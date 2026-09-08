@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#F6F4EF">
 <title>Cadence — emploi du temps par blocs</title>
-<link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233E5C50' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3c-1.8 0-3.4 1.1-4.1 2.7-.8 1.8-.3 3.8 1 5.1l1.2 1.2-2.6 2.6c-.7.7-.7 1.9 0 2.6s1.9.7 2.6 0l2.6-2.6 1.2 1.2c1.3 1.3 3.3 1.8 5.1 1 1.6-.7 2.7-2.3 2.7-4.1 0-2.8-2.3-5.1-5.1-5.1H14L12 3Z'/%3E%3Cpath d='m9 15 6-6'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -126,6 +125,12 @@
   }
   .actions button svg{flex:none;}
   .actions button:hover{border-color:var(--accent);}
+  #editModeBtn{font-weight:600;}
+  #editModeBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  #editModeBtn:not(.active){color:var(--ink-soft);}
+  body:not(.edit-mode) .block{cursor:default;}
+  body:not(.edit-mode) .block:hover{filter:none;box-shadow:0 1px 2px rgba(42,40,34,.15);}
+  .edit-locked-note{font-size:11px;color:var(--ink-faint);margin-left:4px;}
   #menuBtn{display:none;}
   .help-btn{
     width:30px;height:30px;
@@ -790,6 +795,7 @@
       <button id="todayBtn">Aujourd'hui</button>
     </div>
     <div class="actions">
+      <button id="editModeBtn" title="Activer le mode édition" aria-label="Activer le mode édition" aria-pressed="false"><span class="edit-icon">✎</span> <span class="lbl">Modifier</span></button>
       <button id="printBtn" title="Imprimer / Enregistrer en PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span class="lbl">Imprimer / PDF</span></button>
       <button id="exportBtn" title="Exporter les données en JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg> <span class="lbl">Exporter</span></button>
       <button id="importBtn" title="Importer des données JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 21V9"></path><polyline points="7 14 12 9 17 14"></polyline><path d="M5 3h14"></path></svg> <span class="lbl">Importer</span></button>
@@ -898,40 +904,9 @@ function loadState(){
   }catch(e){ console.error('Lecture des données impossible', e); return defaultState(); }
 }
 let STATE = loadState();
-function saveState(skipReminder){
+function saveState(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }
   catch(e){ console.error('Enregistrement des données impossible', e); }
-  if(!skipReminder) markModified();
-}
-
-/* ============ rappel d'export JSON ============ */
-const EXPORT_PENDING_KEY = 'cadence-export-pending';
-function hasPendingExport(){ return localStorage.getItem(EXPORT_PENDING_KEY)==='1'; }
-function setPendingExport(v){ try{ localStorage.setItem(EXPORT_PENDING_KEY, v?'1':'0'); }catch(e){} }
-function ensureExportBanner(){
-  let el = document.getElementById('exportReminder');
-  if(el) return el;
-  el = document.createElement('div');
-  el.id = 'exportReminder';
-  el.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9999;background:#3E5C50;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;font:14px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:92vw;';
-  el.innerHTML =
-    '<span>Plan modifié — pensez à exporter votre JSON.</span>'+
-    '<button id="exportReminderBtn" style="background:#fff;color:#3E5C50;border:none;border-radius:6px;padding:6px 10px;font-weight:600;cursor:pointer;">Exporter</button>'+
-    '<button id="exportReminderClose" aria-label="Fermer" style="background:transparent;color:#fff;border:none;font-size:18px;cursor:pointer;line-height:1;">&times;</button>';
-  document.body.appendChild(el);
-  el.querySelector('#exportReminderBtn').addEventListener('click', ()=>{ exportData(); clearExportReminder(); });
-  el.querySelector('#exportReminderClose').addEventListener('click', ()=>{ el.style.display='none'; });
-  return el;
-}
-function showExportReminder(){ ensureExportBanner().style.display = 'flex'; }
-function clearExportReminder(){
-  setPendingExport(false);
-  const el = document.getElementById('exportReminder');
-  if(el) el.style.display = 'none';
-}
-function markModified(){
-  setPendingExport(true);
-  showExportReminder();
 }
 function getDay(key){
   if(!STATE.days[key]) STATE.days[key] = {templateId:null, blocks:[]};
@@ -942,6 +917,7 @@ function getDay(key){
 let currentView = 'week';
 let refDate = new Date(); refDate.setHours(0,0,0,0);
 let armedSavedBlockId = null;
+let editMode = false; // Le planning est en lecture seule par défaut.
 
 /* ============ DOM refs ============ */
 const weekViewEl = document.getElementById('weekView');
@@ -972,6 +948,25 @@ const armedNoteEl = document.getElementById('armedNote');
   topbarEl.addEventListener('transitionend', updateTopbarOnScroll);
   requestAnimationFrame(updateTopbarOnScroll);
 
+/* ============ mode édition ============ */
+function setEditMode(enabled){
+  editMode = !!enabled;
+  if(!editMode) armedSavedBlockId = null;
+  document.body.classList.toggle('edit-mode', editMode);
+  const importBtn = document.getElementById('importBtn');
+  if(importBtn){ importBtn.disabled = !editMode; importBtn.title = editMode ? 'Importer des données JSON' : 'Activez le mode édition pour importer des données'; }
+  const btn = document.getElementById('editModeBtn');
+  if(btn){
+    btn.classList.toggle('active', editMode);
+    btn.setAttribute('aria-pressed', String(editMode));
+    btn.title = editMode ? 'Désactiver le mode édition' : 'Activer le mode édition';
+    btn.querySelector('.edit-icon').textContent = editMode ? '✓' : '✎';
+    const label = btn.querySelector('.lbl');
+    if(label) label.textContent = editMode ? 'Édition' : 'Modifier';
+  }
+  renderApp();
+}
+
 /* ============ header controls ============ */
 document.querySelectorAll('.view-toggle button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -980,6 +975,7 @@ document.querySelectorAll('.view-toggle button').forEach(btn=>{
     renderApp();
   });
 });
+document.getElementById('editModeBtn').addEventListener('click', ()=>setEditMode(!editMode));
 document.getElementById('prevBtn').addEventListener('click', ()=>{ nav(-1); });
 document.getElementById('nextBtn').addEventListener('click', ()=>{ nav(1); });
 document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); });
@@ -1027,9 +1023,7 @@ weekViewEl.addEventListener('touchend',e=>{
 },{passive:true});
 document.getElementById('printBtn').addEventListener('click', ()=>{ window.print(); });
 document.getElementById('exportBtn').addEventListener('click', exportData);
-document.getElementById('exportBtn').addEventListener('click', clearExportReminder);
-if(hasPendingExport()) requestAnimationFrame(showExportReminder);
-document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importBtn').addEventListener('click', ()=>{ if(editMode) document.getElementById('importFile').click(); });
 document.getElementById('importFile').addEventListener('change', importData);
 
 function exportData(){
@@ -1051,8 +1045,7 @@ function importData(e){
       const normalized = normalizeState(data);
       if(!confirm('Remplacer toutes les données actuelles par celles de ce fichier ?')) return;
       STATE = normalized;
-      saveState(true);
-      clearExportReminder();
+      saveState();
       renderApp();
     }catch(err){ alert('Ce fichier ne peut pas être lu (JSON invalide ou structure incompatible).'); }
   };
@@ -1174,6 +1167,7 @@ function buildColumn(ctx, opts){
   }
 
   wrap.addEventListener('pointerdown', (e)=>{
+    if(!editMode) return;
     if(e.target !== wrap) return; // clicked a block, ignore here
     const rect = wrap.getBoundingClientRect();
     const y0 = e.clientY - rect.top;
@@ -1260,6 +1254,7 @@ function layoutBlocks(blocks){
 
 function attachBlockInteractions(el, block, ctx, rerender){
   el.addEventListener('pointerdown', (e)=>{
+    if(!editMode) return;
     e.stopPropagation();
     const isResize = e.target.classList.contains('resize-handle');
     const startY = e.clientY;
@@ -1407,7 +1402,10 @@ function renderWeekView(){
     const select = document.createElement('select');
     select.className = 'template-select';
     select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+    select.disabled = !editMode;
+    select.title = editMode ? 'Appliquer une journée type' : 'Activez le mode édition pour modifier cette journée';
     select.addEventListener('change', ()=>{
+      if(!editMode){ renderApp(); return; }
       const tid = select.value;
       applyTemplateToDay(tid, key, ()=>renderApp());
     });
@@ -1416,7 +1414,9 @@ function renderWeekView(){
     actions.appendChild(select);
     const addHalf = document.createElement('button');
     addHalf.className='halfday-add'; addHalf.type='button'; addHalf.title='Ajouter une demi-journée type'; addHalf.textContent='＋';
-    addHalf.addEventListener('click',()=>openHalfDayApplyModal(key));
+    addHalf.disabled = !editMode;
+    addHalf.title = editMode ? 'Ajouter une demi-journée type' : 'Activez le mode édition pour modifier cette journée';
+    addHalf.addEventListener('click',()=>{ if(editMode) openHalfDayApplyModal(key); });
     actions.appendChild(addHalf);
     head.appendChild(actions);
     const applied=dayHalfDays(key);
@@ -1458,7 +1458,10 @@ function renderDayView(){
   const select = document.createElement('select');
   select.className = 'template-select';
   select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+  select.disabled = !editMode;
+  select.title = editMode ? 'Appliquer une journée type' : 'Activez le mode édition pour modifier cette journée';
   select.addEventListener('change', ()=>{
+    if(!editMode){ renderApp(); return; }
     applyTemplateToDay(select.value, key, ()=>renderApp());
   });
   head.appendChild(select);
@@ -1654,6 +1657,7 @@ function renderSidebar(){
         '<div class="item-sub">'+(b.duration||60)+' min</div></div>'+
         '<button class="item-edit" title="Modifier">✎</button>';
       li.querySelector('.item-main').addEventListener('click',()=>{
+        if(!editMode) return;
         armedSavedBlockId=(armedSavedBlockId===b.id)?null:b.id; renderSidebar();
         if(window.innerWidth<=800) closeSidebar();
       });
@@ -1996,7 +2000,7 @@ function renderApp(){
   renderSidebar();
   closeSidebar();
 }
-renderApp();
+setEditMode(false);
 
 // Mise à jour discrète de l'indicateur de l'heure courante, sans reconstruire le planning.
 let currentTimeRefresh = null;
@@ -2035,14 +2039,6 @@ if(currentTimeRefresh) clearInterval(currentTimeRefresh);
 currentTimeRefresh=setInterval(refreshCurrentTimeIndicators, 30000);
 
 })();
-</script>
-<script>
-// Installation PWA : le navigateur peut proposer l'installation de Cadence comme application.
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
-}
 </script>
 </body>
 </html>

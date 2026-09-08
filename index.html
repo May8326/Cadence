@@ -898,9 +898,40 @@ function loadState(){
   }catch(e){ console.error('Lecture des données impossible', e); return defaultState(); }
 }
 let STATE = loadState();
-function saveState(){
+function saveState(skipReminder){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }
   catch(e){ console.error('Enregistrement des données impossible', e); }
+  if(!skipReminder) markModified();
+}
+
+/* ============ rappel d'export JSON ============ */
+const EXPORT_PENDING_KEY = 'cadence-export-pending';
+function hasPendingExport(){ return localStorage.getItem(EXPORT_PENDING_KEY)==='1'; }
+function setPendingExport(v){ try{ localStorage.setItem(EXPORT_PENDING_KEY, v?'1':'0'); }catch(e){} }
+function ensureExportBanner(){
+  let el = document.getElementById('exportReminder');
+  if(el) return el;
+  el = document.createElement('div');
+  el.id = 'exportReminder';
+  el.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9999;background:#3E5C50;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;font:14px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:92vw;';
+  el.innerHTML =
+    '<span>Plan modifié — pensez à exporter votre JSON.</span>'+
+    '<button id="exportReminderBtn" style="background:#fff;color:#3E5C50;border:none;border-radius:6px;padding:6px 10px;font-weight:600;cursor:pointer;">Exporter</button>'+
+    '<button id="exportReminderClose" aria-label="Fermer" style="background:transparent;color:#fff;border:none;font-size:18px;cursor:pointer;line-height:1;">&times;</button>';
+  document.body.appendChild(el);
+  el.querySelector('#exportReminderBtn').addEventListener('click', ()=>{ exportData(); clearExportReminder(); });
+  el.querySelector('#exportReminderClose').addEventListener('click', ()=>{ el.style.display='none'; });
+  return el;
+}
+function showExportReminder(){ ensureExportBanner().style.display = 'flex'; }
+function clearExportReminder(){
+  setPendingExport(false);
+  const el = document.getElementById('exportReminder');
+  if(el) el.style.display = 'none';
+}
+function markModified(){
+  setPendingExport(true);
+  showExportReminder();
 }
 function getDay(key){
   if(!STATE.days[key]) STATE.days[key] = {templateId:null, blocks:[]};
@@ -996,6 +1027,8 @@ weekViewEl.addEventListener('touchend',e=>{
 },{passive:true});
 document.getElementById('printBtn').addEventListener('click', ()=>{ window.print(); });
 document.getElementById('exportBtn').addEventListener('click', exportData);
+document.getElementById('exportBtn').addEventListener('click', clearExportReminder);
+if(hasPendingExport()) requestAnimationFrame(showExportReminder);
 document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
 document.getElementById('importFile').addEventListener('change', importData);
 
@@ -1018,7 +1051,8 @@ function importData(e){
       const normalized = normalizeState(data);
       if(!confirm('Remplacer toutes les données actuelles par celles de ce fichier ?')) return;
       STATE = normalized;
-      saveState();
+      saveState(true);
+      clearExportReminder();
       renderApp();
     }catch(err){ alert('Ce fichier ne peut pas être lu (JSON invalide ou structure incompatible).'); }
   };

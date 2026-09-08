@@ -1,14 +1,12 @@
 {
-  "name": "Cadence — emploi du temps",
+  "name": "Cadence",
   "short_name": "Cadence",
-  "lang": "fr",
+  "description": "Emploi du temps par blocs",
   "start_url": "/Cadence/",
   "scope": "/Cadence/",
   "display": "standalone",
-  "orientation": "any",
   "background_color": "#F6F4EF",
   "theme_color": "#F6F4EF",
-  "description": "Emploi du temps personnel par blocs, hors ligne.",
   "icons": [
     {
       "src": "/Cadence/icon.svg",

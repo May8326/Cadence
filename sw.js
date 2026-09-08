@@ -1,4 +1,4 @@
-const CACHE = 'cadence-pwa-v2';
+const CACHE = 'cadence-pwa-v3'; // v2 -> v3 : force le renouvellement du cache
 
 const APP = [
   './',
@@ -39,12 +39,13 @@ self.addEventListener('fetch', event => {
 
         return fetch(event.request)
           .then(response => {
-            const copy = response.clone();
-
-            caches.open(CACHE)
-              .then(cache => cache.put(event.request, copy))
-              .catch(() => {});
-
+            // Ne mettre en cache que les réponses valides (évite de figer une 404/500)
+            if (response && response.ok) {
+              const copy = response.clone();
+              caches.open(CACHE)
+                .then(cache => cache.put(event.request, copy))
+                .catch(() => {});
+            }
             return response;
           })
           .catch(() => caches.match('./index.html'));

@@ -775,6 +775,8 @@
   }
   .print-title{display:none;}
 </style>
+  <!-- Configuration PWA -->
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 <div id="app">
@@ -2037,6 +2039,20 @@ function refreshCurrentTimeIndicators(){
 // Les colonnes reçoivent leur date via renderApp ci-dessous.
 if(currentTimeRefresh) clearInterval(currentTimeRefresh);
 currentTimeRefresh=setInterval(refreshCurrentTimeIndicators, 30000);
+
+
+// ============ PWA / Service Worker ============
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(registration => {
+        console.log('Cadence : Service Worker actif', registration.scope);
+      })
+      .catch(error => {
+        console.error('Cadence : échec du Service Worker', error);
+      });
+  });
+}
 
 })();
 </script>

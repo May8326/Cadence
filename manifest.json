@@ -1,0 +1,15 @@
+{
+  "name": "Cadence — emploi du temps",
+  "short_name": "Cadence",
+  "lang": "fr",
+  "start_url": "./cadence_pwa.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F6F4EF",
+  "theme_color": "#F6F4EF",
+  "description": "Emploi du temps personnel par blocs, hors ligne.",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

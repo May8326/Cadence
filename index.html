@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#F6F4EF">
+<title>Cadence — emploi du temps par blocs</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233E5C50' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3c-1.8 0-3.4 1.1-4.1 2.7-.8 1.8-.3 3.8 1 5.1l1.2 1.2-2.6 2.6c-.7.7-.7 1.9 0 2.6s1.9.7 2.6 0l2.6-2.6 1.2 1.2c1.3 1.3 3.3 1.8 5.1 1 1.6-.7 2.7-2.3 2.7-4.1 0-2.8-2.3-5.1-5.1-5.1H14L12 3Z'/%3E%3Cpath d='m9 15 6-6'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#F6F4EF;
+    --surface:#FFFFFF;
+    --ink:#2A2822;
+    --ink-soft:#6E6A61;
+    --ink-faint:#9A9587;
+    --line:#DEDACF;
+    --line-light:#EAE7DE;
+    --accent:#3E5C50;
+    --accent-ink:#F6F4EF;
+    --accent-soft:#DCE6E0;
+    --danger:#A5473A;
+    --radius:7px;
+    --font-serif:Georgia,'Iowan Old Style','Noto Serif',serif;
+    --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --hour-h:64px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  button{
+    font-family:inherit;
+    cursor:pointer;
+  }
+  input,select{
+    font-family:inherit;
+  }
+  #app{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:12px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--font-serif);
+    font-size:22px;
+    letter-spacing:0.2px;
+    color:var(--ink);
+    margin-right:4px;
+  }
+  .view-toggle{
+    display:flex;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .view-toggle button{
+    border:none;
+    background:var(--surface);
+    padding:7px 14px;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .view-toggle button.active{
+    background:var(--accent);
+    color:var(--accent-ink);
+  }
+  .date-nav{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:1;
+    min-width:220px;
+  }
+  .date-nav button{
+    border:1px solid var(--line);
+    background:var(--surface);
+    border-radius:var(--radius);
+    width:30px;height:30px;
+    font-size:15px;
+    color:var(--ink-soft);
+  }
+  #todayBtn{
+    width:auto;
+    padding:0 10px;
+    font-size:13px;
+  }
+  #dateLabel{
+    font-size:15px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .actions button{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    border-radius:var(--radius);
+    padding:7px 12px;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .actions button svg{flex:none;}
+  .actions button:hover{border-color:var(--accent);}
+  #menuBtn{display:none;}
+  .help-btn{
+    width:30px;height:30px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    border-radius:50%;
+    font-weight:600;
+    font-size:14px;
+    line-height:28px;
+    padding:0;
+    cursor:pointer;
+    flex:none;
+  }
+  .help-btn:hover{color:var(--accent);border-color:var(--accent);}
+
+  /* ---------- Body layout ---------- */
+  .body{
+    display:flex;
+    flex:1;
+    min-height:0;
+  }
+  #sidebar{
+    width:270px;
+    flex:none;
+    border-right:1px solid var(--line);
+    background:var(--surface);
+    overflow-y:auto;
+    padding:14px;
+  }
+  .panel{margin-bottom:26px;}
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .panel-head h2{
+    font-family:var(--font-serif);
+    font-size:15px;
+    font-weight:normal;
+    margin:0;
+    color:var(--ink);
+  }
+  .panel-head button{
+    border:none;
+    background:none;
+    color:var(--accent);
+    font-size:13px;
+    padding:2px 4px;
+  }
+  .empty-hint{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    line-height:1.5;
+    padding:6px 2px;
+  }
+  ul.list{list-style:none;margin:0;padding:0;}
+  li.item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 6px;
+    border-radius:var(--radius);
+    margin-bottom:3px;
+  }
+  li.item:hover{background:var(--paper);}
+  li.item.armed{
+    background:var(--accent-soft);
+    outline:1px dashed var(--accent);
+  }
+  .dot{
+    width:11px;height:11px;
+    border-radius:3px;
+    flex:none;
+  }
+  .item-main{
+    flex:1;
+    min-width:0;
+    cursor:pointer;
+  }
+  .item-title{
+    font-size:13.5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .item-sub{
+    font-size:11.5px;
+    color:var(--ink-faint);
+  }
+  .item-edit{
+    border:none;
+    background:none;
+    color:var(--ink-faint);
+    font-size:14px;
+    padding:2px 4px;
+  }
+  .item-edit:hover{color:var(--accent);}
+  .item-drag{
+    flex:none;
+    color:var(--ink-faint);
+    cursor:grab;
+    font-size:15px;
+    letter-spacing:-3px;
+    width:14px;
+    user-select:none;
+  }
+  li.item.dragging{opacity:.45;}
+  li.item.drag-over{outline:1px dashed var(--accent);background:var(--accent-soft);}
+  @media (max-width:800px){
+    .item-drag{font-size:14px;}
+  }
+  .armed-note{
+    font-size:11.5px;
+    color:var(--accent);
+    padding:2px 6px 8px;
+  }
+
+  /* ---------- Main / grid ---------- */
+  #main{
+    flex:1;
+    overflow:auto;
+    background:var(--paper);
+    padding:16px 20px 40px;
+  }
+  .schedule{
+    display:flex;
+    align-items:flex-start;
+  }
+  .schedule[hidden]{
+    display:none;
+  }
+  .time-axis{
+    flex:none;
+    width:52px;
+    padding-top:70px;
+    position:relative;
+  }
+  .time-axis .tick{
+    position:absolute;
+    left:0;right:8px;
+    text-align:right;
+    font-size:11px;
+    color:var(--ink-faint);
+    transform:translateY(-6px);
+  }
+  .columns{
+    display:flex;
+    flex:1;
+    min-width:0;
+    overflow-x:auto;
+    gap:10px;
+  }
+  .day-col-wrap{
+    flex:1 1 0;
+    min-width:0;
+    max-width:100%;
+  }
+  #dayView .day-col-wrap{min-width:0;max-width:640px;margin:0 auto;width:100%;}
+  .col-head{
+    height:70px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    padding-top:6px;
+    margin-bottom:6px;
+  }
+  .col-head .wd{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .col-head .dt{
+    font-size:11px;
+    color:var(--ink-faint);
+  }
+  .col-head .day-actions{display:flex;gap:4px;align-items:center;margin-top:3px;}
+  .col-head select.template-select{
+    margin-top:3px;
+    font-size:11px;
+    padding:2px 3px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:var(--surface);
+    color:var(--ink-soft);
+    max-width:100%;
+  }
+  .halfday-add{
+    border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);
+    border-radius:5px;font-size:13px;line-height:1;padding:4px 7px;flex:none;
+  }
+  .halfday-add:hover{color:var(--accent);border-color:var(--accent);}
+  .halfday-summary{font-size:10.5px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .halfday-chip{display:inline-block;margin-right:4px;}
+
+  .grid-column{
+    position:relative;
+    min-width:0;
+    width:100%;
+    box-sizing:border-box;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(var(--line-light) 1px, transparent 1px);
+    background-size:100% var(--hour-h), 100% calc(var(--hour-h) / 2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background-color:var(--surface);
+    touch-action:none;
+  }
+  .ghost{
+    position:absolute;
+    left:3px;right:3px;
+    background:var(--accent-soft);
+    border:1.5px dashed var(--accent);
+    border-radius:5px;
+    pointer-events:none;
+  }
+  .block{
+    position:absolute;
+    left:3px;right:3px;
+    box-sizing:border-box;
+    border-radius:5px;
+    padding:4px 6px;
+    overflow:hidden;
+    color:#fff;
+    font-size:11.5px;
+    line-height:1.3;
+    box-shadow:0 1px 2px rgba(0,0,0,.15);
+    cursor:grab;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .block .b-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .block .b-time{opacity:.85;font-size:10.5px;}
+  .block .b-tag{
+    display:inline-block;
+    margin-top:2px;
+    font-size:10px;
+    background:rgba(42,40,34,.10);
+    padding:0 5px;
+    border-radius:8px;
+  }
+  .resize-handle{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:7px;
+    cursor:ns-resize;
+  }
+
+  /* ---------- Help tutorial ---------- */
+  .help-modal{
+    background:var(--surface);
+    border-radius:10px;
+    width:100%;
+    max-width:560px;
+    max-height:88vh;
+    overflow-y:auto;
+    padding:22px;
+  }
+  .help-hero{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:16px;
+  }
+  .help-icon{
+    width:38px;height:38px;
+    flex:none;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-size:18px;
+  }
+  .help-hero h3{
+    font-family:var(--font-serif);
+    font-weight:normal;
+    font-size:21px;
+    margin:0 0 3px;
+  }
+  .help-hero p{margin:0;color:var(--ink-soft);font-size:12.5px;}
+  .help-steps{display:flex;flex-direction:column;gap:12px;}
+  .help-step{display:flex;gap:11px;align-items:flex-start;}
+  .help-step>span{
+    width:23px;height:23px;flex:none;
+    border:1px solid var(--line);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;color:var(--accent);
+    margin-top:1px;
+  }
+  .help-step strong{font-size:13px;color:var(--ink);}
+  .help-step p{margin:2px 0 0;font-size:12px;line-height:1.45;color:var(--ink-soft);}
+  .help-tip{
+    margin-top:17px;
+    padding:10px 12px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:7px;
+    display:flex;gap:8px;
+    font-size:11.5px;line-height:1.45;color:var(--ink-soft);
+  }
+  .help-tip strong{color:var(--ink);white-space:nowrap;}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;
+    background:rgba(30,28,22,.35);
+    display:flex;align-items:center;justify-content:center;
+    z-index:100;
+    padding:16px;
+    overscroll-behavior:contain;
+  }
+  .modal{
+    background:var(--surface);
+    border-radius:10px;
+    width:100%;
+    max-width:420px;
+    max-height:90vh;
+    overflow-y:auto;
+    padding:20px 22px;
+    overscroll-behavior:contain;
+  }
+  .modal.wide{max-width:640px;}
+  .modal h3{
+    font-family:var(--font-serif);
+    font-weight:normal;
+    font-size:19px;
+    margin:0 0 16px;
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .field input[type=text],
+  .field input[type=time],
+  .field input[type=number]{
+    width:100%;
+    padding:8px 9px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--paper);
+  }
+  .row-2{display:flex;gap:12px;}
+  .row-2 .field{flex:1;}
+  .swatches{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+  .swatch{
+    width:26px;height:26px;
+    border-radius:6px;
+    border:2px solid transparent;
+    cursor:pointer;
+  }
+  .swatch.selected{border-color:var(--ink);}
+  .swatch.custom{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper);
+    border:1px dashed var(--ink-faint);
+    font-size:14px;
+    color:var(--ink-faint);
+    position:relative;
+    overflow:hidden;
+  }
+  .swatch.custom input{
+    position:absolute;inset:0;
+    opacity:0;cursor:pointer;
+  }
+  .checkbox-field{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .modal-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:18px;
+    gap:10px;
+  }
+  .modal-actions .left{display:flex;gap:8px;}
+  .btn{
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:6px;
+    padding:8px 15px;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:background .12s ease,border-color .12s ease,color .12s ease,transform .06s ease;
+  }
+  .btn:hover{background:var(--paper);border-color:var(--ink-faint);}
+  .btn:active{transform:translateY(1px);}
+  .btn:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .btn.danger{background:none;border:none;color:var(--danger);padding:8px 4px;}
+
+  /* template editor embedded schedule */
+  .tmpl-editor-wrap{
+    display:flex;
+    margin-top:6px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .tmpl-editor-wrap .time-axis{padding-top:8px;width:44px;}
+  .tmpl-editor-wrap .grid-column{border:none;border-radius:0;border-left:1px solid var(--line);}
+  .tmpl-scroll{max-height:50vh;overflow-y:auto;flex:1;display:flex;}
+
+  /* ---------- Sidebar collapsible sections ---------- */
+  .panel-head{cursor:pointer;}
+  .panel-head .panel-toggle{
+    border:none;background:none;color:var(--ink-faint);font-size:12px;padding:2px 4px;
+    width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .panel-head .panel-title-wrap{display:flex;align-items:center;gap:4px;min-width:0;}
+  .panel.collapsed .panel-head{margin-bottom:0;}
+  .panel.collapsed .panel-content{display:none;}
+  .panel-toggle .chevron{display:inline-block;transition:transform .15s ease;}
+  .panel.collapsed .panel-toggle .chevron{transform:rotate(-90deg);}
+  .tag-group{margin:0 0 8px;}
+  .tag-group-head{
+    display:flex;align-items:center;gap:4px;width:100%;border:none;background:none;
+    padding:4px 4px;color:var(--ink-soft);font-size:11.5px;text-align:left;cursor:pointer;
+  }
+  .tag-group-head .chevron{font-size:10px;color:var(--ink-faint);transition:transform .15s ease;}
+  .tag-group.collapsed .tag-group-head .chevron{transform:rotate(-90deg);}
+  .tag-group.collapsed .tag-group-list{display:none;}
+  .tag-group-head .tag-count{margin-left:auto;color:var(--ink-faint);font-size:10.5px;}
+  .saved-block-drag-hint{font-size:10.5px;color:var(--ink-faint);padding:0 4px 5px;}
+  li.item.drag-over{outline:1px dashed var(--accent);background:var(--accent-soft);}
+
+  /* ---------- Half-day templates overview ---------- */
+  #halfDayTemplatesView .col-head .wd{font-size:14px;}
+  #halfDayTemplatesView .col-head .dt{font-size:11.5px;}
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:800px){
+    #sidebar{
+      position:fixed;
+      top:calc(var(--mobile-topbar-offset, 0px) + 2px);bottom:0;left:0;
+      height:calc(100vh - var(--mobile-topbar-offset, 0px));
+      transform:translateX(-100%);
+      transition:transform .18s ease;
+      z-index:80;
+      box-shadow:2px 0 12px rgba(0,0,0,.15);
+    }
+    #sidebar.open{transform:translateX(0);}
+    #menuBtn{display:inline-block;}
+    .help-btn{width:28px;height:28px;line-height:26px;font-size:13px;}
+    .brand{font-size:19px;}
+    #dateLabel{font-size:13.5px;}
+    .actions button span.lbl{display:none;}
+    .topbar button{min-width:30px;min-height:30px;}
+    .btn{min-height:36px;padding:8px 13px;}
+    #main{padding:12px 8px 28px;}
+    .topbar{position:sticky;top:0;z-index:90;gap:7px;padding:8px 8px;transition:padding .18s ease,gap .18s ease;}
+    .topbar.compact{padding:4px 8px;gap:5px;}
+    .topbar.compact .brand{font-size:16px;}
+    .topbar.compact .view-toggle button{padding:4px 8px;font-size:12px;}
+    .topbar.compact .date-nav{min-width:150px;}
+    .topbar.compact .date-nav button{width:26px;height:26px;font-size:13px;}
+    .topbar.compact #dateLabel{font-size:12px;}
+    .topbar.compact .actions{gap:4px;}
+    .topbar.compact .actions button{padding:4px 7px;}
+    .view-toggle{flex:none;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+    .view-toggle::-webkit-scrollbar{display:none;}
+    .view-toggle button{min-width:58px;min-height:38px;padding:8px 10px;font-size:13px;white-space:nowrap;}
+    .date-nav{min-width:0;flex:1 1 auto;gap:5px;}
+    .date-nav button{width:38px;height:38px;min-width:38px;font-size:20px;flex:none;}
+    #todayBtn{width:auto;min-width:78px;padding:0 9px;font-size:12px;}
+    .topbar .actions{flex:none;gap:5px;}
+    .topbar .actions button{width:38px;height:38px;min-width:38px;min-height:38px;padding:0;justify-content:center;}
+    .col-head{height:78px;padding-top:4px;}
+    .col-head .wd{font-size:12px;}
+    .col-head .dt{font-size:10.5px;margin-top:1px;}
+    .col-head .day-actions{margin-top:5px;width:100%;}
+    .col-head select.template-select{margin-top:0;flex:1;min-width:0;width:auto;font-size:10.5px;padding:3px;}
+    .halfday-add{padding:4px 7px;}
+    .time-axis{padding-top:78px;}
+    .columns{gap:7px;overflow-x:auto;overflow-y:visible;padding-bottom:8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin;}
+    .day-col-wrap{min-width:124px;max-width:124px;scroll-snap-align:start;}
+    #dayView .day-col-wrap{min-width:0;max-width:640px;width:100%;}
+    #weekView .day-col-wrap{flex:0 0 124px;}
+    #weekView .columns{padding-right:16px;}
+    .schedule{min-width:0;}
+    .time-axis{width:46px;}
+    .modal-backdrop{padding:10px;}
+    .modal{max-height:92vh;padding:18px 16px;border-radius:9px;}
+    .help-modal{max-height:92vh;padding:18px 16px;}
+    .row-2{gap:8px;}
+  }
+
+  /* ---------- App / webapp polish ---------- */
+  :root{
+    --shadow-sm:0 1px 2px rgba(42,40,34,.05);
+    --shadow-md:0 4px 14px rgba(42,40,34,.07);
+  }
+  body{overflow:hidden;}
+  #app{background:var(--paper);}
+  .topbar{
+    position:relative;
+    z-index:50;
+    min-height:58px;
+    box-shadow:0 1px 0 rgba(42,40,34,.03);
+    backdrop-filter:saturate(120%) blur(8px);
+  }
+  .brand{font-weight:500;}
+  .view-toggle{box-shadow:var(--shadow-sm);}
+  .view-toggle button{transition:background .15s ease,color .15s ease;}
+  .view-toggle button:not(.active):hover{background:var(--paper);color:var(--ink);}
+  .date-nav button,.actions button,.help-btn,#menuBtn{
+    transition:background .15s ease,border-color .15s ease,color .15s ease,transform .06s ease;
+  }
+  .date-nav button:hover,.actions button:hover,.help-btn:hover,#menuBtn:hover{
+    background:var(--paper);
+  }
+  .date-nav button:active,.actions button:active,.help-btn:active,#menuBtn:active{transform:translateY(1px);}
+  .body{min-height:0;}
+  #sidebar{
+    box-shadow:1px 0 0 rgba(42,40,34,.02);
+    scrollbar-width:thin;
+  }
+  #sidebar::-webkit-scrollbar,#main::-webkit-scrollbar{width:8px;height:8px;}
+  #sidebar::-webkit-scrollbar-thumb,#main::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px;}
+  #sidebar::-webkit-scrollbar-track,#main::-webkit-scrollbar-track{background:transparent;}
+  .panel{margin-bottom:20px;padding-bottom:2px;}
+  .panel-head{padding:3px 2px;border-radius:6px;}
+  .panel-head:hover{background:var(--paper);}
+  .panel-head h2{font-size:14px;}
+  li.item{min-height:38px;transition:background .12s ease,transform .08s ease;}
+  li.item:hover{transform:translateX(1px);}
+  .item-edit{width:28px;height:28px;border-radius:6px;}
+  .item-edit:hover{background:var(--surface);}
+  #main{scroll-behavior:smooth;}
+  .schedule{width:100%;}
+  .schedule > div{min-width:0;}
+  .columns{padding:0 2px 8px 0;}
+  .day-col-wrap{min-width:0;}
+  .col-head{position:relative;}
+  .col-head .wd{letter-spacing:.1px;}
+  .grid-column{
+    box-shadow:var(--shadow-sm);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .block{
+    transition:filter .12s ease,box-shadow .12s ease,transform .08s ease;
+    user-select:none;
+  }
+  .block:hover{
+    filter:saturate(1.04) brightness(1.02);
+    box-shadow:0 2px 5px rgba(42,40,34,.18);
+    z-index:25;
+  }
+  .block:active{transform:scale(.998);}
+  .ghost{z-index:24;}
+  .current-time-overlay{z-index:30;}
+  .modal-backdrop{backdrop-filter:blur(3px);}
+  .modal,.help-modal{box-shadow:0 14px 40px rgba(30,28,22,.16);}
+  .btn.primary{box-shadow:0 1px 2px rgba(42,40,34,.12);}
+
+  @media (min-width:801px){
+    .topbar{position:sticky;top:0;}
+    #main{padding:18px 24px 44px;}
+    #sidebar{width:276px;padding:16px 14px;}
+    .schedule{max-width:1600px;margin:0 auto;}
+    .day-col-wrap{min-width:0;}
+    #dayView .day-col-wrap{max-width:720px;}
+    .columns{gap:12px;}
+  }
+
+  @media (max-width:800px){
+    body{overflow:hidden;}
+    #main{overscroll-behavior-x:none;}
+    .topbar{box-shadow:0 2px 8px rgba(42,40,34,.06);}
+    .columns{padding-left:1px;padding-right:17px;}
+    .grid-column{box-shadow:0 1px 3px rgba(42,40,34,.08);}
+    .block{font-size:11px;padding:5px 6px;}
+    .block .b-time{font-size:10px;}
+    .block .b-tag{font-size:9.5px;}
+    .modal,.help-modal{box-shadow:0 10px 30px rgba(30,28,22,.18);}
+  }
+
+  /* ---------- Current-time indicator ---------- */
+  .current-time-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:20;
+  }
+  .elapsed-shade{
+    position:absolute;
+    left:0; right:0; top:0;
+    background:rgba(42,40,34,.075);
+  }
+  .current-time-line{
+    position:absolute;
+    left:-1px; right:-1px;
+    height:2px;
+    background:#C94A43;
+    box-shadow:0 0 0 1px rgba(201,74,67,.08);
+  }
+  .current-time-line::before{
+    content:'';
+    position:absolute;
+    left:-4px; top:50%;
+    width:8px; height:8px;
+    transform:translateY(-50%);
+    border-radius:50%;
+    background:#C94A43;
+  }
+  .col-head.is-today{
+    box-shadow:inset 0 -2px 0 #C94A43;
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    .current-time-overlay{display:none !important;}
+    .col-head.is-today{box-shadow:none !important;}
+    .topbar, #sidebar, #menuBtn, .col-head select, #sidebarOverlay{display:none !important;}
+    #main{overflow:visible;padding:0;}
+    #app,.body{display:block;height:auto;}
+    .columns{overflow:visible;}
+    .print-title{
+      display:block !important;
+      font-family:var(--font-serif);
+      font-size:20px;
+      margin:0 0 14px;
+    }
+    @page{size:landscape;margin:10mm;}
+  }
+  .print-title{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">Cadence</div>
+    <button id="menuBtn">☰</button>
+    <button id="helpBtn" class="help-btn" title="Aide et tutoriel" aria-label="Aide et tutoriel">?</button>
+    <nav class="view-toggle">
+      <button data-view="week" class="active">Semaine</button>
+      <button data-view="day">Jour</button>
+      <button data-view="templates">Journées</button>
+      <button data-view="halfday-templates">½ journées</button>
+    </nav>
+    <div class="date-nav">
+      <button id="prevBtn">‹</button>
+      <div id="dateLabel"></div>
+      <button id="nextBtn">›</button>
+      <button id="todayBtn">Aujourd'hui</button>
+    </div>
+    <div class="actions">
+      <button id="printBtn" title="Imprimer / Enregistrer en PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span class="lbl">Imprimer / PDF</span></button>
+      <button id="exportBtn" title="Exporter les données en JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg> <span class="lbl">Exporter</span></button>
+      <button id="importBtn" title="Importer des données JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 21V9"></path><polyline points="7 14 12 9 17 14"></polyline><path d="M5 3h14"></path></svg> <span class="lbl">Importer</span></button>
+      <input type="file" id="importFile" hidden accept="application/json">
+    </div>
+  </header>
+
+  <div class="body">
+    <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:70;"></div>
+    <aside id="sidebar">
+      <section class="panel" id="templatePanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Journées type</h2></div><button id="newTemplateBtn">+ Nouveau</button></div>
+        <div class="panel-content"><ul class="list" id="templateList"></ul>
+        <div class="empty-hint" id="templateEmptyHint">Aucune journée type pour l'instant. Créez-en une (ex. « journée de travail ») pour l'appliquer à n'importe quel jour.</div></div>
+      </section>
+      <section class="panel" id="halfDayPanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Demi-journées types</h2></div><button id="newHalfDayBtn">+ Nouveau</button></div>
+        <div class="panel-content"><ul class="list" id="halfDayList"></ul>
+        <div class="empty-hint" id="halfDayEmptyHint">Aucune demi-journée type. Créez-en une (ex. « Soirée AMHE ») pour l’appliquer à une plage de la journée.</div></div>
+      </section>
+      <section class="panel" id="savedBlockPanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Blocs enregistrés</h2></div><button id="newSavedBlockBtn">+ Nouveau</button></div>
+        <div class="panel-content"><div class="armed-note" id="armedNote" style="display:none;">Bloc sélectionné : touchez la grille pour le placer.</div>
+        <div class="saved-block-drag-hint">Glissez-déposez les blocs pour les réorganiser au sein de leur étiquette.</div>
+        <div id="savedBlockList"></div>
+        <div class="empty-hint" id="savedEmptyHint">Aucun bloc enregistré. Enregistrez ici vos activités récurrentes pour les replacer en un clic.</div></div>
+      </section>
+    </aside>
+
+    <main id="main">
+      <div class="print-title" id="printTitle"></div>
+      <div id="weekView" class="schedule"></div>
+      <div id="dayView" class="schedule" hidden></div>
+      <div id="templatesView" class="schedule" hidden></div>
+      <div id="halfDayTemplatesView" class="schedule" hidden></div>
+    </main>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ constants ============ */
+const PX_PER_MIN = 64/60; // matches --hour-h:64px
+const BLOCK_GAP = 3; // px — purely visual inset between adjacent blocks, never affects start/end minutes
+const DAY_START = 6*60;   // 06:00
+const DAY_END   = 23*60;  // 23:00
+const PALETTE = ['#F3B6C8','#F2A6A0','#F6C29A','#F4D77D','#B9D99A','#9FD3B6','#9FD8D2','#A9CBEF','#AEB9E8','#C5B1E8','#D7B5D8','#D9B99B'];
+const WEEKDAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const STORE_KEY = 'cadence-data-v1';
+
+/* ============ utils ============ */
+function pad(n){return n.toString().padStart(2,'0');}
+function minToPx(m){return m*PX_PER_MIN;}
+function pxToMin(px){return px/PX_PER_MIN;}
+function snap(min,step=5){return Math.round(min/step)*step;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function minToTimeStr(min){return pad(Math.floor(min/60))+':'+pad(min%60);}
+function timeStrToMin(str){const p=str.split(':').map(Number);return p[0]*60+p[1];}
+function dateKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function startOfWeek(d){const date=new Date(d);const day=(date.getDay()+6)%7;date.setDate(date.getDate()-day);date.setHours(0,0,0,0);return date;}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
+function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+
+/* ============ state ============ */
+function defaultState(){
+  return {version:1, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}};
+}
+function normalizeState(data){
+  const base=defaultState();
+  if(!data || typeof data!=='object' || Array.isArray(data)) return base;
+  const out=Object.assign(base,data);
+  out.version=1;
+  out.savedBlocks=Array.isArray(out.savedBlocks)?out.savedBlocks:[];
+  out.templates=Array.isArray(out.templates)?out.templates:[];
+  out.halfDayTemplates=Array.isArray(out.halfDayTemplates)?out.halfDayTemplates:[];
+  out.days=(out.days && typeof out.days==='object' && !Array.isArray(out.days))?out.days:{};
+  const validBlock=b=>{
+    if(!b || typeof b!=='object') return false;
+    const st=Number(b.start), en=Number(b.end);
+    return Number.isFinite(st) && Number.isFinite(en) && st>=DAY_START && en<=DAY_END && en>st;
+  };
+  out.savedBlocks=out.savedBlocks.filter(b=>b && typeof b==='object');
+  out.templates=out.templates.filter(t=>t && typeof t==='object').map(t=>Object.assign({},t,{blocks:Array.isArray(t.blocks)?t.blocks.filter(validBlock):[]}));
+  out.halfDayTemplates=out.halfDayTemplates.filter(h=>h && typeof h==='object').map(h=>Object.assign({},h,{blocks:Array.isArray(h.blocks)?h.blocks.filter(validBlock):[]}));
+  Object.keys(out.days).forEach(k=>{
+    const d=out.days[k];
+    if(!d || typeof d!=='object' || Array.isArray(d)) out.days[k]={templateId:null,blocks:[]};
+    else {
+      d.templateId=d.templateId==null?null:d.templateId;
+      d.blocks=Array.isArray(d.blocks)?d.blocks.filter(validBlock):[];
+      if(Array.isArray(d.appliedHalfDays)) d.appliedHalfDays=d.appliedHalfDays.filter(h=>h&&typeof h==='object');
+    }
+  });
+  return out;
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultState();
+    return normalizeState(JSON.parse(raw));
+  }catch(e){ console.error('Lecture des données impossible', e); return defaultState(); }
+}
+let STATE = loadState();
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }
+  catch(e){ console.error('Enregistrement des données impossible', e); }
+}
+function getDay(key){
+  if(!STATE.days[key]) STATE.days[key] = {templateId:null, blocks:[]};
+  return STATE.days[key];
+}
+
+/* ============ view state ============ */
+let currentView = 'week';
+let refDate = new Date(); refDate.setHours(0,0,0,0);
+let armedSavedBlockId = null;
+
+/* ============ DOM refs ============ */
+const weekViewEl = document.getElementById('weekView');
+const dayViewEl = document.getElementById('dayView');
+const templatesViewEl = document.getElementById('templatesView');
+const halfDayTemplatesViewEl = document.getElementById('halfDayTemplatesView');
+const dateLabelEl = document.getElementById('dateLabel');
+const printTitleEl = document.getElementById('printTitle');
+const templateListEl = document.getElementById('templateList');
+const savedBlockListEl = document.getElementById('savedBlockList');
+const halfDayListEl = document.getElementById('halfDayList');
+const sidebarEl = document.getElementById('sidebar');
+const armedNoteEl = document.getElementById('armedNote');
+  const topbarEl = document.querySelector('.topbar');
+  const mainEl = document.getElementById('main');
+  function updateTopbarOnScroll(){
+    const isMobile = window.matchMedia('(max-width:800px)').matches;
+    const compact = isMobile && mainEl.scrollTop > 24;
+    topbarEl.classList.toggle('compact', compact);
+    if(isMobile){
+      document.documentElement.style.setProperty('--mobile-topbar-offset', Math.ceil(topbarEl.getBoundingClientRect().bottom) + 'px');
+    }else{
+      document.documentElement.style.removeProperty('--mobile-topbar-offset');
+    }
+  }
+  mainEl.addEventListener('scroll', updateTopbarOnScroll, {passive:true});
+  window.addEventListener('resize', updateTopbarOnScroll);
+  topbarEl.addEventListener('transitionend', updateTopbarOnScroll);
+  requestAnimationFrame(updateTopbarOnScroll);
+
+/* ============ header controls ============ */
+document.querySelectorAll('.view-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentView = btn.dataset.view;
+    document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderApp();
+  });
+});
+document.getElementById('prevBtn').addEventListener('click', ()=>{ nav(-1); });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ nav(1); });
+document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); });
+function nav(dir){
+  refDate = currentView==='day' ? addDays(refDate,dir) : addDays(refDate, dir*7);
+  renderApp();
+}
+
+// Navigation clavier : les flèches changent la journée / semaine sans gêner les champs de formulaire.
+document.addEventListener('keydown',e=>{
+  if(modalRoot.firstElementChild) return;
+  const tag=(document.activeElement && document.activeElement.tagName)||'';
+  if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+  if(e.key==='ArrowLeft'){ e.preventDefault(); nav(-1); }
+  else if(e.key==='ArrowRight'){ e.preventDefault(); nav(1); }
+  else if(e.key==='Home'){ e.preventDefault(); refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); }
+  else if(e.key==='Escape' && sidebarEl.classList.contains('open')) closeSidebar();
+});
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  sidebarEl.classList.add('open');
+  document.getElementById('sidebarOverlay').style.display='block';
+});
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+function closeSidebar(){
+  sidebarEl.classList.remove('open');
+  document.getElementById('sidebarOverlay').style.display='none';
+}
+
+// Sur téléphone, un balayage horizontal sur la grille permet de passer rapidement à la semaine suivante/précédente.
+let weekTouchStartX=null, weekTouchStartY=null;
+weekViewEl.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1) return;
+  weekTouchStartX=e.touches[0].clientX;
+  weekTouchStartY=e.touches[0].clientY;
+},{passive:true});
+weekViewEl.addEventListener('touchend',e=>{
+  if(weekTouchStartX===null || e.changedTouches.length!==1) return;
+  const dx=e.changedTouches[0].clientX-weekTouchStartX;
+  const dy=e.changedTouches[0].clientY-weekTouchStartY;
+  weekTouchStartX=weekTouchStartY=null;
+  if(Math.abs(dx)<80 || Math.abs(dx)<Math.abs(dy)*1.35) return;
+  const target=e.target.closest('button,select,input,a');
+  if(target) return;
+  nav(dx<0?1:-1);
+},{passive:true});
+document.getElementById('printBtn').addEventListener('click', ()=>{ window.print(); });
+document.getElementById('exportBtn').addEventListener('click', exportData);
+document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', importData);
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(STATE,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cadence-'+dateKey(new Date())+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      const normalized = normalizeState(data);
+      if(!confirm('Remplacer toutes les données actuelles par celles de ce fichier ?')) return;
+      STATE = normalized;
+      saveState();
+      renderApp();
+    }catch(err){ alert('Ce fichier ne peut pas être lu (JSON invalide ou structure incompatible).'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* ============ date label ============ */
+function fmtLong(d){ return d.toLocaleDateString('fr-FR',{weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
+function fmtShort(d){ return d.toLocaleDateString('fr-FR',{day:'numeric', month:'short'}); }
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function updateDateLabel(){
+  const dateNavBtns = [document.getElementById('prevBtn'), document.getElementById('nextBtn'), document.getElementById('todayBtn')];
+  if(currentView==='templates' || currentView==='halfday-templates'){
+    dateNavBtns.forEach(b=>b.style.visibility='hidden');
+    dateLabelEl.textContent = currentView==='templates' ? 'Toutes les journées type' : 'Toutes les demi-journées type';
+    printTitleEl.textContent = currentView==='templates' ? 'Journées type' : 'Demi-journées type';
+    return;
+  }
+  dateNavBtns.forEach(b=>b.style.visibility='');
+  if(currentView==='day'){
+    const label = capitalize(fmtLong(refDate));
+    dateLabelEl.textContent = label;
+    printTitleEl.textContent = label;
+  }else{
+    const start = startOfWeek(refDate);
+    const end = addDays(start,6);
+    const label = 'Semaine du '+fmtShort(start)+' au '+fmtShort(end)+' '+end.getFullYear();
+    dateLabelEl.textContent = label;
+    printTitleEl.textContent = label;
+  }
+}
+
+/* ============ hour axis ============ */
+function buildTimeAxis(opts){
+  opts = opts || {};
+  const axis = document.createElement('div');
+  axis.className = 'time-axis';
+  axis.style.height = minToPx(DAY_END-DAY_START)+'px';
+  // The time axis must start where the grid starts, i.e. below the day header.
+  // Desktop: 70px header + 6px margin; mobile: 78px header + 6px margin.
+  const headerOffset = opts.headerOffset != null ? opts.headerOffset : (window.matchMedia('(max-width:800px)').matches ? 84 : 76);
+  for(let m=DAY_START; m<=DAY_END; m+=60){
+    const t = document.createElement('div');
+    t.className = 'tick';
+    t.style.top = (headerOffset + minToPx(m-DAY_START))+'px';
+    t.textContent = minToTimeStr(m);
+    axis.appendChild(t);
+  }
+  return axis;
+}
+
+/* ============ schedule column (reusable for day/week/template editor) ============ */
+// ctx = { getBlocks(), setBlocks(arr) }
+function buildColumn(ctx, opts){
+  opts = opts||{};
+  const wrap = document.createElement('div');
+  wrap.className = 'grid-column';
+  wrap.style.height = minToPx(DAY_END-DAY_START)+'px';
+
+  function renderCurrentTime(){
+    wrap.querySelectorAll('.current-time-overlay').forEach(n=>n.remove());
+    const key = opts.dayKey || null;
+    if(!key) return;
+    const todayKey = dateKey(new Date());
+    const dayStartPx = 0;
+    const overlay = document.createElement('div');
+    overlay.className = 'current-time-overlay';
+    const shade = document.createElement('div');
+    shade.className = 'elapsed-shade';
+    const now = new Date();
+    let elapsedEnd = null;
+    if(key < todayKey) elapsedEnd = DAY_END;
+    else if(key === todayKey){
+      const nowMin = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
+      elapsedEnd = clamp(nowMin, DAY_START, DAY_END);
+    }
+    if(elapsedEnd !== null && elapsedEnd > DAY_START){
+      shade.style.height = minToPx(elapsedEnd-DAY_START)+'px';
+      overlay.appendChild(shade);
+    }
+    if(key === todayKey){
+      const nowMin = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
+      if(nowMin >= DAY_START && nowMin <= DAY_END){
+        const line = document.createElement('div');
+        line.className = 'current-time-line';
+        line.style.top = minToPx(nowMin-DAY_START)+'px';
+        overlay.appendChild(line);
+      }
+    }
+    if(overlay.children.length) wrap.appendChild(overlay);
+  }
+
+  function render(){
+    wrap.querySelectorAll('.block, .ghost').forEach(n=>n.remove());
+    layoutBlocks(ctx.getBlocks()).forEach(b=>{
+      const el = document.createElement('div');
+      el.className = 'block';
+      el.style.top = (minToPx(b.start-DAY_START)+BLOCK_GAP/2)+'px';
+      el.style.height = Math.max(minToPx(b.end-b.start)-BLOCK_GAP,13)+'px';
+      el.style.background = b.color;
+      // Keep every block strictly inside its visual sub-column: the 3px
+      // inset is expressed in pixels, while the column position stays percentage-based.
+      // The previous formula mixed `3` with `%`, which made the block overflow
+      // when a column was wide (notably in Day view on desktop).
+      el.style.left = 'calc('+(b.col*(100/b.cols))+'% + 3px)';
+      el.style.width = 'calc('+(100/b.cols)+'% - 6px)';
+      el.innerHTML = '<div class="b-title">'+esc(b.title)+'</div>'+
+        '<div class="b-time">'+minToTimeStr(b.start)+'–'+minToTimeStr(b.end)+'</div>'+
+        (b.tag?'<div class="b-tag">'+esc(b.tag)+'</div>':'');
+      const handle = document.createElement('div');
+      handle.className = 'resize-handle';
+      el.appendChild(handle);
+      wrap.appendChild(el);
+      attachBlockInteractions(el, b, ctx, render);
+    });
+    renderCurrentTime();
+  }
+
+  wrap.addEventListener('pointerdown', (e)=>{
+    if(e.target !== wrap) return; // clicked a block, ignore here
+    const rect = wrap.getBoundingClientRect();
+    const y0 = e.clientY - rect.top;
+
+    if(armedSavedBlockId){
+      const sb = STATE.savedBlocks.find(x=>x.id===armedSavedBlockId);
+      if(sb){
+        let start = snap(DAY_START + pxToMin(y0));
+        start = clamp(start, DAY_START, DAY_END-15);
+        let end = clamp(start+(sb.duration||60), start+15, DAY_END);
+        const blocks = ctx.getBlocks();
+        blocks.push({id:uid(), title:sb.title, color:sb.color, tag:sb.tag, start, end, sourceId:sb.id});
+        ctx.setBlocks(blocks);
+        armedSavedBlockId = null;
+        renderSidebar();
+        render();
+      }
+      return;
+    }
+
+    const ghost = document.createElement('div');
+    ghost.className = 'ghost';
+    ghost.style.top = y0+'px';
+    ghost.style.height = '0px';
+    wrap.appendChild(ghost);
+    wrap.setPointerCapture(e.pointerId);
+
+    let moved = false;
+    function onMove(ev){
+      const y1 = ev.clientY - rect.top;
+      moved = Math.abs(y1-y0) > 4;
+      const top = Math.min(y0,y1);
+      const h = Math.abs(y1-y0);
+      ghost.style.top = top+'px';
+      ghost.style.height = h+'px';
+    }
+    function onUp(ev){
+      wrap.removeEventListener('pointermove', onMove);
+      wrap.removeEventListener('pointerup', onUp);
+      const y1 = moved ? ev.clientY - rect.top : y0+60*PX_PER_MIN;
+      let start = snap(DAY_START + pxToMin(Math.min(y0,y1)));
+      let end = snap(DAY_START + pxToMin(Math.max(y0,y1)));
+      if(end-start < 15) end = start+60;
+      start = clamp(start, DAY_START, DAY_END-15);
+      end = clamp(end, start+15, DAY_END);
+      ghost.remove();
+      openBlockModal({mode:'create', ctx, start, end, onDone:render});
+    }
+    wrap.addEventListener('pointermove', onMove);
+    wrap.addEventListener('pointerup', onUp);
+  });
+
+  render();
+  return {el:wrap, render};
+}
+
+// simple overlap layout: assign side-by-side columns to overlapping blocks
+function layoutBlocks(blocks){
+  const sorted = [...blocks].sort((a,b)=>a.start-b.start);
+  const groups = [];
+  let cur = [];
+  let curEnd = -1;
+  sorted.forEach(b=>{
+    if(cur.length && b.start >= curEnd){ groups.push(cur); cur=[]; curEnd=-1; }
+    cur.push(b);
+    curEnd = Math.max(curEnd, b.end);
+  });
+  if(cur.length) groups.push(cur);
+  const out = [];
+  groups.forEach(g=>{
+    // assign columns greedily
+    const cols = [];
+    g.forEach(b=>{
+      let placed=false;
+      for(let i=0;i<cols.length;i++){
+        if(cols[i] <= b.start){ cols[i]=b.end; b._col=i; placed=true; break; }
+      }
+      if(!placed){ cols.push(b.end); b._col=cols.length-1; }
+    });
+    g.forEach(b=> out.push(Object.assign({}, b, {col:b._col, cols:cols.length})));
+  });
+  return out;
+}
+
+function attachBlockInteractions(el, block, ctx, rerender){
+  el.addEventListener('pointerdown', (e)=>{
+    e.stopPropagation();
+    const isResize = e.target.classList.contains('resize-handle');
+    const startY = e.clientY;
+    const originStart = block.start, originEnd = block.end;
+    let moved = false;
+    el.setPointerCapture(e.pointerId);
+
+    function onMove(ev){
+      const deltaMin = snap(pxToMin(ev.clientY-startY));
+      if(Math.abs(ev.clientY-startY) > 4) moved = true;
+      if(isResize){
+        let end = clamp(originEnd+deltaMin, originStart+15, DAY_END);
+        el.style.height = minToPx(end-originStart)+'px';
+        el._pendingEnd = end;
+      }else{
+        let start = originStart+deltaMin;
+        let end = originEnd+deltaMin;
+        if(start < DAY_START){ end += DAY_START-start; start = DAY_START; }
+        if(end > DAY_END){ start -= end-DAY_END; end = DAY_END; }
+        el.style.top = minToPx(start-DAY_START)+'px';
+        el._pendingStart = start; el._pendingEnd = end;
+      }
+    }
+    function onUp(){
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      if(!moved){
+        openBlockModal({mode:'edit', ctx, block, onDone:rerender});
+        return;
+      }
+      const blocks = ctx.getBlocks();
+      const b = blocks.find(x=>x.id===block.id);
+      if(b){
+        if(isResize && el._pendingEnd!=null) b.end = el._pendingEnd;
+        if(!isResize && el._pendingStart!=null){ b.start = el._pendingStart; b.end = el._pendingEnd; }
+        ctx.setBlocks(blocks);
+      }
+      rerender();
+    }
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+  });
+}
+
+/* ============ contexts ============ */
+function dayContext(key){
+  return {
+    getBlocks(){ return getDay(key).blocks; },
+    setBlocks(arr){ getDay(key).blocks = arr; saveState(); }
+  };
+}
+function templateContext(tmpl){
+  return {
+    getBlocks(){ return tmpl.blocks; },
+    setBlocks(arr){ tmpl.blocks = arr; },
+  };
+}
+function templateOverviewContext(tmpl){
+  return {
+    getBlocks(){ return tmpl.blocks; },
+    setBlocks(arr){ tmpl.blocks = arr; saveState(); },
+  };
+}
+
+/* ============ half-day templates ============ */
+function getHalfDayTemplates(){ return STATE.halfDayTemplates || (STATE.halfDayTemplates=[]); }
+function dayHalfDays(key){
+  const d=getDay(key);
+  if(!Array.isArray(d.appliedHalfDays)) d.appliedHalfDays=[];
+  return d.appliedHalfDays;
+}
+function halfDayLabel(h){ return esc(h.name)+' · '+minToTimeStr(h.start)+'–'+minToTimeStr(h.end); }
+function applyHalfDayToDay(templateId,key,overrideStart,overrideEnd,cb){
+  const h=getHalfDayTemplates().find(x=>x.id===templateId);
+  if(!h) return;
+  const dayObj=getDay(key);
+  const start=overrideStart!=null?overrideStart:h.start;
+  const end=overrideEnd!=null?overrideEnd:h.end;
+  const proceed=()=>{
+    // Remove only blocks that intersect the target range; preserve and trim blocks crossing the boundaries.
+    const next=[];
+    dayObj.blocks.forEach(b=>{
+      if(b.end<=start || b.start>=end){ next.push(b); return; }
+      if(b.start<start) next.push(Object.assign({},b,{id:uid(),end:start}));
+      if(b.end>end) next.push(Object.assign({},b,{id:uid(),start:end}));
+    });
+    h.blocks.forEach(b=>{
+      const bs=Math.max(start,b.start), be=Math.min(end,b.end);
+      if(be>bs) next.push(Object.assign({},b,{id:uid(),start:bs,end:be}));
+    });
+    dayObj.blocks=next;
+    dayHalfDays(key).push({id:uid(),templateId:h.id,start,end});
+    saveState();
+    cb&&cb();
+  };
+  if(dayObj.blocks.some(b=>b.start<end && b.end>start)){
+    if(confirm('Cette plage contient déjà des blocs. Les remplacer par cette demi-journée type ?')) proceed();
+  }else proceed();
+}
+function openHalfDayApplyModal(key){
+  const hs=getHalfDayTemplates();
+  if(!hs.length){ alert('Créez d’abord une demi-journée type dans la barre latérale.'); return; }
+  const options=hs.map(h=>'<option value="'+h.id+'">'+halfDayLabel(h)+'</option>').join('');
+  const first=hs[0];
+  const html='<h3>Ajouter une demi-journée type</h3>'+
+    '<div class="field"><label>Demi-journée</label><select id="f-halfday" style="width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:6px;font-size:14px;background:var(--paper);color:var(--ink)">'+options+'</select></div>'+
+    '<div class="row-2"><div class="field"><label>Début d’application</label><input type="time" id="f-hstart" value="'+minToTimeStr(first.start)+'"></div><div class="field"><label>Fin d’application</label><input type="time" id="f-hend" value="'+minToTimeStr(first.end)+'"></div></div>'+
+    '<div class="empty-hint">La plage choisie remplace le programme existant sur cette période. Les blocs qui la traversent sont automatiquement tronqués.</div>'+
+    '<div class="modal-actions"><div></div><div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-apply">Appliquer</button></div></div>';
+  const modal=openModalShell(html);
+  const select=modal.querySelector('#f-halfday');
+  function sync(){ const h=hs.find(x=>x.id===select.value); if(h){modal.querySelector('#f-hstart').value=minToTimeStr(h.start);modal.querySelector('#f-hend').value=minToTimeStr(h.end);} }
+  select.addEventListener('change',sync);
+  modal.querySelector('#f-cancel').addEventListener('click',closeModal);
+  modal.querySelector('#f-apply').addEventListener('click',()=>{
+    let st=timeStrToMin(modal.querySelector('#f-hstart').value), en=timeStrToMin(modal.querySelector('#f-hend').value);
+    st=clamp(st,DAY_START,DAY_END-15); en=clamp(en,st+15,DAY_END);
+    applyHalfDayToDay(select.value,key,st,en,()=>{closeModal();renderApp();});
+  });
+}
+
+/* ============ week / day views ============ */
+function renderWeekView(){
+  weekViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  const start = startOfWeek(refDate);
+  for(let i=0;i<7;i++){
+    const d = addDays(start,i);
+    const key = dateKey(d);
+    const dayObj = getDay(key);
+
+    const colWrap = document.createElement('div');
+    colWrap.className = 'day-col-wrap';
+    colWrap.dataset.dayKey = key;
+
+    const head = document.createElement('div');
+    const isToday = dateKey(new Date())===key;
+    head.className = 'col-head'+(isToday?' is-today':'');
+    head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+WEEKDAYS[i]+'</div><div class="dt">'+fmtShort(d)+'</div>';
+    const select = document.createElement('select');
+    select.className = 'template-select';
+    select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+    select.addEventListener('change', ()=>{
+      const tid = select.value;
+      applyTemplateToDay(tid, key, ()=>renderApp());
+    });
+    const actions = document.createElement('div');
+    actions.className='day-actions';
+    actions.appendChild(select);
+    const addHalf = document.createElement('button');
+    addHalf.className='halfday-add'; addHalf.type='button'; addHalf.title='Ajouter une demi-journée type'; addHalf.textContent='＋';
+    addHalf.addEventListener('click',()=>openHalfDayApplyModal(key));
+    actions.appendChild(addHalf);
+    head.appendChild(actions);
+    const applied=dayHalfDays(key);
+    if(applied.length){
+      const sum=document.createElement('div'); sum.className='halfday-summary';
+      sum.textContent=applied.map(a=>{const h=getHalfDayTemplates().find(x=>x.id===a.templateId);return h?h.name+' '+minToTimeStr(a.start)+'–'+minToTimeStr(a.end):''}).filter(Boolean).join(' · ');
+      head.appendChild(sum);
+    }
+    colWrap.appendChild(head);
+
+    const col = buildColumn(dayContext(key), {dayKey:key});
+    colWrap.appendChild(col.el);
+    cols.appendChild(colWrap);
+  }
+  container.appendChild(axis);
+  container.appendChild(cols);
+  weekViewEl.appendChild(container);
+}
+
+function renderDayView(){
+  dayViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  const key = dateKey(refDate);
+  const dayObj = getDay(key);
+  const colWrap = document.createElement('div');
+  colWrap.className = 'day-col-wrap';
+  colWrap.dataset.dayKey = key;
+
+  const head = document.createElement('div');
+  const isToday = dateKey(new Date())===key;
+  head.className = 'col-head'+(isToday?' is-today':'');
+  const wd = WEEKDAYS[(refDate.getDay()+6)%7];
+  head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+wd+(isToday?' · Aujourd\'hui':'')+'</div><div class="dt">'+fmtShort(refDate)+'</div>';
+  const select = document.createElement('select');
+  select.className = 'template-select';
+  select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+  select.addEventListener('change', ()=>{
+    applyTemplateToDay(select.value, key, ()=>renderApp());
+  });
+  head.appendChild(select);
+  colWrap.appendChild(head);
+
+  const col = buildColumn(dayContext(key), {dayKey:key});
+  colWrap.appendChild(col.el);
+  cols.appendChild(colWrap);
+  container.appendChild(axis);
+  container.appendChild(cols);
+  dayViewEl.appendChild(container);
+}
+
+function renderTemplatesView(){
+  templatesViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  if(!STATE.templates.length){
+    const empty = document.createElement('div');
+    empty.className = 'empty-hint';
+    empty.style.padding = '30px 12px';
+    empty.textContent = "Aucune journée type pour l'instant. Créez-en une depuis la barre latérale (« Journées type ») pour la voir apparaître ici.";
+    cols.appendChild(empty);
+  }else{
+    STATE.templates.forEach(t=>{
+      const colWrap = document.createElement('div');
+      colWrap.className = 'day-col-wrap';
+
+      const head = document.createElement('div');
+      head.className = 'col-head';
+      head.innerHTML = '<div class="wd">'+esc(t.name)+'</div>'+
+        '<div class="dt">'+t.blocks.length+' bloc'+(t.blocks.length>1?'s':'')+'</div>';
+      colWrap.appendChild(head);
+
+      const col = buildColumn(templateOverviewContext(t));
+      colWrap.appendChild(col.el);
+      cols.appendChild(colWrap);
+    });
+  }
+  container.appendChild(axis);
+  container.appendChild(cols);
+  templatesViewEl.appendChild(container);
+}
+
+function renderHalfDayTemplatesView(){
+  halfDayTemplatesViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+  const halfDays = getHalfDayTemplates();
+  if(!halfDays.length){
+    const empty=document.createElement('div'); empty.className='empty-hint'; empty.style.padding='30px 12px';
+    empty.textContent='Aucune demi-journée type pour l’instant. Créez-en une depuis la barre latérale (« Demi-journées types ») pour la voir apparaître ici.';
+    cols.appendChild(empty);
+  }else{
+    halfDays.forEach(h=>{
+      const colWrap=document.createElement('div'); colWrap.className='day-col-wrap';
+      const head=document.createElement('div'); head.className='col-head';
+      head.innerHTML='<div class="wd">'+esc(h.name)+'</div>'+
+        '<div class="dt">'+minToTimeStr(h.start)+'–'+minToTimeStr(h.end)+' · '+h.blocks.length+' bloc'+(h.blocks.length>1?'s':'')+'</div>';
+      colWrap.appendChild(head);
+      const col=buildColumn(templateOverviewContext(h));
+      colWrap.appendChild(col.el); cols.appendChild(colWrap);
+    });
+  }
+  container.appendChild(axis); container.appendChild(cols); halfDayTemplatesViewEl.appendChild(container);
+}
+
+function applyTemplateToDay(templateId, key, cb){
+  const dayObj = getDay(key);
+  const proceed = ()=>{
+    if(!templateId){
+      dayObj.templateId = null; dayObj.blocks = [];
+    }else{
+      const tmpl = STATE.templates.find(t=>t.id===templateId);
+      dayObj.templateId = templateId;
+      dayObj.blocks = tmpl.blocks.map(b=>Object.assign({}, b, {id:uid()}));
+    }
+    saveState();
+    cb && cb();
+  };
+  if(dayObj.blocks.length){
+    if(confirm('Ce jour contient déjà des blocs. Les remplacer ?')) proceed();
+    else renderApp(); // reset select to previous state
+  }else{
+    proceed();
+  }
+}
+
+/* ============ sidebar: templates & saved blocks ============ */
+function renderSidebar(){
+  // templates
+  templateListEl.innerHTML = '';
+  document.getElementById('templateEmptyHint').style.display = STATE.templates.length? 'none':'block';
+  STATE.templates.forEach(t=>{
+    const li = document.createElement('li');
+    li.className = 'item';
+    li.draggable = true;
+    li.dataset.templateId = t.id;
+    li.innerHTML = '<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span>'+
+      '<div class="item-main"><div class="item-title">'+esc(t.name)+'</div>'+
+      '<div class="item-sub">'+t.blocks.length+' bloc'+(t.blocks.length>1?'s':'')+'</div></div>'+
+      '<button class="item-edit" title="Modifier">✎</button>';
+    li.querySelector('.item-edit').addEventListener('click', ()=>openTemplateModal(t));
+    li.querySelector('.item-main').addEventListener('click', ()=>openTemplateModal(t));
+    li.addEventListener('dragstart', e=>{
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain', t.id);
+      li.classList.add('dragging');
+    });
+    li.addEventListener('dragend', ()=>{ li.classList.remove('dragging'); templateListEl.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over')); });
+    li.addEventListener('dragover', e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      const dragging = templateListEl.querySelector('.item.dragging');
+      if(!dragging || dragging===li) return;
+      li.classList.add('drag-over');
+    });
+    li.addEventListener('dragleave', ()=>li.classList.remove('drag-over'));
+    li.addEventListener('drop', e=>{
+      e.preventDefault();
+      li.classList.remove('drag-over');
+      const fromId = e.dataTransfer.getData('text/plain');
+      if(!fromId || fromId===t.id) return;
+      const fromIndex = STATE.templates.findIndex(x=>x.id===fromId);
+      const toIndex = STATE.templates.findIndex(x=>x.id===t.id);
+      if(fromIndex<0 || toIndex<0) return;
+      const [moved] = STATE.templates.splice(fromIndex,1);
+      const rect = li.getBoundingClientRect();
+      const insertBefore = e.clientY < rect.top + rect.height/2;
+      let targetIndex = STATE.templates.findIndex(x=>x.id===t.id);
+      if(!insertBefore) targetIndex += 1;
+      STATE.templates.splice(targetIndex,0,moved);
+      saveState();
+      renderSidebar();
+      if(currentView==='templates') renderTemplatesView();
+    });
+    templateListEl.appendChild(li);
+  });
+
+  // half-day templates
+  halfDayListEl.innerHTML='';
+  const halfDays=getHalfDayTemplates();
+  document.getElementById('halfDayEmptyHint').style.display=halfDays.length?'none':'block';
+  halfDays.forEach(h=>{
+    const li=document.createElement('li'); li.className='item'; li.draggable=true; li.dataset.halfdayId=h.id;
+    li.innerHTML='<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span><div class="item-main"><div class="item-title">'+esc(h.name)+'</div><div class="item-sub">'+minToTimeStr(h.start)+'–'+minToTimeStr(h.end)+' · '+h.blocks.length+' bloc'+(h.blocks.length>1?'s':'')+'</div></div><button class="item-edit" title="Modifier">✎</button>';
+    li.querySelector('.item-main').addEventListener('click',()=>openHalfDayModal(h));
+    li.querySelector('.item-edit').addEventListener('click',e=>{e.stopPropagation();openHalfDayModal(h);});
+    li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',h.id);li.classList.add('dragging');});
+    li.addEventListener('dragend',()=>{li.classList.remove('dragging');halfDayListEl.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over'));});
+    li.addEventListener('dragover',e=>{e.preventDefault();const d=halfDayListEl.querySelector('.item.dragging');if(d&&d!==li)li.classList.add('drag-over');});
+    li.addEventListener('dragleave',()=>li.classList.remove('drag-over'));
+    li.addEventListener('drop',e=>{e.preventDefault();li.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(!id||id===h.id)return;const a=halfDays.findIndex(x=>x.id===id);const b=halfDays.findIndex(x=>x.id===h.id);if(a<0||b<0)return;const [m]=halfDays.splice(a,1);let ti=halfDays.findIndex(x=>x.id===h.id);if(e.clientY>=li.getBoundingClientRect().top+li.getBoundingClientRect().height/2)ti++;halfDays.splice(ti,0,m);saveState();renderSidebar();});
+    halfDayListEl.appendChild(li);
+  });
+
+  // saved blocks — grouped by tag, with drag & drop inside each group
+  const savedRoot = savedBlockListEl;
+  savedRoot.innerHTML = '';
+  document.getElementById('savedEmptyHint').style.display = STATE.savedBlocks.length? 'none':'block';
+  armedNoteEl.style.display = armedSavedBlockId ? 'block':'none';
+
+  const groups=[];
+  const groupMap=new Map();
+  STATE.savedBlocks.forEach(b=>{
+    const tag=(b.tag||'').trim();
+    const key=tag || '__untagged__';
+    if(!groupMap.has(key)){ const g={key,tag,blocks:[]}; groupMap.set(key,g); groups.push(g); }
+    groupMap.get(key).blocks.push(b);
+  });
+
+  groups.forEach(g=>{
+    const section=document.createElement('div'); section.className='tag-group'; section.dataset.tagKey=g.key;
+    const head=document.createElement('button'); head.type='button'; head.className='tag-group-head';
+    head.innerHTML='<span class="chevron">▾</span><span>'+esc(g.tag||'Sans étiquette')+'</span><span class="tag-count">'+g.blocks.length+'</span>';
+    const list=document.createElement('ul'); list.className='list tag-group-list';
+    head.addEventListener('click',()=>section.classList.toggle('collapsed'));
+    section.appendChild(head); section.appendChild(list); savedRoot.appendChild(section);
+
+    g.blocks.forEach(b=>{
+      const li=document.createElement('li'); li.className='item'+(armedSavedBlockId===b.id?' armed':'');
+      li.draggable=true; li.dataset.blockId=b.id;
+      li.innerHTML='<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span>'+
+        '<span class="dot" style="background:'+b.color+'"></span>'+
+        '<div class="item-main"><div class="item-title">'+esc(b.title)+'</div>'+
+        '<div class="item-sub">'+(b.duration||60)+' min</div></div>'+
+        '<button class="item-edit" title="Modifier">✎</button>';
+      li.querySelector('.item-main').addEventListener('click',()=>{
+        armedSavedBlockId=(armedSavedBlockId===b.id)?null:b.id; renderSidebar();
+        if(window.innerWidth<=800) closeSidebar();
+      });
+      li.querySelector('.item-edit').addEventListener('click',e=>{e.stopPropagation();openSavedBlockModal(b);});
+      li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',b.id);li.classList.add('dragging');});
+      li.addEventListener('dragend',()=>{li.classList.remove('dragging');list.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over'));});
+      li.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';const d=list.querySelector('.item.dragging');if(d&&d!==li)li.classList.add('drag-over');});
+      li.addEventListener('dragleave',()=>li.classList.remove('drag-over'));
+      li.addEventListener('drop',e=>{
+        e.preventDefault(); li.classList.remove('drag-over');
+        const fromId=e.dataTransfer.getData('text/plain'); if(!fromId||fromId===b.id)return;
+        const fromIndex=STATE.savedBlocks.findIndex(x=>x.id===fromId);
+        const toIndex=STATE.savedBlocks.findIndex(x=>x.id===b.id);
+        if(fromIndex<0||toIndex<0)return;
+        if((STATE.savedBlocks[fromIndex].tag||'').trim()!==(b.tag||'').trim())return;
+        const [moved]=STATE.savedBlocks.splice(fromIndex,1);
+        let target=STATE.savedBlocks.findIndex(x=>x.id===b.id);
+        if(e.clientY>=li.getBoundingClientRect().top+li.getBoundingClientRect().height/2)target++;
+        STATE.savedBlocks.splice(target,0,moved); saveState(); renderSidebar();
+      });
+      list.appendChild(li);
+    });
+  });
+}
+document.getElementById('newTemplateBtn').addEventListener('click', ()=>openTemplateModal(null));
+document.getElementById('newHalfDayBtn').addEventListener('click', ()=>openHalfDayModal(null));
+document.getElementById('newSavedBlockBtn').addEventListener('click', ()=>openSavedBlockModal(null));
+
+/* ============ modals ============ */
+const modalRoot = document.getElementById('modalRoot');
+let modalPreviousFocus = null;
+function closeModal(){
+  modalRoot.innerHTML = '';
+  if(modalPreviousFocus && document.contains(modalPreviousFocus)){
+    try{ modalPreviousFocus.focus(); }catch(e){}
+  }
+  modalPreviousFocus = null;
+}
+function openModalShell(innerHtml, wide){
+  modalPreviousFocus = document.activeElement;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.setAttribute('role','presentation');
+  backdrop.innerHTML = '<div class="modal'+(wide?' wide':'')+'" role="dialog" aria-modal="true">'+innerHtml+'</div>';
+  backdrop.addEventListener('mousedown', (e)=>{ if(e.target===backdrop) closeModal(); });
+  modalRoot.innerHTML = '';
+  modalRoot.appendChild(backdrop);
+  const modal=backdrop.querySelector('.modal');
+  requestAnimationFrame(()=>{
+    const first=modal.querySelector('input,select,textarea,button');
+    if(first) first.focus();
+  });
+  return modal;
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && modalRoot.firstElementChild) closeModal();
+});
+function swatchesHtml(selected, inputId){
+  return '<div class="swatches" id="'+inputId+'">'+
+    PALETTE.map(c=>'<div class="swatch'+(c===selected?' selected':'')+'" data-color="'+c+'" style="background:'+c+'"></div>').join('')+
+    '<label class="swatch custom" title="Couleur personnalisée">🎨<input type="color" value="'+(selected||PALETTE[0])+'"></label>'+
+    '</div>';
+}
+function wireSwatches(container, onPick){
+  let current = null;
+  container.querySelectorAll('.swatch[data-color]').forEach(sw=>{
+    if(sw.classList.contains('selected')) current = sw.dataset.color;
+    sw.addEventListener('click', ()=>{
+      container.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+      sw.classList.add('selected');
+      current = sw.dataset.color;
+      onPick(current);
+    });
+  });
+  const colorInput = container.querySelector('input[type=color]');
+  colorInput.addEventListener('input', ()=>{
+    container.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+    current = colorInput.value;
+    onPick(current);
+  });
+  if(!current){ current = colorInput.value; }
+  return { get(){ return current; } };
+}
+
+/* ---- block create/edit modal ---- */
+function openBlockModal({mode, ctx, block, start, end, onDone}){
+  const isEdit = mode==='edit';
+  const title = isEdit ? block.title : '';
+  const color = isEdit ? block.color : PALETTE[0];
+  const tag = isEdit ? (block.tag||'') : '';
+  const s = isEdit ? block.start : start;
+  const e = isEdit ? block.end : end;
+
+  const html =
+    '<h3>'+(isEdit?'Modifier le bloc':'Nouveau bloc')+'</h3>'+
+    '<div class="field"><label>Titre</label><input type="text" id="f-title" value="'+esc(title)+'" placeholder="Ex. Réunion, sport, trajet..."></div>'+
+    '<div class="row-2">'+
+      '<div class="field"><label>Début</label><input type="time" id="f-start" value="'+minToTimeStr(s)+'"></div>'+
+      '<div class="field"><label>Fin</label><input type="time" id="f-end" value="'+minToTimeStr(e)+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>Couleur</label>'+swatchesHtml(color,'f-color')+'</div>'+
+    '<div class="field"><label>Étiquette (optionnel)</label><input type="text" id="f-tag" value="'+esc(tag)+'" placeholder="Ex. travail, perso..."></div>'+
+    (isEdit? '' : '<div class="checkbox-field"><input type="checkbox" id="f-save-recurring"><label for="f-save-recurring" style="margin:0;">Enregistrer comme bloc réutilisable</label></div>')+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit? '<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+
+  const modal = openModalShell(html);
+  const swatchApi = wireSwatches(modal.querySelector('#f-color'), ()=>{});
+  modal.querySelector('#f-cancel').addEventListener('click', closeModal);
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer ce bloc ?')) return;
+      const blocks = ctx.getBlocks().filter(b=>b.id!==block.id);
+      ctx.setBlocks(blocks);
+      closeModal();
+      onDone && onDone();
+      renderSidebar();
+    });
+  }
+  modal.querySelector('#f-save').addEventListener('click', ()=>{
+    const t = modal.querySelector('#f-title').value.trim() || 'Sans titre';
+    let ns = timeStrToMin(modal.querySelector('#f-start').value);
+    let ne = timeStrToMin(modal.querySelector('#f-end').value);
+    if(ne<=ns) ne = ns+15;
+    ns = clamp(ns, DAY_START, DAY_END-5);
+    ne = clamp(ne, ns+5, DAY_END);
+    const col = swatchApi.get();
+    const tg = modal.querySelector('#f-tag').value.trim();
+
+    if(isEdit){
+      const blocks = ctx.getBlocks();
+      const b = blocks.find(x=>x.id===block.id);
+      Object.assign(b, {title:t, color:col, tag:tg, start:ns, end:ne});
+      ctx.setBlocks(blocks);
+    }else{
+      const blocks = ctx.getBlocks();
+      const saveRecurring = modal.querySelector('#f-save-recurring');
+      let sourceId = null;
+      if(saveRecurring && saveRecurring.checked){
+        sourceId = uid();
+        STATE.savedBlocks.push({id:sourceId, title:t, color:col, tag:tg, duration:ne-ns});
+      }
+      blocks.push({id:uid(), title:t, color:col, tag:tg, start:ns, end:ne, ...(sourceId?{sourceId}: {})});
+      ctx.setBlocks(blocks);
+      if(sourceId) saveState();
+    }
+    closeModal();
+    onDone && onDone();
+    renderSidebar();
+  });
+}
+
+/* ---- saved block modal ---- */
+function openSavedBlockModal(existing){
+  const isEdit = !!existing;
+  const html =
+    '<h3>'+(isEdit?'Modifier le bloc enregistré':'Nouveau bloc enregistré')+'</h3>'+
+    '<div class="field"><label>Titre</label><input type="text" id="f-title" value="'+esc(isEdit?existing.title:'')+'"></div>'+
+    '<div class="field"><label>Couleur</label>'+swatchesHtml(isEdit?existing.color:PALETTE[0],'f-color')+'</div>'+
+    '<div class="row-2">'+
+      '<div class="field"><label>Étiquette (optionnel)</label><input type="text" id="f-tag" value="'+esc(isEdit?(existing.tag||''):'')+'"></div>'+
+      '<div class="field"><label>Durée par défaut (min)</label><input type="number" id="f-duration" min="5" step="5" value="'+(isEdit?existing.duration:60)+'"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+  const modal = openModalShell(html);
+  const swatchApi = wireSwatches(modal.querySelector('#f-color'), ()=>{});
+  modal.querySelector('#f-cancel').addEventListener('click', closeModal);
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer ce bloc enregistré ?')) return;
+      STATE.savedBlocks = STATE.savedBlocks.filter(b=>b.id!==existing.id);
+      saveState(); closeModal(); renderSidebar();
+    });
+  }
+  modal.querySelector('#f-save').addEventListener('click', ()=>{
+    const t = modal.querySelector('#f-title').value.trim() || 'Sans titre';
+    const tg = modal.querySelector('#f-tag').value.trim();
+    const dur = Math.max(5, parseInt(modal.querySelector('#f-duration').value,10) || 60);
+    const col = swatchApi.get();
+    if(isEdit){
+      // La durée par défaut ne modifie jamais les blocs déjà placés.
+      Object.assign(existing, {title:t, tag:tg, duration:dur, color:col});
+
+      // Synchroniser uniquement les propriétés d'identité/présentation
+      // de toutes les occurrences liées à ce bloc réutilisable.
+      const updateLinkedBlocks = blocks => {
+        let changed = false;
+        blocks.forEach(b=>{
+          if(b.sourceId===existing.id){
+            b.title = t;
+            b.tag = tg;
+            b.color = col;
+            changed = true;
+          }
+        });
+        return changed;
+      };
+      Object.values(STATE.days).forEach(day=>updateLinkedBlocks(day.blocks||[]));
+      STATE.templates.forEach(tmpl=>updateLinkedBlocks(tmpl.blocks||[]));
+    }else{
+      STATE.savedBlocks.push({id:uid(), title:t, tag:tg, duration:dur, color:col});
+    }
+    saveState(); closeModal(); renderApp();
+  });
+}
+
+/* ---- half-day template modal ---- */
+function openHalfDayModal(existing){
+  const isEdit=!!existing;
+  const working={id:isEdit?existing.id:uid(),name:isEdit?existing.name:'',start:isEdit?existing.start:18*60,end:isEdit?existing.end:23*60,blocks:isEdit?existing.blocks.map(b=>Object.assign({},b)):[]};
+  const html='<h3>'+(isEdit?'Modifier la demi-journée type':'Nouvelle demi-journée type')+'</h3>'+
+    '<div class="field"><label>Nom</label><input type="text" id="f-name" value="'+esc(working.name)+'" placeholder="Ex. Soirée AMHE, Matinée productive..."></div>'+
+    '<div class="row-2"><div class="field"><label>Début de la plage</label><input type="time" id="f-start" value="'+minToTimeStr(working.start)+'"></div><div class="field"><label>Fin de la plage</label><input type="time" id="f-end" value="'+minToTimeStr(working.end)+'"></div></div>'+
+    '<div class="field"><label>Blocs de cette demi-journée — placez-les dans la plage définie</label></div>'+
+    '<div class="tmpl-editor-wrap"><div class="tmpl-scroll" id="tmplScroll"></div></div>'+
+    '<div class="modal-actions"><div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div><div><button class="btn" id="f-cancel">Fermer</button> <button class="btn primary" id="f-save">Enregistrer</button></div></div>';
+  const modal=openModalShell(html,true); const scroll=modal.querySelector('#tmplScroll');
+  const axis=buildTimeAxis({headerOffset:8}); const ctx=templateContext(working); let dirty=false; const saveBtn=modal.querySelector('#f-save');
+  const original=ctx.setBlocks.bind(ctx); ctx.setBlocks=arr=>{original(arr);dirty=true;saveBtn.textContent='Enregistrer *';};
+  const col=buildColumn(ctx); scroll.appendChild(axis);scroll.appendChild(col.el);col.el.style.flex='1';
+  const save=()=>{let name=modal.querySelector('#f-name').value.trim();if(!name){alert('Merci de donner un nom à cette demi-journée type.');return false;}let st=timeStrToMin(modal.querySelector('#f-start').value),en=timeStrToMin(modal.querySelector('#f-end').value);st=clamp(st,DAY_START,DAY_END-15);en=clamp(en,st+15,DAY_END);if(working.blocks.some(b=>b.start<st||b.end>en)){alert('Tous les blocs de la demi-journée doivent être entièrement compris dans sa plage horaire.');return false;}working.name=name;working.start=st;working.end=en;if(isEdit)Object.assign(existing,{name:working.name,start:working.start,end:working.end,blocks:working.blocks.map(b=>Object.assign({},b))});else getHalfDayTemplates().push({id:working.id,name:working.name,start:working.start,end:working.end,blocks:working.blocks.map(b=>Object.assign({},b))});saveState();dirty=false;return true;};
+  modal.querySelector('#f-cancel').addEventListener('click',()=>{if(dirty&&confirm('Cette demi-journée type a été modifiée. Enregistrer les modifications ?')){if(save()){closeModal();renderApp();}}else if(!dirty)closeModal();else closeModal();});
+  if(isEdit)modal.querySelector('#f-delete').addEventListener('click',()=>{if(!confirm('Supprimer cette demi-journée type ? Les jours déjà configurés garderont leurs blocs.'))return;STATE.halfDayTemplates=getHalfDayTemplates().filter(h=>h.id!==existing.id);saveState();closeModal();renderApp();});
+  saveBtn.addEventListener('click',()=>{if(save()){closeModal();renderApp();}});
+}
+
+/* ---- template modal (with embedded mini schedule) ---- */
+function openTemplateModal(existing){
+  const isEdit = !!existing;
+  const workingTmpl = isEdit ? {id:existing.id, name:existing.name, blocks: existing.blocks.map(b=>Object.assign({},b))} : {id:uid(), name:'', blocks:[]};
+
+  const html =
+    '<h3>'+(isEdit?'Modifier la journée type':'Nouvelle journée type')+'</h3>'+
+    '<div class="field"><label>Nom</label><input type="text" id="f-name" value="'+esc(workingTmpl.name)+'" placeholder="Ex. Journée de travail, Week-end, Déplacement..."></div>'+
+    '<div class="field"><label>Blocs de cette journée type — cliquez-glissez sur la grille pour ajouter un bloc</label></div>'+
+    '<div class="tmpl-editor-wrap"><div class="tmpl-scroll" id="tmplScroll"></div></div>'+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer la journée type</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Fermer</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+
+  const modal = openModalShell(html, true);
+  const scroll = modal.querySelector('#tmplScroll');
+  const axis = buildTimeAxis({headerOffset:8});
+  const ctx = templateContext(workingTmpl);
+  let templateDirty = false;
+  const saveBtn = modal.querySelector('#f-save');
+  const saveTemplate = ()=>{
+    const name = modal.querySelector('#f-name').value.trim();
+    if(!name){ alert('Merci de donner un nom à cette journée type.'); return false; }
+    workingTmpl.name = name;
+    if(isEdit){
+      Object.assign(existing, {name:workingTmpl.name, blocks:workingTmpl.blocks.map(b=>Object.assign({},b))});
+    }else{
+      STATE.templates.push({id:workingTmpl.id, name:workingTmpl.name, blocks:workingTmpl.blocks.map(b=>Object.assign({},b))});
+    }
+    saveState();
+    templateDirty = false;
+    saveBtn.textContent = 'Enregistrer';
+    return true;
+  };
+  const originalSetBlocks = ctx.setBlocks.bind(ctx);
+  ctx.setBlocks = arr => { originalSetBlocks(arr); templateDirty = true; saveBtn.textContent = 'Enregistrer *'; };
+  const col = buildColumn(ctx);
+  scroll.appendChild(axis);
+  scroll.appendChild(col.el);
+  col.el.style.flex = '1';
+
+  modal.querySelector('#f-cancel').addEventListener('click', ()=>{
+    if(templateDirty){
+      if(confirm('Cette journée type a été modifiée. Enregistrer les modifications ?')){
+        if(saveTemplate()){ closeModal(); renderApp(); }
+      }else{ closeModal(); }
+    }else{ closeModal(); }
+  });
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer cette journée type ? Les jours qui l\'utilisent garderont leurs blocs actuels.')) return;
+      STATE.templates = STATE.templates.filter(t=>t.id!==existing.id);
+      saveState(); closeModal(); renderApp();
+    });
+  }
+  saveBtn.addEventListener('click', ()=>{
+    if(saveTemplate()){ closeModal(); renderApp(); }
+  });
+}
+
+/* ============ help / tutorial ============ */
+function openHelpModal(){
+  const html =
+    '<div class="help-modal">'+
+      '<div class="help-hero">'+
+        '<div class="help-icon">?</div>'+
+        '<div><h3>Bienvenue dans Cadence</h3><p>Un petit guide pour prendre l’application en main.</p></div>'+
+      '</div>'+
+      '<div class="help-steps">'+
+        '<div class="help-step"><span>1</span><div><strong>Organisez votre semaine</strong><p>Utilisez <b>Semaine</b> pour voir vos journées côte à côte, ou <b>Jour</b> pour vous concentrer sur une seule journée.</p></div></div>'+
+        '<div class="help-step"><span>2</span><div><strong>Créez une journée type</strong><p>Dans le menu de gauche, créez une <b>Journée type</b> (travail, week-end, déplacement…). Vous pourrez ensuite l’appliquer à n’importe quel jour.</p></div></div>'+
+        '<div class="help-step"><span>3</span><div><strong>Ajoutez vos activités</strong><p>Cliquez ou faites glisser sur la grille pour créer un bloc. Vous pouvez modifier son titre, ses horaires, sa couleur et son étiquette.</p></div></div>'+
+        '<div class="help-step"><span>4</span><div><strong>Réutilisez vos blocs</strong><p>Enregistrez une activité récurrente dans <b>Blocs enregistrés</b>. Un clic sur un bloc enregistré permet ensuite de le placer rapidement dans votre planning.</p></div></div>'+
+        '<div class="help-step"><span>5</span><div><strong>Utilisez les demi-journées</strong><p>Les <b>Demi-journées types</b> servent à enregistrer des plages réutilisables, par exemple une matinée ou une soirée. La vue <b>½ journées</b> permet de les consulter et de les modifier.</p></div></div>'+
+        '<div class="help-step"><span>6</span><div><strong>Personnalisez sans tout casser</strong><p>Quand vous appliquez un modèle à une journée, vous pouvez ensuite modifier cette journée indépendamment du modèle. Les modèles restent réutilisables.</p></div></div>'+
+        '<div class="help-step"><span>7</span><div><strong>Gardez vos données avec vous</strong><p><b>Exporter</b> crée une sauvegarde JSON que vous pouvez conserver sur votre ordinateur ou dans votre cloud. <b>Importer</b> permet de la restaurer sur un autre appareil.</p></div></div>'+
+        '<div class="help-step"><span>8</span><div><strong>Imprimez votre planning</strong><p>Le bouton <b>Imprimer / PDF</b> ouvre l’impression du jour ou de la semaine affiché(e), pour enregistrer votre planning en PDF.</p></div></div>'+
+      '</div>'+
+      '<div class="help-tip"><strong>Astuce</strong><span>Sur téléphone, ouvrez le menu <b>☰</b> pour accéder aux journées types et aux blocs enregistrés. Les sections du menu peuvent être repliées pour garder l’écran lisible.</span></div>'+
+      '<div class="modal-actions"><div></div><button class="btn primary" id="helpClose">J’ai compris</button></div>'+
+    '</div>';
+  const modal = openModalShell(html, false);
+  modal.querySelector('#helpClose').addEventListener('click', closeModal);
+}
+
+/* ============ boot / render ============ */
+
+document.getElementById('helpBtn').addEventListener('click', openHelpModal);
+
+// Collapsible sidebar panels
+document.querySelectorAll('#sidebar > .panel').forEach(panel=>{
+  const toggle=panel.querySelector('.panel-toggle');
+  if(toggle) toggle.addEventListener('click',e=>{e.stopPropagation();panel.classList.toggle('collapsed');});
+  const title=panel.querySelector('.panel-head h2');
+  if(title) title.addEventListener('click',()=>panel.classList.toggle('collapsed'));
+});
+
+function renderApp(){
+  updateDateLabel();
+  weekViewEl.hidden = currentView!=='week';
+  dayViewEl.hidden = currentView!=='day';
+  templatesViewEl.hidden = currentView!=='templates';
+  halfDayTemplatesViewEl.hidden = currentView!=='halfday-templates';
+  if(currentView==='week') renderWeekView();
+  else if(currentView==='day') renderDayView();
+  else if(currentView==='templates') renderTemplatesView();
+  else renderHalfDayTemplatesView();
+  renderSidebar();
+  closeSidebar();
+}
+renderApp();
+
+// Mise à jour discrète de l'indicateur de l'heure courante, sans reconstruire le planning.
+let currentTimeRefresh = null;
+function refreshCurrentTimeIndicators(){
+  document.querySelectorAll('.grid-column').forEach(col=>{
+    const key = col.closest('.day-col-wrap')?.dataset?.dayKey;
+    if(!key) return;
+    // Rejoue uniquement le rendu de l'indicateur via un événement léger.
+    const ctxKey = key;
+    const todayKey = dateKey(new Date());
+    col.querySelectorAll('.current-time-overlay').forEach(n=>n.remove());
+    const now = new Date();
+    const overlay = document.createElement('div'); overlay.className='current-time-overlay';
+    let elapsedEnd = null;
+    if(ctxKey < todayKey) elapsedEnd = DAY_END;
+    else if(ctxKey === todayKey){
+      const nowMin=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+      elapsedEnd=clamp(nowMin,DAY_START,DAY_END);
+    }
+    if(elapsedEnd !== null && elapsedEnd > DAY_START){
+      const shade=document.createElement('div'); shade.className='elapsed-shade';
+      shade.style.height=minToPx(elapsedEnd-DAY_START)+'px'; overlay.appendChild(shade);
+    }
+    if(ctxKey === todayKey){
+      const nowMin=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+      if(nowMin>=DAY_START && nowMin<=DAY_END){
+        const line=document.createElement('div'); line.className='current-time-line';
+        line.style.top=minToPx(nowMin-DAY_START)+'px'; overlay.appendChild(line);
+      }
+    }
+    if(overlay.children.length) col.appendChild(overlay);
+  });
+}
+// Les colonnes reçoivent leur date via renderApp ci-dessous.
+if(currentTimeRefresh) clearInterval(currentTimeRefresh);
+currentTimeRefresh=setInterval(refreshCurrentTimeIndicators, 30000);
+
+})();
+</script>
+<script>
+// Installation PWA : le navigateur peut proposer l'installation de Cadence comme application.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

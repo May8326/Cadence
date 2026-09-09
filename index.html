@@ -332,6 +332,18 @@
 
   /* ---------- Google Calendar ---------- */
   .calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .calendar-view-toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--paper);}
+  .calendar-view-toggle button{border:0;border-right:1px solid var(--line);background:transparent;color:var(--ink-soft);padding:7px 11px;font-size:12px;cursor:pointer;}
+  .calendar-view-toggle button:last-child{border-right:0;}
+  .calendar-view-toggle button.active{background:var(--ink);color:var(--surface);}
+  .calendar-planner.day-mode .calendar-planner-head{grid-template-columns:58px minmax(420px,1fr);min-width:500px;}
+  .calendar-planner.day-mode .calendar-planner-body{grid-template-columns:58px minmax(420px,1fr);min-width:500px;}
+  .calendar-planner.day-mode .calendar-allday{grid-template-columns:58px minmax(420px,1fr);min-width:500px;}
+  .calendar-planner.day-mode .calendar-day-column{min-width:0;}
+  .calendar-planner.day-mode .calendar-planner-head>div{font-size:13px;}
+  .calendar-planner.day-mode .calendar-event-planned{font-size:11px;padding:6px 7px;}
+  .calendar-planner.day-mode .calendar-event-planned .event-time{font-size:10px;}
+
   .calendar-range{display:flex;align-items:center;gap:5px;}
   .calendar-range button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;min-width:34px;height:34px;cursor:pointer;}
   .calendar-range button:hover{background:var(--surface);}
@@ -1135,6 +1147,7 @@ let todoistFilter = 'today';
 let calendarEvents = [];
 let calendarCalendars = [];
 let calendarSelectedIds = new Set();
+let calendarViewMode = localStorage.getItem('cadence-calendar-view-v1') || 'day';
 let calendarLoadedKey = '';
 let calendarLoading = false;
 const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
@@ -2290,6 +2303,29 @@ function formatCalendarRange(start,end){
   const a=start.toLocaleDateString('fr-FR',opts), b=new Date(end.getTime()-1).toLocaleDateString('fr-FR',opts);
   return a+' – '+b;
 }
+function calendarViewStart(){
+  if(calendarViewMode==='day'){ const d=new Date(refDate); d.setHours(0,0,0,0); return d; }
+  return calendarWeekStart(refDate);
+}
+function calendarViewEnd(){
+  const d=calendarViewStart(); d.setDate(d.getDate()+(calendarViewMode==='day'?1:7)); return d;
+}
+function formatCalendarViewRange(start,end){
+  if(calendarViewMode==='day') return start.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  return formatCalendarRange(start,end);
+}
+function calendarNavigate(delta){
+  const d=new Date(refDate);
+  d.setDate(d.getDate()+(calendarViewMode==='day'?delta:delta*7));
+  d.setHours(0,0,0,0);
+  refDate=d; calendarLoadedKey=''; renderCalendar(); loadCalendarEvents();
+}
+function setCalendarViewMode(mode){
+  calendarViewMode=mode==='week'?'week':'day';
+  localStorage.setItem('cadence-calendar-view-v1',calendarViewMode);
+  calendarLoadedKey=''; renderCalendar(); loadCalendarEvents();
+}
+
 function calendarEventDate(event){
   if(event.start?.date) return new Date(event.start.date+'T00:00:00');
   return event.start?.dateTime ? new Date(event.start.dateTime) : null;
@@ -2335,7 +2371,7 @@ function plannerEventHtml(event){
 }
 function renderCalendar(){
   if(!calendarContentEl)return;
-  const start=calendarWeekStart(refDate), end=calendarWeekEnd(refDate);
+  const start=calendarViewStart(), end=calendarViewEnd();
   if(!window.CadenceGoogleCalendar.isConnected()){
     calendarContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Non connecté.</span></div></div><div class="calendar-toolbar"><button class="btn primary" id="calendarConnectBtn">Connecter Google Agenda</button></div><p class="external-note">Cadence demande un accès en lecture à vos agendas et à leurs événements. Aucun événement ne sera créé, modifié ou supprimé.</p>';
     calendarContentEl.querySelector('#calendarConnectBtn').addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';await loadCalendarCalendars();renderCalendar();loadCalendarEvents();}catch(error){showCalendarError(error);}});
@@ -2349,8 +2385,8 @@ function renderCalendar(){
   const selectedIds=new Set(selected.map(c=>String(c.id)));
   const colorById=new Map(selected.map(c=>[String(c.id),calendarColor(c)]));
   const events=calendarEvents.filter(e=>selectedIds.has(String(e.cadenceCalendarId)));
-  const days=Array.from({length:7},(_,i)=>addDays(start,i));
-  const weekdayHtml='<div></div>'+days.map(d=>'<div class="'+(calendarDayKey(d)===calendarDayKey(new Date())?'today':'')+'">'+escapeHtml(d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}))+'</div>').join('');
+  const days=calendarViewMode==='day'?[start]:Array.from({length:7},(_,i)=>addDays(start,i));
+  const weekdayHtml='<div></div>'+days.map(d=>'<div class="'+(calendarDayKey(d)===calendarDayKey(new Date())?'today':'')+'">'+escapeHtml(d.toLocaleDateString('fr-FR',{weekday:calendarViewMode==='day'?'long':'short',day:'numeric',month:calendarViewMode==='day'?'long':undefined}))+'</div>').join('');
   const allDayHtml='<div>Journée</div>'+days.map(day=>{
     const dayEvents=calendarEventsForDay(events,day).filter(e=>e.start?.date);
     return '<div>'+dayEvents.map(e=>'<span class="allday-event" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+'">'+escapeHtml(e.summary||'Sans titre')+'</span>').join('')+'</div>';
@@ -2361,10 +2397,14 @@ function renderCalendar(){
     return '<div class="calendar-day-column">'+dayEvents.map(e=>{const st=plannerEventStyle(e);if(!st)return '';return '<article class="calendar-event-planned" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+';top:'+st.top+'px;height:'+st.height+'px">'+plannerEventHtml(e)+'</article>';}).join('')+'</div>';
   }).join('');
   const switcher=calendarCalendars.map(c=>'<label><input type="checkbox" data-calendar-id="'+escapeHtml(String(c.id))+'" '+(calendarSelectedIds.has(String(c.id))?'checked':'')+'><span style="width:8px;height:8px;border-radius:50%;background:'+calendarColor(c)+';display:inline-block"></span>'+escapeHtml(c.summary||c.summaryOverride||c.id)+'</label>').join('');
-  calendarContentEl.innerHTML='<div class="calendar-connected"><span><span class="status-dot"></span>Google Calendar connecté · '+selected.length+'/'+calendarCalendars.length+' agendas</span><button class="btn" id="calendarDisconnectBtn">Déconnecter</button></div><div class="calendar-toolbar"><div class="calendar-range"><button id="calendarPrevBtn" aria-label="Semaine précédente">‹</button><div class="calendar-range-label">'+escapeHtml(formatCalendarRange(start,end))+'</div><button id="calendarNextBtn" aria-label="Semaine suivante">›</button></div><button class="btn" id="calendarTodayBtn">Aujourd’hui</button></div><div class="calendar-switcher">'+switcher+'</div><div class="calendar-planner"><div class="calendar-planner-head">'+weekdayHtml+'</div><div class="calendar-allday">'+allDayHtml+'</div><div class="calendar-planner-body"><div class="calendar-time-axis">'+axis+'</div>'+body+'</div></div>';
+  const viewToggle='<div class="calendar-view-toggle" role="group" aria-label="Vue de l’agenda"><button id="calendarDayViewBtn" class="'+(calendarViewMode==='day'?'active':'')+'">Jour</button><button id="calendarWeekViewBtn" class="'+(calendarViewMode==='week'?'active':'')+'">Semaine</button></div>';
+  const prevLabel=calendarViewMode==='day'?'Jour précédent':'Semaine précédente', nextLabel=calendarViewMode==='day'?'Jour suivant':'Semaine suivante';
+  calendarContentEl.innerHTML='<div class="calendar-connected"><span><span class="status-dot"></span>Google Calendar connecté · '+selected.length+'/'+calendarCalendars.length+' agendas</span><button class="btn" id="calendarDisconnectBtn">Déconnecter</button></div><div class="calendar-toolbar"><div class="calendar-range">'+viewToggle+'<button id="calendarPrevBtn" aria-label="'+prevLabel+'">‹</button><div class="calendar-range-label">'+escapeHtml(formatCalendarViewRange(start,end))+'</div><button id="calendarNextBtn" aria-label="'+nextLabel+'">›</button></div><button class="btn" id="calendarTodayBtn">Aujourd’hui</button></div><div class="calendar-switcher">'+switcher+'</div><div class="calendar-planner '+(calendarViewMode==='day'?'day-mode':'week-mode')+'"><div class="calendar-planner-head">'+weekdayHtml+'</div><div class="calendar-allday">'+allDayHtml+'</div><div class="calendar-planner-body"><div class="calendar-time-axis">'+axis+'</div>'+body+'</div></div>';
   calendarContentEl.querySelectorAll('[data-calendar-id]').forEach(input=>input.addEventListener('change',()=>{const id=input.dataset.calendarId;if(input.checked)calendarSelectedIds.add(id);else calendarSelectedIds.delete(id);renderCalendar();}));
-  calendarContentEl.querySelector('#calendarPrevBtn').addEventListener('click',()=>{refDate=addDays(calendarWeekStart(refDate),-7);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
-  calendarContentEl.querySelector('#calendarNextBtn').addEventListener('click',()=>{refDate=addDays(calendarWeekStart(refDate),7);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
+  calendarContentEl.querySelector('#calendarDayViewBtn').addEventListener('click',()=>setCalendarViewMode('day'));
+  calendarContentEl.querySelector('#calendarWeekViewBtn').addEventListener('click',()=>setCalendarViewMode('week'));
+  calendarContentEl.querySelector('#calendarPrevBtn').addEventListener('click',()=>calendarNavigate(-1));
+  calendarContentEl.querySelector('#calendarNextBtn').addEventListener('click',()=>calendarNavigate(1));
   calendarContentEl.querySelector('#calendarTodayBtn').addEventListener('click',()=>{refDate=new Date();refDate.setHours(0,0,0,0);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
   calendarContentEl.querySelector('#calendarDisconnectBtn').addEventListener('click',()=>{window.CadenceGoogleCalendar.disconnect();calendarEvents=[];calendarCalendars=[];calendarSelectedIds=new Set();calendarLoadedKey='';renderCalendar();});
 }
@@ -2380,7 +2420,7 @@ function showCalendarError(error){
 }
 async function loadCalendarEvents(){
   if(!calendarContentEl || !window.CadenceGoogleCalendar.isConnected())return;
-  const start=calendarWeekStart(refDate), end=calendarWeekEnd(refDate), key=start.toISOString().slice(0,10)+'|'+[...calendarSelectedIds].sort().join(',');
+  const start=calendarViewStart(), end=calendarViewEnd(), key=start.toISOString().slice(0,10)+'|'+calendarViewMode+'|'+[...calendarSelectedIds].sort().join(',');
   if(calendarLoading || calendarLoadedKey===key)return;
   calendarLoading=true;
   try{

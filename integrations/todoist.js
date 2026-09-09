@@ -148,10 +148,23 @@
     return all;
   }
 
+  async function getSections(){
+    let all=[];
+    let cursor='';
+    do{
+      const qs = new URLSearchParams({limit:'200'});
+      if(cursor) qs.set('cursor',cursor);
+      const data = await api('/sections?' + qs.toString());
+      all = all.concat(data.results || []);
+      cursor = data.next_cursor || '';
+    }while(cursor);
+    return all;
+  }
+
   function isConnected(){ return !!readStored()?.accessToken; }
   function disconnect(){ clearStored(); }
 
-  window.CadenceTodoist = {startOAuth, finishOAuth, getTasks, isConnected, disconnect, getStored:readStored};
+  window.CadenceTodoist = {startOAuth, finishOAuth, getTasks, getSections, isConnected, disconnect, getStored:readStored};
 
   window.CadenceTodoistReady = finishOAuth().catch(err => ({error:err.message}));
 })();

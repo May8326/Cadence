@@ -144,10 +144,16 @@ Le Client ID OAuth est configuré dans `integrations/google-calendar.js`. L'orig
 La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agendas Google, gestion visuelle des chevauchements et indicateur de l’heure actuelle.
 
 
-### V1.7 — optimisation Android et paramétrages
-- navigation principale avec icônes SVG de style Lucide ;
-- suppression du bouton « ? » du bandeau supérieur : l’aide est centralisée dans Paramétrages ;
-- vue Google Calendar « Jour » adaptable à la largeur de l’écran ;
-- zoom/dézoom de la vue « Semaine » ;
-- espace « Paramétrages » pour les connexions, données, aide et informations ;
-- tutoriel mis à jour pour Android, Todoist et Google Calendar.
+### V1.8 — confort Android et zoom tactile
+
+- navigation principale fixée en bas de l’écran sur mobile, avec prise en compte de la zone sûre Android ;
+- bandeau supérieur réorganisé sur mobile pour éviter les débordements, notamment du bouton « Aujourd’hui » ;
+- vues Tâches et Agenda allégées : le texte de présentation et l’état de connexion ne sont plus répétés en tête ;
+- zoom des vues Semaine, Journées types et Demi-journées types avec boutons − / + ;
+- zoom tactile par pincement à deux doigts pour ces vues ;
+- zoom tactile également disponible dans la vue Semaine de Google Calendar ;
+- aide/tutoriel déplacée dans Paramétrages et mise à jour avec les commandes tactiles et le fonctionnement mobile.
+
+## Structure
+
+Le projet reste volontairement sans build : un fichier HTML/CSS/JS principal, deux modules d’intégration et un service worker pour la PWA.

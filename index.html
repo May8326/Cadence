@@ -360,7 +360,10 @@
   .calendar-time-axis{position:relative;height:1088px;border-right:1px solid var(--line);background:var(--paper);}
   .calendar-time-label{position:absolute;right:7px;transform:translateY(-50%);font-size:9px;color:var(--ink-faint);}
   .calendar-day-column{position:relative;height:1088px;border-left:1px solid var(--line-light);background:repeating-linear-gradient(to bottom,transparent 0,transparent 63px,var(--line-light) 64px);}
-  .calendar-event-planned{position:absolute;left:3px;right:3px;border-left:4px solid var(--calendar-color,#9fb7d4);background:color-mix(in srgb,var(--calendar-color,#9fb7d4) 18%,var(--paper));border-radius:5px;padding:4px 5px;overflow:hidden;min-height:18px;box-shadow:var(--shadow-sm);font-size:10px;line-height:1.25;}
+  .calendar-event-planned{position:absolute;border-left:4px solid var(--calendar-color,#9fb7d4);background:color-mix(in srgb,var(--calendar-color,#9fb7d4) 18%,var(--paper));border-radius:5px;padding:4px 5px;overflow:hidden;min-height:18px;box-shadow:var(--shadow-sm);font-size:10px;line-height:1.25;z-index:2;}
+  .calendar-event-planned:hover{z-index:4;box-shadow:var(--shadow-md);}
+  .calendar-now-line{position:absolute;left:0;right:0;height:2px;background:var(--ink);z-index:3;pointer-events:none;opacity:.75;}
+  .calendar-now-line::before{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--ink);}
   .calendar-event-planned a{color:inherit;text-decoration:none;}
   .calendar-event-planned a:hover{text-decoration:underline;}
   .calendar-event-planned .event-time{font-size:9px;color:var(--ink-soft);}
@@ -2354,13 +2357,46 @@ function calendarEventsForDay(events,day){
   });
 }
 function plannerMinutes(date){return date.getHours()*60+date.getMinutes()+date.getSeconds()/60;}
-function plannerEventStyle(event){
+function plannerEventStyle(event,layout={}){
   const dayStart=6*60, dayEnd=23*60;
   const start=calendarEventDate(event), end=calendarEventEnd(event);
   if(!start || event.start?.date) return null;
   let a=Math.max(dayStart,plannerMinutes(start)), b=Math.min(dayEnd,plannerMinutes(end||new Date(start.getTime()+30*60000)));
   if(b<=a) b=Math.min(dayEnd,a+20);
-  return {top:((a-dayStart)/60*64),height:Math.max(22,(b-a)/60*64)};
+  const left=layout.left ?? 0, width=layout.width ?? 100;
+  return {top:((a-dayStart)/60*64),height:Math.max(22,(b-a)/60*64),left,right:100-left-width,width};
+}
+function plannerEventLayouts(events){
+  const sorted=events.map((event,index)=>({event,index,start:calendarEventDate(event),end:calendarEventEnd(event)||new Date((calendarEventDate(event)||new Date()).getTime()+30*60000)}))
+    .filter(x=>x.start&&!x.event.start?.date)
+    .sort((a,b)=>a.start-b.start || a.end-b.end);
+  const result=new Map();
+  let cluster=[], clusterEnd=0;
+  const flush=()=>{
+    if(!cluster.length)return;
+    const columns=[];
+    cluster.forEach(item=>{
+      let col=columns.findIndex(lastEnd=>lastEnd<=item.start);
+      if(col<0){col=columns.length;columns.push(item.end);}else columns[col]=item.end;
+      item.col=col;
+    });
+    const count=columns.length;
+    cluster.forEach(item=>result.set(item.index,{left:(item.col/count)*100,width:100/count}));
+    cluster=[]; clusterEnd=0;
+  };
+  sorted.forEach(item=>{
+    if(!cluster.length || item.start<clusterEnd){cluster.push(item);if(item.end>clusterEnd)clusterEnd=item.end;}
+    else{flush();cluster=[item];clusterEnd=item.end;}
+  });
+  flush();
+  return result;
+}
+function plannerNowOffset(day){
+  const now=new Date();
+  if(calendarDayKey(now)!==calendarDayKey(day))return null;
+  const mins=plannerMinutes(now), start=6*60, end=23*60;
+  if(mins<start||mins>end)return null;
+  return (mins-start)/60*64;
 }
 function plannerEventHtml(event){
   const title=escapeHtml(event.summary||'Sans titre'), link=calendarEventUrl(event);
@@ -2394,7 +2430,10 @@ function renderCalendar(){
   const axis=Array.from({length:18},(_,i)=>'<span class="calendar-time-label" style="top:'+(i*64)+'px">'+String(i+6).padStart(2,'0')+':00</span>').join('');
   const body=days.map(day=>{
     const dayEvents=calendarEventsForDay(events,day).filter(e=>!e.start?.date);
-    return '<div class="calendar-day-column">'+dayEvents.map(e=>{const st=plannerEventStyle(e);if(!st)return '';return '<article class="calendar-event-planned" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+';top:'+st.top+'px;height:'+st.height+'px">'+plannerEventHtml(e)+'</article>';}).join('')+'</div>';
+    const layouts=plannerEventLayouts(dayEvents);
+    const nowOffset=plannerNowOffset(day);
+    const nowLine=nowOffset===null?'':'<div class="calendar-now-line" style="top:'+nowOffset+'px" aria-hidden="true"></div>';
+    return '<div class="calendar-day-column">'+nowLine+dayEvents.map((e,i)=>{const st=plannerEventStyle(e,layouts.get(i));if(!st)return '';return '<article class="calendar-event-planned" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+';top:'+st.top+'px;height:'+st.height+'px;left:calc('+st.left+'% + 3px);width:calc('+st.width+'% - 6px)">'+plannerEventHtml(e)+'</article>';}).join('')+'</div>';
   }).join('');
   const switcher=calendarCalendars.map(c=>'<label><input type="checkbox" data-calendar-id="'+escapeHtml(String(c.id))+'" '+(calendarSelectedIds.has(String(c.id))?'checked':'')+'><span style="width:8px;height:8px;border-radius:50%;background:'+calendarColor(c)+';display:inline-block"></span>'+escapeHtml(c.summary||c.summaryOverride||c.id)+'</label>').join('');
   const viewToggle='<div class="calendar-view-toggle" role="group" aria-label="Vue de l’agenda"><button id="calendarDayViewBtn" class="'+(calendarViewMode==='day'?'active':'')+'">Jour</button><button id="calendarWeekViewBtn" class="'+(calendarViewMode==='week'?'active':'')+'">Semaine</button></div>';

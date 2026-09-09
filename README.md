@@ -142,3 +142,7 @@ Le Client ID OAuth est configuré dans `integrations/google-calendar.js`. L'orig
 
 ### Agenda Google – planning
 La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agendas Google, gestion visuelle des chevauchements et indicateur de l’heure actuelle.
+
+
+## Espace Plus — V1.7
+La V1.7 centralise dans l’espace « Plus » les connexions Todoist et Google Calendar, les opérations d’export/import des données Cadence, le mode édition, l’accès au tutoriel et les informations sur l’application.

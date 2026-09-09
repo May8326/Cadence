@@ -307,6 +307,13 @@
   .todoist-filter button{border:0;background:transparent;border-radius:6px;padding:6px 10px;color:var(--ink-soft);font-size:12px;cursor:pointer;}
   .todoist-filter button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);font-weight:600;}
   .todoist-list{display:flex;flex-direction:column;gap:7px;margin-top:16px;}
+  .todoist-section{margin-top:18px;}
+  .todoist-section:first-child{margin-top:0;}
+  .todoist-section-title{display:flex;align-items:center;gap:8px;padding:7px 2px 6px;font-family:var(--font-serif);font-size:14px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);}
+  .todoist-section-title .count{font-family:var(--font-sans);font-size:10px;font-weight:500;color:var(--ink-soft);}
+  .todoist-task-title a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px;}
+  .todoist-task-title a:hover{color:var(--ink);text-decoration-color:var(--ink);}
+  .todoist-overdue{color:#a34d4d !important;font-weight:600;}
   .todoist-task{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);}
   .todoist-task .task-priority{width:4px;min-height:30px;border-radius:4px;background:var(--ink-faint);flex:none;}
   .todoist-task.p1 .task-priority{background:#d35b68}.todoist-task.p2 .task-priority{background:#df8c57}.todoist-task.p3 .task-priority{background:#d5b34c}
@@ -1085,6 +1092,7 @@ const calendarViewEl = document.getElementById('calendarView');
 const moreViewEl = document.getElementById('moreView');
 const todoistContentEl = document.getElementById('todoistContent');
 let todoistTasks = [];
+let todoistSections = [];
 let todoistLoaded = false;
 let todoistFilter = 'today';
 const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
@@ -2174,9 +2182,35 @@ function formatTodoistDue(task){
   const parts=date.split('-'); return parts.length===3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : date;
 }
 function todoistTaskDateKey(task){return task.due?.date ? task.due.date.slice(0,10) : null;}
+function isTodoistOverdue(task){
+  const d=todoistTaskDateKey(task), today=dateKey(new Date());
+  return !!d && d<today;
+}
 function filterTodoistTasks(){
   const today=dateKey(new Date()), week=dateKey(addDays(new Date(),7));
-  return todoistTasks.filter(task=>{const d=todoistTaskDateKey(task);if(todoistFilter==='today')return d===today;if(todoistFilter==='week')return d&&d>=today&&d<=week;if(todoistFilter==='unscheduled')return !d;return true;}).sort((a,b)=>{const da=todoistTaskDateKey(a)||'9999-99-99',db=todoistTaskDateKey(b)||'9999-99-99';return da===db?(a.order||0)-(b.order||0):da.localeCompare(db);});
+  return todoistTasks.filter(task=>{
+    const d=todoistTaskDateKey(task);
+    if(todoistFilter==='today') return !!d && d<=today;
+    if(todoistFilter==='week') return d&&d>=today&&d<=week;
+    if(todoistFilter==='unscheduled') return !d;
+    return true;
+  }).sort((a,b)=>{
+    const da=todoistTaskDateKey(a)||'9999-99-99',db=todoistTaskDateKey(b)||'9999-99-99';
+    return da===db?(a.order||0)-(b.order||0):da.localeCompare(db);
+  });
+}
+function renderTodoistTitle(value){
+  const escaped=escapeHtml(value||'Sans titre');
+  return escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,label,url)=>`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+}
+function todoistSectionGroups(tasks){
+  const groups=new Map();
+  tasks.forEach(task=>{
+    const id=task.section_id||'__no_section__';
+    if(!groups.has(id)) groups.set(id,{id,name:id==='__no_section__'?'Sans section':(task.section_name||'Section'),tasks:[]});
+    groups.get(id).tasks.push(task);
+  });
+  return Array.from(groups.values());
 }
 function renderTodoist(){
   if(!todoistContentEl)return;
@@ -2185,15 +2219,17 @@ function renderTodoist(){
     todoistContentEl.querySelector('#todoistConnectBtn').addEventListener('click',()=>window.CadenceTodoist.startOAuth()); return;
   }
   const filtered=filterTodoistTasks();
-  todoistContentEl.innerHTML=`<div class="todoist-connected"><span><span class="status-dot"></span>Todoist connecté</span><button class="btn" id="todoistDisconnectBtn">Déconnecter</button></div><div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${filtered.length?filtered.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${escapeHtml(task.content||'Sans titre')}</div><div class="todoist-task-meta"><span>${escapeHtml(formatTodoistDue(task))}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join(''):'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
+  const groups=todoistSectionGroups(filtered);
+  const groupsHtml=groups.map(group=>`<section class="todoist-section"><div class="todoist-section-title">${escapeHtml(group.name)} <span class="count">${group.tasks.length}</span></div>${group.tasks.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${renderTodoistTitle(task.content)}</div><div class="todoist-task-meta"><span class="${isTodoistOverdue(task)?'todoist-overdue':''}">${escapeHtml(formatTodoistDue(task))}${isTodoistOverdue(task)?' · en retard':''}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join('')}</section>`).join('');
+  todoistContentEl.innerHTML=`<div class="todoist-connected"><span><span class="status-dot"></span>Todoist connecté</span><button class="btn" id="todoistDisconnectBtn">Déconnecter</button></div><div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${groupsHtml||'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
   todoistContentEl.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{todoistFilter=btn.dataset.filter;renderTodoist();}));
   todoistContentEl.querySelector('#todoistRefreshBtn').addEventListener('click',loadTodoistTasks);
-  todoistContentEl.querySelector('#todoistDisconnectBtn').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistLoaded=false;renderTodoist();});
+  todoistContentEl.querySelector('#todoistDisconnectBtn').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderTodoist();});
 }
 async function loadTodoistTasks(){
   if(!window.CadenceTodoist.isConnected()){renderTodoist();return;}
   todoistContentEl.innerHTML='<div class="todoist-loading">Chargement des tâches…</div>';
-  try{todoistTasks=await window.CadenceTodoist.getTasks();todoistLoaded=true;renderTodoist();}
+  try{const [tasks,sections]=await Promise.all([window.CadenceTodoist.getTasks(),window.CadenceTodoist.getSections()]);const sectionMap=new Map(sections.map(s=>[String(s.id),s]));todoistSections=sections;todoistTasks=tasks.map(task=>({...task,section_name:sectionMap.get(String(task.section_id))?.name||''}));todoistLoaded=true;renderTodoist();}
   catch(error){todoistContentEl.innerHTML=`<div class="todoist-error">Impossible de charger Todoist : ${escapeHtml(error.message||String(error))}</div><div class="todoist-toolbar"><button class="btn" id="todoistRetryBtn">Réessayer</button></div>`;todoistContentEl.querySelector('#todoistRetryBtn').addEventListener('click',loadTodoistTasks);}
 }
 function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}

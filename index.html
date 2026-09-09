@@ -250,6 +250,79 @@
     padding:2px 6px 8px;
   }
 
+  /* ---------- Navigation entre les espaces ---------- */
+  /* Navigation des volets principaux : visuellement distincte des vues du planning. */
+  .app-nav{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    padding:3px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--paper);
+    box-shadow:none;
+    overflow:hidden;
+  }
+  .app-nav button{
+    border:none;
+    border-radius:7px;
+    background:transparent;
+    color:var(--ink-soft);
+    padding:6px 11px;
+    font-size:12.5px;
+    white-space:nowrap;
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+  }
+  .app-nav button.active{
+    background:var(--surface);
+    color:var(--ink);
+    box-shadow:var(--shadow-sm);
+    font-weight:600;
+  }
+  .app-nav button:not(.active):hover{background:rgba(255,255,255,.55);color:var(--ink);}
+  .section-title{display:none;font-family:var(--font-serif);font-size:17px;font-weight:500;}
+  body.external-section .section-title{display:block;}
+  body.external-section #sidebar,body.external-section #menuBtn{display:none;}
+  .external-view{max-width:900px;margin:0 auto;}
+  .external-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    padding:22px;
+    margin-bottom:16px;
+  }
+  .external-card h1{font-family:var(--font-serif);font-size:24px;font-weight:500;margin:0 0 7px;}
+  .external-card p{margin:0;color:var(--ink-soft);line-height:1.55;}
+  .integration-status{display:flex;align-items:center;gap:10px;margin-top:18px;padding:12px 14px;background:var(--paper);border:1px solid var(--line-light);border-radius:6px;}
+  .integration-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none;}
+  .integration-status strong{font-size:13px;font-weight:600;}
+  .integration-status span{font-size:12px;color:var(--ink-soft);}
+  .external-note{font-size:12px!important;color:var(--ink-faint)!important;margin-top:12px!important;}
+
+  /* ---------- Todoist ---------- */
+  .todoist-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .todoist-toolbar .btn{min-height:36px;}
+  .todoist-filter{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--paper);}
+  .todoist-filter button{border:0;background:transparent;border-radius:6px;padding:6px 10px;color:var(--ink-soft);font-size:12px;cursor:pointer;}
+  .todoist-filter button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);font-weight:600;}
+  .todoist-list{display:flex;flex-direction:column;gap:7px;margin-top:16px;}
+  .todoist-task{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);}
+  .todoist-task .task-priority{width:4px;min-height:30px;border-radius:4px;background:var(--ink-faint);flex:none;}
+  .todoist-task.p1 .task-priority{background:#d35b68}.todoist-task.p2 .task-priority{background:#df8c57}.todoist-task.p3 .task-priority{background:#d5b34c}
+  .todoist-task-main{min-width:0;flex:1;}
+  .todoist-task-title{font-size:13px;color:var(--ink);line-height:1.4;}
+  .todoist-task-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px;font-size:11px;color:var(--ink-soft);}
+  .todoist-task-link{font-size:11px;color:var(--ink-soft);text-decoration:none;flex:none;padding-top:2px;}
+  .todoist-task-link:hover{text-decoration:underline;color:var(--ink);}
+  .todoist-empty{padding:22px 10px;text-align:center;color:var(--ink-faint);font-size:13px;}
+  .todoist-error{margin-top:14px;padding:11px 13px;border:1px solid #e4c4c4;border-radius:7px;background:#fff8f8;color:#8a4c4c;font-size:12px;line-height:1.45;}
+  .todoist-loading{padding:20px;text-align:center;color:var(--ink-soft);font-size:12px;}
+  .todoist-connected{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:10px 12px;background:var(--paper);border:1px solid var(--line-light);border-radius:7px;}
+  .todoist-connected .status-dot{width:8px;height:8px;border-radius:50%;background:#72a879;display:inline-block;margin-right:7px;}
+  .todoist-connected span{font-size:12px;color:var(--ink-soft);}
+  @media (max-width:800px){.todoist-toolbar{align-items:stretch}.todoist-filter{flex:1}.todoist-filter button{flex:1}.todoist-connected{align-items:flex-start}}
+
   /* ---------- Main / grid ---------- */
   #main{
     flex:1;
@@ -596,7 +669,34 @@
     .actions button span.lbl{display:none;}
     .topbar button{min-width:30px;min-height:30px;}
     .btn{min-height:36px;padding:8px 13px;}
-    #main{padding:12px 8px 28px;}
+    #main{padding:12px 8px 20px;}
+    /* Barre des volets : véritable barre de navigation de l'application.
+       Elle occupe sa propre ligne en bas du layout : elle ne flotte donc
+       jamais au-dessus du contenu ni du menu latéral sur Android. */
+    .app-nav{
+      position:static;
+      order:3;
+      flex:none;
+      width:100%;
+      box-sizing:border-box;
+      display:flex;
+      justify-content:stretch;
+      gap:0;
+      padding:4px 4px calc(4px + env(safe-area-inset-bottom));
+      border:0;
+      border-top:1px solid var(--line);
+      border-radius:0;
+      background:var(--surface);
+      box-shadow:0 -2px 8px rgba(42,40,34,.06);
+      z-index:40;
+    }
+    .app-nav button{flex:1;min-height:50px;padding:7px 5px;font-size:11.5px;}
+    .topbar{backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .section-title{display:block;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .external-view{padding:4px 2px 18px;}
+    .external-card{padding:18px 16px;}
+    .external-card h1{font-size:21px;}
+    body.external-section #main{padding-bottom:20px;}
     .topbar{position:sticky;top:0;z-index:90;gap:7px;padding:8px 8px;transition:padding .18s ease,gap .18s ease;}
     .topbar.compact{padding:4px 8px;gap:5px;}
     .topbar.compact .brand{font-size:16px;}
@@ -704,6 +804,16 @@
   .btn.primary{box-shadow:0 1px 2px rgba(42,40,34,.12);}
 
   @media (min-width:801px){
+    /* Sur grand écran, on conserve l'aspect de la V1.0 : la navigation des
+       volets reste visuellement dans le bandeau supérieur. */
+    .app-nav{
+      position:absolute;
+      top:12px;
+      right:18px;
+      flex:none;
+    }
+    .app-nav button{padding:6px 10px;}
+    .external-view{padding-top:4px;}
     .topbar{position:sticky;top:0;}
     #main{padding:18px 24px 44px;}
     #sidebar{width:276px;padding:16px 14px;}
@@ -761,7 +871,7 @@
   @media print{
     .current-time-overlay{display:none !important;}
     .col-head.is-today{box-shadow:none !important;}
-    .topbar, #sidebar, #menuBtn, .col-head select, #sidebarOverlay{display:none !important;}
+    .topbar, #sidebar, #menuBtn, #sidebarOverlay, .app-nav{display:none !important;}
     #main{overflow:visible;padding:0;}
     #app,.body{display:block;height:auto;}
     .columns{overflow:visible;}
@@ -784,19 +894,22 @@
     <div class="brand">Cadence</div>
     <button id="menuBtn">☰</button>
     <button id="helpBtn" class="help-btn" title="Aide et tutoriel" aria-label="Aide et tutoriel">?</button>
-    <nav class="view-toggle">
-      <button data-view="week" class="active">Semaine</button>
-      <button data-view="day">Jour</button>
-      <button data-view="templates">Journées</button>
-      <button data-view="halfday-templates">½ journées</button>
-    </nav>
-    <div class="date-nav">
-      <button id="prevBtn">‹</button>
-      <div id="dateLabel"></div>
-      <button id="nextBtn">›</button>
-      <button id="todayBtn">Aujourd'hui</button>
+    <div class="section-title" id="sectionTitle"></div>
+    <div class="cadence-controls" id="cadenceControls" style="display:flex;align-items:center;gap:18px;flex:1;flex-wrap:wrap;">
+      <nav class="view-toggle">
+        <button data-view="week" class="active">Semaine</button>
+        <button data-view="day">Jour</button>
+        <button data-view="templates">Journées</button>
+        <button data-view="halfday-templates">½ journées</button>
+      </nav>
+      <div class="date-nav">
+        <button id="prevBtn">‹</button>
+        <div id="dateLabel"></div>
+        <button id="nextBtn">›</button>
+        <button id="todayBtn">Aujourd'hui</button>
+      </div>
     </div>
-    <div class="actions">
+    <div class="actions cadence-controls" id="cadenceActions">
       <button id="editModeBtn" title="Activer le mode édition" aria-label="Activer le mode édition" aria-pressed="false"><span class="edit-icon">✎</span> <span class="lbl">Modifier</span></button>
       <button id="printBtn" title="Imprimer / Enregistrer en PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span class="lbl">Imprimer / PDF</span></button>
       <button id="exportBtn" title="Exporter les données en JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg> <span class="lbl">Exporter</span></button>
@@ -833,12 +946,46 @@
       <div id="dayView" class="schedule" hidden></div>
       <div id="templatesView" class="schedule" hidden></div>
       <div id="halfDayTemplatesView" class="schedule" hidden></div>
+
+      <section id="tasksView" class="external-view" hidden aria-labelledby="tasksTitle">
+        <div class="external-card">
+          <h1 id="tasksTitle">Tâches</h1>
+          <p>Vos tâches Todoist, directement dans Cadence.</p>
+          <div id="todoistContent"></div>
+        </div>
+      </section>
+      <section id="calendarView" class="external-view" hidden aria-labelledby="calendarTitle">
+        <div class="external-card">
+          <h1 id="calendarTitle">Agenda</h1>
+          <p>Un espace pour afficher vos événements Google Calendar aux côtés de votre emploi du temps.</p>
+          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Connexion disponible à l’étape suivante.</span></div></div>
+          <p class="external-note">V1.0 — aucune connexion Google n’est effectuée à ce stade.</p>
+        </div>
+      </section>
+      <section id="moreView" class="external-view" hidden aria-labelledby="moreTitle">
+        <div class="external-card">
+          <h1 id="moreTitle">Plus</h1>
+          <p>Les réglages et connexions de Cadence trouveront ici leur place.</p>
+        </div>
+        <div class="external-card">
+          <div class="integration-status" style="margin-top:0"><span class="dot"></span><div><strong>Todoist</strong><br><span>Non connecté — intégration à venir.</span></div></div>
+          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Non connecté — intégration à venir.</span></div></div>
+        </div>
+      </section>
     </main>
   </div>
+
+  <nav class="app-nav" id="appNav" aria-label="Espaces de Cadence">
+    <button data-section="cadence" class="active">Cadence</button>
+    <button data-section="tasks">Tâches</button>
+    <button data-section="calendar">Agenda</button>
+    <button data-section="more">Plus</button>
+  </nav>
 </div>
 
 <div id="modalRoot"></div>
 
+<script src="integrations/todoist.js"></script>
 <script>
 (function(){
 "use strict";
@@ -916,6 +1063,7 @@ function getDay(key){
 }
 
 /* ============ view state ============ */
+let appSection = 'cadence';
 let currentView = 'week';
 let refDate = new Date(); refDate.setHours(0,0,0,0);
 let armedSavedBlockId = null;
@@ -926,6 +1074,15 @@ const weekViewEl = document.getElementById('weekView');
 const dayViewEl = document.getElementById('dayView');
 const templatesViewEl = document.getElementById('templatesView');
 const halfDayTemplatesViewEl = document.getElementById('halfDayTemplatesView');
+const tasksViewEl = document.getElementById('tasksView');
+const calendarViewEl = document.getElementById('calendarView');
+const moreViewEl = document.getElementById('moreView');
+const todoistContentEl = document.getElementById('todoistContent');
+let todoistTasks = [];
+let todoistLoaded = false;
+let todoistFilter = 'today';
+const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
+const sectionTitleEl = document.getElementById('sectionTitle');
 const dateLabelEl = document.getElementById('dateLabel');
 const printTitleEl = document.getElementById('printTitle');
 const templateListEl = document.getElementById('templateList');
@@ -969,6 +1126,15 @@ function setEditMode(enabled){
   renderApp();
 }
 
+/* ============ navigation entre espaces ============ */
+document.querySelectorAll('#appNav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    appSection = btn.dataset.section;
+    document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderApp();
+  });
+});
+
 /* ============ header controls ============ */
 document.querySelectorAll('.view-toggle button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -982,6 +1148,7 @@ document.getElementById('prevBtn').addEventListener('click', ()=>{ nav(-1); });
 document.getElementById('nextBtn').addEventListener('click', ()=>{ nav(1); });
 document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); });
 function nav(dir){
+  if(appSection!=='cadence') return;
   refDate = currentView==='day' ? addDays(refDate,dir) : addDays(refDate, dir*7);
   renderApp();
 }
@@ -1981,6 +2148,8 @@ function openHelpModal(){
 
 document.getElementById('helpBtn').addEventListener('click', openHelpModal);
 
+window.CadenceTodoistReady.then(result=>{if(result&&result.error){console.warn('Todoist OAuth:',result.error);return;}if(result){appSection='tasks';document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='tasks'));}renderApp();}).catch(error=>console.warn('Todoist OAuth:',error));
+
 // Collapsible sidebar panels
 document.querySelectorAll('#sidebar > .panel').forEach(panel=>{
   const toggle=panel.querySelector('.panel-toggle');
@@ -1989,18 +2158,63 @@ document.querySelectorAll('#sidebar > .panel').forEach(panel=>{
   if(title) title.addEventListener('click',()=>panel.classList.toggle('collapsed'));
 });
 
+function formatTodoistDue(task){
+  if(!task.due || !task.due.date) return 'Sans échéance';
+  const d=task.due.date, date=d.slice(0,10), today=dateKey(new Date()), tomorrowDate=dateKey(addDays(new Date(),1));
+  if(date===today) return d.length>10 ? 'Aujourd’hui · '+d.slice(11,16) : 'Aujourd’hui';
+  if(date===tomorrowDate) return d.length>10 ? 'Demain · '+d.slice(11,16) : 'Demain';
+  const parsed=new Date(d);
+  if(!Number.isNaN(parsed.getTime()) && d.length>10) return parsed.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})+' · '+parsed.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const parts=date.split('-'); return parts.length===3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : date;
+}
+function todoistTaskDateKey(task){return task.due?.date ? task.due.date.slice(0,10) : null;}
+function filterTodoistTasks(){
+  const today=dateKey(new Date()), week=dateKey(addDays(new Date(),7));
+  return todoistTasks.filter(task=>{const d=todoistTaskDateKey(task);if(todoistFilter==='today')return d===today;if(todoistFilter==='week')return d&&d>=today&&d<=week;if(todoistFilter==='unscheduled')return !d;return true;}).sort((a,b)=>{const da=todoistTaskDateKey(a)||'9999-99-99',db=todoistTaskDateKey(b)||'9999-99-99';return da===db?(a.order||0)-(b.order||0):da.localeCompare(db);});
+}
+function renderTodoist(){
+  if(!todoistContentEl)return;
+  if(!window.CadenceTodoist.isConnected()){
+    todoistContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Todoist</strong><br><span>Non connecté.</span></div></div><div class="todoist-toolbar"><button class="btn primary" id="todoistConnectBtn">Connecter Todoist</button></div><p class="external-note">Cadence demande uniquement un accès en lecture à vos tâches. Aucune tâche n’est modifiée.</p>';
+    todoistContentEl.querySelector('#todoistConnectBtn').addEventListener('click',()=>window.CadenceTodoist.startOAuth()); return;
+  }
+  const filtered=filterTodoistTasks();
+  todoistContentEl.innerHTML=`<div class="todoist-connected"><span><span class="status-dot"></span>Todoist connecté</span><button class="btn" id="todoistDisconnectBtn">Déconnecter</button></div><div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${filtered.length?filtered.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${escapeHtml(task.content||'Sans titre')}</div><div class="todoist-task-meta"><span>${escapeHtml(formatTodoistDue(task))}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join(''):'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
+  todoistContentEl.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{todoistFilter=btn.dataset.filter;renderTodoist();}));
+  todoistContentEl.querySelector('#todoistRefreshBtn').addEventListener('click',loadTodoistTasks);
+  todoistContentEl.querySelector('#todoistDisconnectBtn').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistLoaded=false;renderTodoist();});
+}
+async function loadTodoistTasks(){
+  if(!window.CadenceTodoist.isConnected()){renderTodoist();return;}
+  todoistContentEl.innerHTML='<div class="todoist-loading">Chargement des tâches…</div>';
+  try{todoistTasks=await window.CadenceTodoist.getTasks();todoistLoaded=true;renderTodoist();}
+  catch(error){todoistContentEl.innerHTML=`<div class="todoist-error">Impossible de charger Todoist : ${escapeHtml(error.message||String(error))}</div><div class="todoist-toolbar"><button class="btn" id="todoistRetryBtn">Réessayer</button></div>`;todoistContentEl.querySelector('#todoistRetryBtn').addEventListener('click',loadTodoistTasks);}
+}
+function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
 function renderApp(){
-  updateDateLabel();
-  weekViewEl.hidden = currentView!=='week';
-  dayViewEl.hidden = currentView!=='day';
-  templatesViewEl.hidden = currentView!=='templates';
-  halfDayTemplatesViewEl.hidden = currentView!=='halfday-templates';
-  if(currentView==='week') renderWeekView();
-  else if(currentView==='day') renderDayView();
-  else if(currentView==='templates') renderTemplatesView();
-  else renderHalfDayTemplatesView();
-  renderSidebar();
-  closeSidebar();
+  const isCadence = appSection==='cadence';
+  document.body.classList.toggle('external-section', !isCadence);
+  cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
+  sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',more:'Plus'}[appSection] || 'Cadence');
+  weekViewEl.hidden = !isCadence || currentView!=='week';
+  dayViewEl.hidden = !isCadence || currentView!=='day';
+  templatesViewEl.hidden = !isCadence || currentView!=='templates';
+  halfDayTemplatesViewEl.hidden = !isCadence || currentView!=='halfday-templates';
+  tasksViewEl.hidden = appSection!=='tasks';
+  calendarViewEl.hidden = appSection!=='calendar';
+  moreViewEl.hidden = appSection!=='more';
+  if(isCadence){
+    updateDateLabel();
+    if(currentView==='week') renderWeekView();
+    else if(currentView==='day') renderDayView();
+    else if(currentView==='templates') renderTemplatesView();
+    else renderHalfDayTemplatesView();
+    renderSidebar();
+  }else{
+    closeSidebar();
+    if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }
+  }
 }
 setEditMode(false);
 

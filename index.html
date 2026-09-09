@@ -300,6 +300,25 @@
   .integration-status span{font-size:12px;color:var(--ink-soft);}
   .external-note{font-size:12px!important;color:var(--ink-faint)!important;margin-top:12px!important;}
 
+  /* ---------- Plus / réglages ---------- */
+  .more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+  .more-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px;}
+  .more-card h2{font-family:var(--font-serif);font-size:17px;font-weight:500;margin:0 0 6px;}
+  .more-card>p{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.5;}
+  .more-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .more-status{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:9px 10px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);font-size:11.5px;color:var(--ink-soft);}
+  .more-status .status-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none;}
+  .more-status.connected .status-dot{background:#72a879;}
+  .more-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .more-actions .btn{min-height:34px;}
+  .more-card-wide{grid-column:1/-1;}
+  .more-list{display:flex;flex-direction:column;gap:8px;margin-top:13px;}
+  .more-list-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 11px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);}
+  .more-list-row strong{font-size:12px;font-weight:600;}
+  .more-list-row span{display:block;font-size:11px;color:var(--ink-soft);margin-top:2px;}
+  .more-warning{font-size:11px;color:var(--ink-soft);line-height:1.45;margin-top:10px;}
+  @media (max-width:800px){.more-grid{grid-template-columns:1fr}.more-card-wide{grid-column:auto}.more-card{padding:16px}.more-list-row{align-items:flex-start;flex-direction:column}}
+
   /* ---------- Todoist ---------- */
   .todoist-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;}
   .todoist-toolbar .btn{min-height:36px;}
@@ -1027,11 +1046,46 @@
       <section id="moreView" class="external-view" hidden aria-labelledby="moreTitle">
         <div class="external-card">
           <h1 id="moreTitle">Plus</h1>
-          <p>Les réglages et connexions de Cadence trouveront ici leur place.</p>
+          <p>Connexions, sauvegardes et réglages de Cadence.</p>
         </div>
-        <div class="external-card">
-          <div class="integration-status" style="margin-top:0"><span class="dot"></span><div><strong>Todoist</strong><br><span>Connexion gérée depuis l’espace Tâches.</span></div></div>
-          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Connexion gérée depuis l’espace Agenda.</span></div></div>
+
+        <div class="more-grid">
+          <section class="more-card" aria-labelledby="moreTodoistTitle">
+            <div class="more-card-head"><div><h2 id="moreTodoistTitle">Todoist</h2><p>Afficher vos tâches dans l’espace Tâches.</p></div></div>
+            <div id="moreTodoistStatus" class="more-status"><span class="status-dot"></span><span>Vérification de la connexion…</span></div>
+            <div class="more-actions" id="moreTodoistActions"></div>
+          </section>
+
+          <section class="more-card" aria-labelledby="moreCalendarTitle">
+            <div class="more-card-head"><div><h2 id="moreCalendarTitle">Google Calendar</h2><p>Afficher vos agendas et événements dans l’espace Agenda.</p></div></div>
+            <div id="moreCalendarStatus" class="more-status"><span class="status-dot"></span><span>Vérification de la connexion…</span></div>
+            <div class="more-actions" id="moreCalendarActions"></div>
+          </section>
+
+          <section class="more-card more-card-wide" aria-labelledby="moreDataTitle">
+            <div class="more-card-head"><div><h2 id="moreDataTitle">Données Cadence</h2><p>Vos journées types, blocs enregistrés et plannings sont stockés localement dans votre navigateur.</p></div></div>
+            <div class="more-actions">
+              <button class="btn" id="moreExportBtn">Exporter les données</button>
+              <button class="btn" id="moreImportBtn">Importer des données</button>
+              <button class="btn" id="moreEditBtn">Activer le mode édition</button>
+            </div>
+            <div class="more-warning">L’importation remplace les données Cadence actuellement présentes sur cet appareil. Une sauvegarde est recommandée avant toute importation.</div>
+          </section>
+
+          <section class="more-card" aria-labelledby="moreHelpTitle">
+            <h2 id="moreHelpTitle">Aide</h2>
+            <p>Retrouvez le tutoriel de prise en main de Cadence.</p>
+            <div class="more-actions"><button class="btn" id="moreHelpBtn">Ouvrir le tutoriel</button></div>
+          </section>
+
+          <section class="more-card" aria-labelledby="moreAboutTitle">
+            <h2 id="moreAboutTitle">À propos</h2>
+            <p>Cadence · planning personnel par blocs.</p>
+            <div class="more-list">
+              <div class="more-list-row"><div><strong>Version</strong><span>V1.7</span></div></div>
+              <div class="more-list-row"><div><strong>Projet</strong><span>Application statique, PWA, GitHub Pages</span></div><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener">GitHub ↗</a></div>
+            </div>
+          </section>
         </div>
       </section>
     </main>
@@ -2476,6 +2530,53 @@ async function loadCalendarEvents(){
   }catch(error){calendarLoading=false;showCalendarError(error);}
 }
 
+function renderMore(){
+  const todoistStatus=document.getElementById('moreTodoistStatus');
+  const todoistActions=document.getElementById('moreTodoistActions');
+  const calendarStatus=document.getElementById('moreCalendarStatus');
+  const calendarActions=document.getElementById('moreCalendarActions');
+  const editBtn=document.getElementById('moreEditBtn');
+  const importBtn=document.getElementById('moreImportBtn');
+  if(!todoistStatus || !todoistActions || !calendarStatus || !calendarActions) return;
+
+  const todoConnected=!!window.CadenceTodoist?.isConnected();
+  todoistStatus.classList.toggle('connected',todoConnected);
+  todoistStatus.innerHTML='<span class="status-dot"></span><span>'+ (todoConnected ? 'Connecté à Todoist.' : 'Non connecté à Todoist.') +'</span>';
+  todoistActions.innerHTML=todoConnected
+    ? '<button class="btn" id="moreTodoistDisconnectBtn">Déconnecter</button>'
+    : '<button class="btn primary" id="moreTodoistConnectBtn">Connecter Todoist</button>';
+  const todoConnect=document.getElementById('moreTodoistConnectBtn');
+  const todoDisconnect=document.getElementById('moreTodoistDisconnectBtn');
+  if(todoConnect) todoConnect.addEventListener('click',()=>window.CadenceTodoist.startOAuth());
+  if(todoDisconnect) todoDisconnect.addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});
+
+  const calConnected=!!window.CadenceGoogleCalendar?.isConnected();
+  calendarStatus.classList.toggle('connected',calConnected);
+  calendarStatus.innerHTML='<span class="status-dot"></span><span>'+ (calConnected ? 'Connecté à Google Calendar.' : 'Non connecté à Google Calendar.') +'</span>';
+  calendarActions.innerHTML=calConnected
+    ? '<button class="btn" id="moreCalendarDisconnectBtn">Déconnecter</button>'
+    : '<button class="btn primary" id="moreCalendarConnectBtn">Connecter Google Calendar</button>';
+  const calConnect=document.getElementById('moreCalendarConnectBtn');
+  const calDisconnect=document.getElementById('moreCalendarDisconnectBtn');
+  if(calConnect) calConnect.addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';renderMore();}catch(error){alert(error.message||String(error));}});
+  if(calDisconnect) calDisconnect.addEventListener('click',()=>{window.CadenceGoogleCalendar.disconnect();calendarEvents=[];calendarCalendars=[];calendarSelectedIds=new Set();calendarLoadedKey='';renderMore();});
+
+  if(editBtn){
+    editBtn.textContent=editMode?'Désactiver le mode édition':'Activer le mode édition';
+    editBtn.classList.toggle('primary',editMode);
+    editBtn.onclick=()=>{setEditMode(!editMode);renderMore();};
+  }
+  if(importBtn){
+    importBtn.disabled=!editMode;
+    importBtn.title=editMode?'Importer un fichier JSON':'Activez le mode édition pour importer';
+    importBtn.onclick=()=>{if(editMode) document.getElementById('importFile').click();};
+  }
+  const exportBtn=document.getElementById('moreExportBtn');
+  if(exportBtn) exportBtn.onclick=exportData;
+  const helpBtn=document.getElementById('moreHelpBtn');
+  if(helpBtn) helpBtn.onclick=openHelpModal;
+}
+
 function renderApp(){
   const isCadence = appSection==='cadence';
   document.body.classList.toggle('external-section', !isCadence);
@@ -2499,6 +2600,7 @@ function renderApp(){
     closeSidebar();
     if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }
     if(appSection==='calendar'){ renderCalendar(); if(window.CadenceGoogleCalendar.isConnected()){ loadCalendarCalendars().then(()=>{renderCalendar();loadCalendarEvents();}).catch(showCalendarError); } }
+    if(appSection==='more'){ renderMore(); }
   }
 }
 setEditMode(false);

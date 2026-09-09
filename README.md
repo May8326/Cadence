@@ -124,3 +124,17 @@ La V1.0 ajoute le premier connecteur Todoist, sans dépendance externe ni instal
 - les jetons sont conservés localement dans le navigateur ;
 - les tâches sont récupérées depuis l'API Todoist v1 et filtrables par aujourd'hui, 7 jours, sans échéance ou toutes ;
 - Cadence ne modifie ni ne supprime les tâches dans cette première intégration.
+
+
+## Intégration Google Calendar — V1.3
+
+La V1.3 ajoute l'affichage en lecture seule de l'agenda Google principal.
+
+- authentification Google Identity Services directement dans le navigateur ;
+- portée demandée : `https://www.googleapis.com/auth/calendar.events.readonly` ;
+- aucun secret client, serveur, base de données ou dépendance locale ;
+- affichage des événements sur une semaine, avec navigation et retour à aujourd'hui ;
+- les événements ouvrent leur fiche Google Calendar lorsqu'un lien est fourni ;
+- aucun événement n'est créé, modifié ou supprimé par Cadence.
+
+Le Client ID OAuth est configuré dans `integrations/google-calendar.js`. L'origine JavaScript autorisée dans Google Cloud doit être `https://may8326.github.io`.

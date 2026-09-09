@@ -2,7 +2,7 @@
   'use strict';
 
   const CLIENT_ID = '813866094414-oa35s352ttl9trpurvi5vtgls85neib3.apps.googleusercontent.com';
-  const SCOPES = 'https://www.googleapis.com/auth/calendar.events.readonly';
+  const SCOPES = 'https://www.googleapis.com/auth/calendar.events.readonly https://www.googleapis.com/auth/calendar.calendarlist.readonly';
   const TOKEN_URL = 'https://oauth2.googleapis.com/tokeninfo';
   const API_URL = 'https://www.googleapis.com/calendar/v3';
 
@@ -106,7 +106,20 @@
     return response.json();
   }
 
-  async function getEvents(timeMin,timeMax){
+  async function getCalendars(){
+    let all=[];
+    let pageToken='';
+    do{
+      const qs=new URLSearchParams({maxResults:'250'});
+      if(pageToken) qs.set('pageToken',pageToken);
+      const data=await api('/users/me/calendarList?'+qs.toString());
+      all=all.concat(data.items || []);
+      pageToken=data.nextPageToken || '';
+    }while(pageToken);
+    return all;
+  }
+
+  async function getEvents(calendarId,timeMin,timeMax){
     const qs=new URLSearchParams({
       timeMin:timeMin.toISOString(),
       timeMax:timeMax.toISOString(),
@@ -114,7 +127,7 @@
       orderBy:'startTime',
       maxResults:'2500'
     });
-    const data=await api('/calendars/primary/events?'+qs.toString());
+    const data=await api('/calendars/'+encodeURIComponent(calendarId)+'/events?'+qs.toString());
     return data.items || [];
   }
 
@@ -123,6 +136,7 @@
     connect,
     disconnect,
     isConnected,
+    getCalendars,
     getEvents,
     getStored:()=>({connected:isConnected()})
   };

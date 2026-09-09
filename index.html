@@ -330,6 +330,31 @@
   .todoist-connected span{font-size:12px;color:var(--ink-soft);}
   @media (max-width:800px){.todoist-toolbar{align-items:stretch}.todoist-filter{flex:1}.todoist-filter button{flex:1}.todoist-connected{align-items:flex-start}}
 
+  /* ---------- Google Calendar ---------- */
+  .calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .calendar-range{display:flex;align-items:center;gap:5px;}
+  .calendar-range button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;min-width:34px;height:34px;cursor:pointer;}
+  .calendar-range button:hover{background:var(--surface);}
+  .calendar-range-label{font-family:var(--font-serif);font-size:15px;min-width:190px;text-align:center;}
+  .calendar-list{display:flex;flex-direction:column;gap:16px;margin-top:18px;}
+  .calendar-day{border-top:1px solid var(--line);padding-top:9px;}
+  .calendar-day:first-child{border-top:0;padding-top:0;}
+  .calendar-day-title{font-family:var(--font-serif);font-size:14px;font-weight:600;margin-bottom:7px;}
+  .calendar-event{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);margin-top:6px;}
+  .calendar-event-time{width:72px;flex:none;font-size:11px;color:var(--ink-soft);padding-top:1px;}
+  .calendar-event-main{min-width:0;flex:1;}
+  .calendar-event-title{font-size:13px;line-height:1.4;color:var(--ink);}
+  .calendar-event-title a{color:inherit;text-decoration:none;}
+  .calendar-event-title a:hover{text-decoration:underline;}
+  .calendar-event-location{margin-top:3px;font-size:11px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .calendar-all-day{font-size:10px;color:var(--ink-soft);}
+  .calendar-connected{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:10px 12px;background:var(--paper);border:1px solid var(--line-light);border-radius:7px;}
+  .calendar-connected span{font-size:12px;color:var(--ink-soft);}
+  .calendar-connected .status-dot{width:8px;height:8px;border-radius:50%;background:#72a879;display:inline-block;margin-right:7px;}
+  .calendar-empty,.calendar-loading{padding:22px 10px;text-align:center;color:var(--ink-faint);font-size:13px;}
+  .calendar-error{margin-top:14px;padding:11px 13px;border:1px solid #e4c4c4;border-radius:7px;background:#fff8f8;color:#8a4c4c;font-size:12px;line-height:1.45;}
+  @media (max-width:600px){.calendar-range-label{min-width:0;flex:1}.calendar-toolbar{align-items:stretch}.calendar-range{width:100%}.calendar-event-time{width:62px}}
+
   /* ---------- Main / grid ---------- */
   #main{
     flex:1;
@@ -969,9 +994,8 @@
       <section id="calendarView" class="external-view" hidden aria-labelledby="calendarTitle">
         <div class="external-card">
           <h1 id="calendarTitle">Agenda</h1>
-          <p>Un espace pour afficher vos événements Google Calendar aux côtés de votre emploi du temps.</p>
-          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Connexion disponible à l’étape suivante.</span></div></div>
-          <p class="external-note">V1.0 — aucune connexion Google n’est effectuée à ce stade.</p>
+          <p>Vos événements Google Calendar, affichés directement dans Cadence.</p>
+          <div id="calendarContent"></div>
         </div>
       </section>
       <section id="moreView" class="external-view" hidden aria-labelledby="moreTitle">
@@ -980,8 +1004,8 @@
           <p>Les réglages et connexions de Cadence trouveront ici leur place.</p>
         </div>
         <div class="external-card">
-          <div class="integration-status" style="margin-top:0"><span class="dot"></span><div><strong>Todoist</strong><br><span>Non connecté — intégration à venir.</span></div></div>
-          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Non connecté — intégration à venir.</span></div></div>
+          <div class="integration-status" style="margin-top:0"><span class="dot"></span><div><strong>Todoist</strong><br><span>Connexion gérée depuis l’espace Tâches.</span></div></div>
+          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Connexion gérée depuis l’espace Agenda.</span></div></div>
         </div>
       </section>
     </main>
@@ -999,6 +1023,7 @@
 <div id="modalRoot"></div>
 
 <script src="integrations/todoist.js"></script>
+<script src="integrations/google-calendar.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1089,12 +1114,16 @@ const templatesViewEl = document.getElementById('templatesView');
 const halfDayTemplatesViewEl = document.getElementById('halfDayTemplatesView');
 const tasksViewEl = document.getElementById('tasksView');
 const calendarViewEl = document.getElementById('calendarView');
+const calendarContentEl = document.getElementById('calendarContent');
 const moreViewEl = document.getElementById('moreView');
 const todoistContentEl = document.getElementById('todoistContent');
 let todoistTasks = [];
 let todoistSections = [];
 let todoistLoaded = false;
 let todoistFilter = 'today';
+let calendarEvents = [];
+let calendarLoadedKey = '';
+let calendarLoading = false;
 const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
 const sectionTitleEl = document.getElementById('sectionTitle');
 const dateLabelEl = document.getElementById('dateLabel');
@@ -2234,6 +2263,86 @@ async function loadTodoistTasks(){
 }
 function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 
+function calendarWeekStart(date){
+  const d=new Date(date); d.setHours(0,0,0,0);
+  const day=d.getDay()||7;
+  d.setDate(d.getDate()-day+1);
+  return d;
+}
+function calendarWeekEnd(date){
+  const d=calendarWeekStart(date); d.setDate(d.getDate()+7); return d;
+}
+function formatCalendarRange(start,end){
+  const opts={day:'numeric',month:'long'};
+  const a=start.toLocaleDateString('fr-FR',opts), b=new Date(end.getTime()-1).toLocaleDateString('fr-FR',opts);
+  return a+' – '+b;
+}
+function calendarEventDate(event){
+  if(event.start?.date) return new Date(event.start.date+'T00:00:00');
+  return event.start?.dateTime ? new Date(event.start.dateTime) : null;
+}
+function calendarEventEnd(event){
+  if(event.end?.date) return new Date(event.end.date+'T00:00:00');
+  return event.end?.dateTime ? new Date(event.end.dateTime) : null;
+}
+function formatCalendarTime(event){
+  if(event.start?.date) return '<span class="calendar-all-day">Toute la journée</span>';
+  const start=calendarEventDate(event), end=calendarEventEnd(event);
+  if(!start) return '';
+  const f=d=>d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  return f(start)+(end?' – '+f(end):'');
+}
+function calendarEventUrl(event){return event.htmlLink||'';}
+function calendarDayKey(d){return dateKey(d);}
+function renderCalendar(){
+  if(!calendarContentEl)return;
+  const start=calendarWeekStart(refDate), end=calendarWeekEnd(refDate);
+  const rangeKey=start.toISOString().slice(0,10);
+  if(!window.CadenceGoogleCalendar.isConnected()){
+    calendarContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Non connecté.</span></div></div><div class="calendar-toolbar"><button class="btn primary" id="calendarConnectBtn">Connecter Google Agenda</button></div><p class="external-note">Cadence demande uniquement un accès en lecture à vos événements. Aucun événement ne sera créé, modifié ou supprimé.</p>';
+    calendarContentEl.querySelector('#calendarConnectBtn').addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';renderCalendar();loadCalendarEvents();}catch(error){showCalendarError(error);}});
+    return;
+  }
+  const byDay=new Map();
+  for(let i=0;i<7;i++){const d=addDays(start,i);byDay.set(calendarDayKey(d),{date:d,events:[]});}
+  calendarEvents.forEach(event=>{const d=calendarEventDate(event);if(!d)return;const key=calendarDayKey(d);if(byDay.has(key))byDay.get(key).events.push(event);});
+  const daysHtml=Array.from(byDay.values()).map(day=>{
+    const title=day.date.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    const events=day.events.sort((a,b)=>(calendarEventDate(a)||0)-(calendarEventDate(b)||0));
+    return '<section class="calendar-day"><div class="calendar-day-title">'+escapeHtml(title.charAt(0).toUpperCase()+title.slice(1))+'</div>'+(
+      events.length?events.map(event=>{
+        const title=escapeHtml(event.summary||'Sans titre');
+        const link=calendarEventUrl(event);
+        const titleHtml=link?'<a href="'+escapeHtml(link)+'" target="_blank" rel="noopener noreferrer">'+title+'</a>':title;
+        const location=event.location?'<div class="calendar-event-location">'+escapeHtml(event.location)+'</div>':'';
+        return '<article class="calendar-event"><div class="calendar-event-time">'+formatCalendarTime(event)+'</div><div class="calendar-event-main"><div class="calendar-event-title">'+titleHtml+'</div>'+location+'</div></article>';
+      }).join(''):'<div class="calendar-empty">Aucun événement</div>'
+    )+'</section>';
+  }).join('');
+  calendarContentEl.innerHTML='<div class="calendar-connected"><span><span class="status-dot"></span>Google Calendar connecté</span><button class="btn" id="calendarDisconnectBtn">Déconnecter</button></div><div class="calendar-toolbar"><div class="calendar-range"><button id="calendarPrevBtn" aria-label="Semaine précédente">‹</button><div class="calendar-range-label">'+escapeHtml(formatCalendarRange(start,end))+'</div><button id="calendarNextBtn" aria-label="Semaine suivante">›</button></div><button class="btn" id="calendarTodayBtn">Aujourd’hui</button></div><div class="calendar-list">'+daysHtml+'</div>';
+  calendarContentEl.querySelector('#calendarPrevBtn').addEventListener('click',()=>{refDate=addDays(calendarWeekStart(refDate),-7);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
+  calendarContentEl.querySelector('#calendarNextBtn').addEventListener('click',()=>{refDate=addDays(calendarWeekStart(refDate),7);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
+  calendarContentEl.querySelector('#calendarTodayBtn').addEventListener('click',()=>{refDate=new Date();refDate.setHours(0,0,0,0);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
+  calendarContentEl.querySelector('#calendarDisconnectBtn').addEventListener('click',()=>{window.CadenceGoogleCalendar.disconnect();calendarEvents=[];calendarLoadedKey='';renderCalendar();});
+}
+function showCalendarError(error){
+  calendarContentEl.innerHTML='<div class="calendar-error">Impossible de charger Google Calendar : '+escapeHtml(error.message||String(error))+'</div><div class="calendar-toolbar"><button class="btn" id="calendarRetryBtn">Réessayer</button></div>';
+  calendarContentEl.querySelector('#calendarRetryBtn').addEventListener('click',loadCalendarEvents);
+}
+async function loadCalendarEvents(){
+  if(!calendarContentEl || !window.CadenceGoogleCalendar.isConnected())return;
+  const start=calendarWeekStart(refDate), end=calendarWeekEnd(refDate), key=start.toISOString().slice(0,10);
+  if(calendarLoading || calendarLoadedKey===key)return;
+  calendarLoading=true;
+  if(calendarContentEl.querySelector('.calendar-list')) calendarContentEl.querySelector('.calendar-list').innerHTML='<div class="calendar-loading">Chargement de l’agenda…</div>';
+  try{
+    calendarEvents=await window.CadenceGoogleCalendar.getEvents(start,end);
+    calendarLoadedKey=key;
+    calendarLoading=false;
+    renderCalendar();
+  }catch(error){calendarLoading=false;showCalendarError(error);}
+}
+
 function renderApp(){
   const isCadence = appSection==='cadence';
   document.body.classList.toggle('external-section', !isCadence);
@@ -2256,6 +2365,7 @@ function renderApp(){
   }else{
     closeSidebar();
     if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }
+    if(appSection==='calendar'){ renderCalendar(); if(window.CadenceGoogleCalendar.isConnected()) loadCalendarEvents(); }
   }
 }
 setEditMode(false);

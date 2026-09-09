@@ -669,17 +669,16 @@
     .actions button span.lbl{display:none;}
     .topbar button{min-width:30px;min-height:30px;}
     .btn{min-height:36px;padding:8px 13px;}
-    #main{padding:12px 8px 20px;}
-    /* Barre des volets : véritable barre de navigation de l'application.
-       Elle occupe sa propre ligne en bas du layout : elle ne flotte donc
-       jamais au-dessus du contenu ni du menu latéral sur Android. */
-    .app-nav{
+    #main{padding:12px 8px calc(84px + env(safe-area-inset-bottom));}
+    /* Sur Android, la navigation des volets est un pied de page réel :
+       elle fait partie du layout et ne recouvre jamais le bandeau de Cadence. */
+    .app-nav-desktop{display:none;}
+    .app-nav-mobile{
       position:static;
-      order:3;
-      flex:none;
+      display:flex;
+      flex:0 0 auto;
       width:100%;
       box-sizing:border-box;
-      display:flex;
       justify-content:stretch;
       gap:0;
       padding:4px 4px calc(4px + env(safe-area-inset-bottom));
@@ -690,7 +689,7 @@
       box-shadow:0 -2px 8px rgba(42,40,34,.06);
       z-index:40;
     }
-    .app-nav button{flex:1;min-height:50px;padding:7px 5px;font-size:11.5px;}
+    .app-nav-mobile button{flex:1;min-height:50px;padding:7px 5px;font-size:11.5px;}
     .topbar{backdrop-filter:none;-webkit-backdrop-filter:none;}
     .section-title{display:block;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .external-view{padding:4px 2px 18px;}
@@ -804,13 +803,13 @@
   .btn.primary{box-shadow:0 1px 2px rgba(42,40,34,.12);}
 
   @media (min-width:801px){
-    /* Sur grand écran, on conserve l'aspect de la V1.0 : la navigation des
-       volets reste visuellement dans le bandeau supérieur. */
-    .app-nav{
-      position:absolute;
-      top:12px;
-      right:18px;
+    .app-nav-mobile{display:none;}
+    /* Sur grand écran, la navigation des volets fait réellement partie
+       du bandeau supérieur : elle reste donc visible au-dessus du contenu. */
+    .app-nav-desktop{
+      position:static;
       flex:none;
+      margin-left:auto;
     }
     .app-nav button{padding:6px 10px;}
     .external-view{padding-top:4px;}
@@ -916,6 +915,12 @@
       <button id="importBtn" title="Importer des données JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 21V9"></path><polyline points="7 14 12 9 17 14"></polyline><path d="M5 3h14"></path></svg> <span class="lbl">Importer</span></button>
       <input type="file" id="importFile" hidden accept="application/json">
     </div>
+    <nav class="app-nav app-nav-desktop" aria-label="Espaces de Cadence">
+      <button data-section="cadence" class="active">Cadence</button>
+      <button data-section="tasks">Tâches</button>
+      <button data-section="calendar">Agenda</button>
+      <button data-section="more">Plus</button>
+    </nav>
   </header>
 
   <div class="body">
@@ -975,12 +980,13 @@
     </main>
   </div>
 
-  <nav class="app-nav" id="appNav" aria-label="Espaces de Cadence">
+  <nav class="app-nav app-nav-mobile" aria-label="Espaces de Cadence">
     <button data-section="cadence" class="active">Cadence</button>
     <button data-section="tasks">Tâches</button>
     <button data-section="calendar">Agenda</button>
     <button data-section="more">Plus</button>
   </nav>
+
 </div>
 
 <div id="modalRoot"></div>
@@ -1127,10 +1133,10 @@ function setEditMode(enabled){
 }
 
 /* ============ navigation entre espaces ============ */
-document.querySelectorAll('#appNav button').forEach(btn=>{
+document.querySelectorAll('.app-nav button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     appSection = btn.dataset.section;
-    document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active', b===btn));
     renderApp();
   });
 });
@@ -2148,7 +2154,7 @@ function openHelpModal(){
 
 document.getElementById('helpBtn').addEventListener('click', openHelpModal);
 
-window.CadenceTodoistReady.then(result=>{if(result&&result.error){console.warn('Todoist OAuth:',result.error);return;}if(result){appSection='tasks';document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='tasks'));}renderApp();}).catch(error=>console.warn('Todoist OAuth:',error));
+window.CadenceTodoistReady.then(result=>{if(result&&result.error){console.warn('Todoist OAuth:',result.error);return;}if(result){appSection='tasks';document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='tasks'));}renderApp();}).catch(error=>console.warn('Todoist OAuth:',error));
 
 // Collapsible sidebar panels
 document.querySelectorAll('#sidebar > .panel').forEach(panel=>{

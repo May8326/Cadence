@@ -1,674 +1,2274 @@
-                    GNU GENERAL PUBLIC LICENSE
-                       Version 3, 29 June 2007
-
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
-
-                            Preamble
-
-  The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
-
-  The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
-the GNU General Public License is intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users.  We, the Free Software Foundation, use the
-GNU General Public License for most of our software; it applies also to
-any other work released this way by its authors.  You can apply it to
-your programs, too.
-
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
-have the freedom to distribute copies of free software (and charge for
-them if you wish), that you receive source code or can get it if you
-want it, that you can change the software or use pieces of it in new
-free programs, and that you know you can do these things.
-
-  To protect your rights, we need to prevent others from denying you
-these rights or asking you to surrender the rights.  Therefore, you have
-certain responsibilities if you distribute copies of the software, or if
-you modify it: responsibilities to respect the freedom of others.
-
-  For example, if you distribute copies of such a program, whether
-gratis or for a fee, you must pass on to the recipients the same
-freedoms that you received.  You must make sure that they, too, receive
-or can get the source code.  And you must show them these terms so they
-know their rights.
-
-  Developers that use the GNU GPL protect your rights with two steps:
-(1) assert copyright on the software, and (2) offer you this License
-giving you legal permission to copy, distribute and/or modify it.
-
-  For the developers' and authors' protection, the GPL clearly explains
-that there is no warranty for this free software.  For both users' and
-authors' sake, the GPL requires that modified versions be marked as
-changed, so that their problems will not be attributed erroneously to
-authors of previous versions.
-
-  Some devices are designed to deny users access to install or run
-modified versions of the software inside them, although the manufacturer
-can do so.  This is fundamentally incompatible with the aim of
-protecting users' freedom to change the software.  The systematic
-pattern of such abuse occurs in the area of products for individuals to
-use, which is precisely where it is most unacceptable.  Therefore, we
-have designed this version of the GPL to prohibit the practice for those
-products.  If such problems arise substantially in other domains, we
-stand ready to extend this provision to those domains in future versions
-of the GPL, as needed to protect the freedom of users.
-
-  Finally, every program is threatened constantly by software patents.
-States should not allow patents to restrict development and use of
-software on general-purpose computers, but in those that do, we wish to
-avoid the special danger that patents applied to a free program could
-make it effectively proprietary.  To prevent this, the GPL assures that
-patents cannot be used to render the program non-free.
-
-  The precise terms and conditions for copying, distribution and
-modification follow.
-
-                       TERMS AND CONDITIONS
-
-  0. Definitions.
-
-  "This License" refers to version 3 of the GNU General Public License.
-
-  "Copyright" also means copyright-like laws that apply to other kinds of
-works, such as semiconductor masks.
-
-  "The Program" refers to any copyrightable work licensed under this
-License.  Each licensee is addressed as "you".  "Licensees" and
-"recipients" may be individuals or organizations.
-
-  To "modify" a work means to copy from or adapt all or part of the work
-in a fashion requiring copyright permission, other than the making of an
-exact copy.  The resulting work is called a "modified version" of the
-earlier work or a work "based on" the earlier work.
-
-  A "covered work" means either the unmodified Program or a work based
-on the Program.
-
-  To "propagate" a work means to do anything with it that, without
-permission, would make you directly or secondarily liable for
-infringement under applicable copyright law, except executing it on a
-computer or modifying a private copy.  Propagation includes copying,
-distribution (with or without modification), making available to the
-public, and in some countries other activities as well.
-
-  To "convey" a work means any kind of propagation that enables other
-parties to make or receive copies.  Mere interaction with a user through
-a computer network, with no transfer of a copy, is not conveying.
-
-  An interactive user interface displays "Appropriate Legal Notices"
-to the extent that it includes a convenient and prominently visible
-feature that (1) displays an appropriate copyright notice, and (2)
-tells the user that there is no warranty for the work (except to the
-extent that warranties are provided), that licensees may convey the
-work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
-menu, a prominent item in the list meets this criterion.
-
-  1. Source Code.
-
-  The "source code" for a work means the preferred form of the work
-for making modifications to it.  "Object code" means any non-source
-form of a work.
-
-  A "Standard Interface" means an interface that either is an official
-standard defined by a recognized standards body, or, in the case of
-interfaces specified for a particular programming language, one that
-is widely used among developers working in that language.
-
-  The "System Libraries" of an executable work include anything, other
-than the work as a whole, that (a) is included in the normal form of
-packaging a Major Component, but which is not part of that Major
-Component, and (b) serves only to enable use of the work with that
-Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
-"Major Component", in this context, means a major essential component
-(kernel, window system, and so on) of the specific operating system
-(if any) on which the executable work runs, or a compiler used to
-produce the work, or an object code interpreter used to run it.
-
-  The "Corresponding Source" for a work in object code form means all
-the source code needed to generate, install, and (for an executable
-work) run the object code and to modify the work, including scripts to
-control those activities.  However, it does not include the work's
-System Libraries, or general-purpose tools or generally available free
-programs which are used unmodified in performing those activities but
-which are not part of the work.  For example, Corresponding Source
-includes interface definition files associated with source files for
-the work, and the source code for shared libraries and dynamically
-linked subprograms that the work is specifically designed to require,
-such as by intimate data communication or control flow between those
-subprograms and other parts of the work.
-
-  The Corresponding Source need not include anything that users
-can regenerate automatically from other parts of the Corresponding
-Source.
-
-  The Corresponding Source for a work in source code form is that
-same work.
-
-  2. Basic Permissions.
-
-  All rights granted under this License are granted for the term of
-copyright on the Program, and are irrevocable provided the stated
-conditions are met.  This License explicitly affirms your unlimited
-permission to run the unmodified Program.  The output from running a
-covered work is covered by this License only if the output, given its
-content, constitutes a covered work.  This License acknowledges your
-rights of fair use or other equivalent, as provided by copyright law.
-
-  You may make, run and propagate covered works that you do not
-convey, without conditions so long as your license otherwise remains
-in force.  You may convey covered works to others for the sole purpose
-of having them make modifications exclusively for you, or provide you
-with facilities for running those works, provided that you comply with
-the terms of this License in conveying all material for which you do
-not control copyright.  Those thus making or running the covered works
-for you must do so exclusively on your behalf, under your direction
-and control, on terms that prohibit them from making any copies of
-your copyrighted material outside their relationship with you.
-
-  Conveying under any other circumstances is permitted solely under
-the conditions stated below.  Sublicensing is not allowed; section 10
-makes it unnecessary.
-
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
-
-  No covered work shall be deemed part of an effective technological
-measure under any applicable law fulfilling obligations under article
-11 of the WIPO copyright treaty adopted on 20 December 1996, or
-similar laws prohibiting or restricting circumvention of such
-measures.
-
-  When you convey a covered work, you waive any legal power to forbid
-circumvention of technological measures to the extent such circumvention
-is effected by exercising rights under this License with respect to
-the covered work, and you disclaim any intention to limit operation or
-modification of the work as a means of enforcing, against the work's
-users, your or third parties' legal rights to forbid circumvention of
-technological measures.
-
-  4. Conveying Verbatim Copies.
-
-  You may convey verbatim copies of the Program's source code as you
-receive it, in any medium, provided that you conspicuously and
-appropriately publish on each copy an appropriate copyright notice;
-keep intact all notices stating that this License and any
-non-permissive terms added in accord with section 7 apply to the code;
-keep intact all notices of the absence of any warranty; and give all
-recipients a copy of this License along with the Program.
-
-  You may charge any price or no price for each copy that you convey,
-and you may offer support or warranty protection for a fee.
-
-  5. Conveying Modified Source Versions.
-
-  You may convey a work based on the Program, or the modifications to
-produce it from the Program, in the form of source code under the
-terms of section 4, provided that you also meet all of these conditions:
-
-    a) The work must carry prominent notices stating that you modified
-    it, and giving a relevant date.
-
-    b) The work must carry prominent notices stating that it is
-    released under this License and any conditions added under section
-    7.  This requirement modifies the requirement in section 4 to
-    "keep intact all notices".
-
-    c) You must license the entire work, as a whole, under this
-    License to anyone who comes into possession of a copy.  This
-    License will therefore apply, along with any applicable section 7
-    additional terms, to the whole of the work, and all its parts,
-    regardless of how they are packaged.  This License gives no
-    permission to license the work in any other way, but it does not
-    invalidate such permission if you have separately received it.
-
-    d) If the work has interactive user interfaces, each must display
-    Appropriate Legal Notices; however, if the Program has interactive
-    interfaces that do not display Appropriate Legal Notices, your
-    work need not make them do so.
-
-  A compilation of a covered work with other separate and independent
-works, which are not by their nature extensions of the covered work,
-and which are not combined with it such as to form a larger program,
-in or on a volume of a storage or distribution medium, is called an
-"aggregate" if the compilation and its resulting copyright are not
-used to limit the access or legal rights of the compilation's users
-beyond what the individual works permit.  Inclusion of a covered work
-in an aggregate does not cause this License to apply to the other
-parts of the aggregate.
-
-  6. Conveying Non-Source Forms.
-
-  You may convey a covered work in object code form under the terms
-of sections 4 and 5, provided that you also convey the
-machine-readable Corresponding Source under the terms of this License,
-in one of these ways:
-
-    a) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by the
-    Corresponding Source fixed on a durable physical medium
-    customarily used for software interchange.
-
-    b) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by a
-    written offer, valid for at least three years and valid for as
-    long as you offer spare parts or customer support for that product
-    model, to give anyone who possesses the object code either (1) a
-    copy of the Corresponding Source for all the software in the
-    product that is covered by this License, on a durable physical
-    medium customarily used for software interchange, for a price no
-    more than your reasonable cost of physically performing this
-    conveying of source, or (2) access to copy the
-    Corresponding Source from a network server at no charge.
-
-    c) Convey individual copies of the object code with a copy of the
-    written offer to provide the Corresponding Source.  This
-    alternative is allowed only occasionally and noncommercially, and
-    only if you received the object code with such an offer, in accord
-    with subsection 6b.
-
-    d) Convey the object code by offering access from a designated
-    place (gratis or for a charge), and offer equivalent access to the
-    Corresponding Source in the same way through the same place at no
-    further charge.  You need not require recipients to copy the
-    Corresponding Source along with the object code.  If the place to
-    copy the object code is a network server, the Corresponding Source
-    may be on a different server (operated by you or a third party)
-    that supports equivalent copying facilities, provided you maintain
-    clear directions next to the object code saying where to find the
-    Corresponding Source.  Regardless of what server hosts the
-    Corresponding Source, you remain obligated to ensure that it is
-    available for as long as needed to satisfy these requirements.
-
-    e) Convey the object code using peer-to-peer transmission, provided
-    you inform other peers where the object code and Corresponding
-    Source of the work are being offered to the general public at no
-    charge under subsection 6d.
-
-  A separable portion of the object code, whose source code is excluded
-from the Corresponding Source as a System Library, need not be
-included in conveying the object code work.
-
-  A "User Product" is either (1) a "consumer product", which means any
-tangible personal property which is normally used for personal, family,
-or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a product is a consumer product,
-doubtful cases shall be resolved in favor of coverage.  For a particular
-product received by a particular user, "normally used" refers to a
-typical or common use of that class of product, regardless of the status
-of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the product.  A product
-is a consumer product regardless of whether the product has substantial
-commercial, industrial or non-consumer uses, unless such uses represent
-the only significant mode of use of the product.
-
-  "Installation Information" for a User Product means any methods,
-procedures, authorization keys, or other information required to install
-and execute modified versions of a covered work in that User Product from
-a modified version of its Corresponding Source.  The information must
-suffice to ensure that the continued functioning of the modified object
-code is in no case prevented or interfered with solely because
-modification has been made.
-
-  If you convey an object code work under this section in, or with, or
-specifically for use in, a User Product, and the conveying occurs as
-part of a transaction in which the right of possession and use of the
-User Product is transferred to the recipient in perpetuity or for a
-fixed term (regardless of how the transaction is characterized), the
-Corresponding Source conveyed under this section must be accompanied
-by the Installation Information.  But this requirement does not apply
-if neither you nor any third party retains the ability to install
-modified object code on the User Product (for example, the work has
-been installed in ROM).
-
-  The requirement to provide Installation Information does not include a
-requirement to continue to provide support service, warranty, or updates
-for a work that has been modified or installed by the recipient, or for
-the User Product in which it has been modified or installed.  Access to a
-network may be denied when the modification itself materially and
-adversely affects the operation of the network or violates the rules and
-protocols for communication across the network.
-
-  Corresponding Source conveyed, and Installation Information provided,
-in accord with this section must be in a format that is publicly
-documented (and with an implementation available to the public in
-source code form), and must require no special password or key for
-unpacking, reading or copying.
-
-  7. Additional Terms.
-
-  "Additional permissions" are terms that supplement the terms of this
-License by making exceptions from one or more of its conditions.
-Additional permissions that are applicable to the entire Program shall
-be treated as though they were included in this License, to the extent
-that they are valid under applicable law.  If additional permissions
-apply only to part of the Program, that part may be used separately
-under those permissions, but the entire Program remains governed by
-this License without regard to the additional permissions.
-
-  When you convey a copy of a covered work, you may at your option
-remove any additional permissions from that copy, or from any part of
-it.  (Additional permissions may be written to require their own
-removal in certain cases when you modify the work.)  You may place
-additional permissions on material, added by you to a covered work,
-for which you have or can give appropriate copyright permission.
-
-  Notwithstanding any other provision of this License, for material you
-add to a covered work, you may (if authorized by the copyright holders of
-that material) supplement the terms of this License with terms:
-
-    a) Disclaiming warranty or limiting liability differently from the
-    terms of sections 15 and 16 of this License; or
-
-    b) Requiring preservation of specified reasonable legal notices or
-    author attributions in that material or in the Appropriate Legal
-    Notices displayed by works containing it; or
-
-    c) Prohibiting misrepresentation of the origin of that material, or
-    requiring that modified versions of such material be marked in
-    reasonable ways as different from the original version; or
-
-    d) Limiting the use for publicity purposes of names of licensors or
-    authors of the material; or
-
-    e) Declining to grant rights under trademark law for use of some
-    trade names, trademarks, or service marks; or
-
-    f) Requiring indemnification of licensors and authors of that
-    material by anyone who conveys the material (or modified versions of
-    it) with contractual assumptions of liability to the recipient, for
-    any liability that these contractual assumptions directly impose on
-    those licensors and authors.
-
-  All other non-permissive additional terms are considered "further
-restrictions" within the meaning of section 10.  If the Program as you
-received it, or any part of it, contains a notice stating that it is
-governed by this License along with a term that is a further
-restriction, you may remove that term.  If a license document contains
-a further restriction but permits relicensing or conveying under this
-License, you may add to a covered work material governed by the terms
-of that license document, provided that the further restriction does
-not survive such relicensing or conveying.
-
-  If you add terms to a covered work in accord with this section, you
-must place, in the relevant source files, a statement of the
-additional terms that apply to those files, or a notice indicating
-where to find the applicable terms.
-
-  Additional terms, permissive or non-permissive, may be stated in the
-form of a separately written license, or stated as exceptions;
-the above requirements apply either way.
-
-  8. Termination.
-
-  You may not propagate or modify a covered work except as expressly
-provided under this License.  Any attempt otherwise to propagate or
-modify it is void, and will automatically terminate your rights under
-this License (including any patent licenses granted under the third
-paragraph of section 11).
-
-  However, if you cease all violation of this License, then your
-license from a particular copyright holder is reinstated (a)
-provisionally, unless and until the copyright holder explicitly and
-finally terminates your license, and (b) permanently, if the copyright
-holder fails to notify you of the violation by some reasonable means
-prior to 60 days after the cessation.
-
-  Moreover, your license from a particular copyright holder is
-reinstated permanently if the copyright holder notifies you of the
-violation by some reasonable means, this is the first time you have
-received notice of violation of this License (for any work) from that
-copyright holder, and you cure the violation prior to 30 days after
-your receipt of the notice.
-
-  Termination of your rights under this section does not terminate the
-licenses of parties who have received copies or rights from you under
-this License.  If your rights have been terminated and not permanently
-reinstated, you do not qualify to receive new licenses for the same
-material under section 10.
-
-  9. Acceptance Not Required for Having Copies.
-
-  You are not required to accept this License in order to receive or
-run a copy of the Program.  Ancillary propagation of a covered work
-occurring solely as a consequence of using peer-to-peer transmission
-to receive a copy likewise does not require acceptance.  However,
-nothing other than this License grants you permission to propagate or
-modify any covered work.  These actions infringe copyright if you do
-not accept this License.  Therefore, by modifying or propagating a
-covered work, you indicate your acceptance of this License to do so.
-
-  10. Automatic Licensing of Downstream Recipients.
-
-  Each time you convey a covered work, the recipient automatically
-receives a license from the original licensors, to run, modify and
-propagate that work, subject to this License.  You are not responsible
-for enforcing compliance by third parties with this License.
-
-  An "entity transaction" is a transaction transferring control of an
-organization, or substantially all assets of one, or subdividing an
-organization, or merging organizations.  If propagation of a covered
-work results from an entity transaction, each party to that
-transaction who receives a copy of the work also receives whatever
-licenses to the work the party's predecessor in interest had or could
-give under the previous paragraph, plus a right to possession of the
-Corresponding Source of the work from the predecessor in interest, if
-the predecessor has it or can get it with reasonable efforts.
-
-  You may not impose any further restrictions on the exercise of the
-rights granted or affirmed under this License.  For example, you may
-not impose a license fee, royalty, or other charge for exercise of
-rights granted under this License, and you may not initiate litigation
-(including a cross-claim or counterclaim in a lawsuit) alleging that
-any patent claim is infringed by making, using, selling, offering for
-sale, or importing the Program or any portion of it.
-
-  11. Patents.
-
-  A "contributor" is a copyright holder who authorizes use under this
-License of the Program or a work on which the Program is based.  The
-work thus licensed is called the contributor's "contributor version".
-
-  A contributor's "essential patent claims" are all patent claims
-owned or controlled by the contributor, whether already acquired or
-hereafter acquired, that would be infringed by some manner, permitted
-by this License, of making, using, or selling its contributor version,
-but do not include claims that would be infringed only as a
-consequence of further modification of the contributor version.  For
-purposes of this definition, "control" includes the right to grant
-patent sublicenses in a manner consistent with the requirements of
-this License.
-
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
-patent license under the contributor's essential patent claims, to
-make, use, sell, offer for sale, import and otherwise run, modify and
-propagate the contents of its contributor version.
-
-  In the following three paragraphs, a "patent license" is any express
-agreement or commitment, however denominated, not to enforce a patent
-(such as an express permission to practice a patent or covenant not to
-sue for patent infringement).  To "grant" such a patent license to a
-party means to make such an agreement or commitment not to enforce a
-patent against the party.
-
-  If you convey a covered work, knowingly relying on a patent license,
-and the Corresponding Source of the work is not available for anyone
-to copy, free of charge and under the terms of this License, through a
-publicly available network server or other readily accessible means,
-then you must either (1) cause the Corresponding Source to be so
-available, or (2) arrange to deprive yourself of the benefit of the
-patent license for this particular work, or (3) arrange, in a manner
-consistent with the requirements of this License, to extend the patent
-license to downstream recipients.  "Knowingly relying" means you have
-actual knowledge that, but for the patent license, your conveying the
-covered work in a country, or your recipient's use of the covered work
-in a country, would infringe one or more identifiable patents in that
-country that you have reason to believe are valid.
-
-  If, pursuant to or in connection with a single transaction or
-arrangement, you convey, or propagate by procuring conveyance of, a
-covered work, and grant a patent license to some of the parties
-receiving the covered work authorizing them to use, propagate, modify
-or convey a specific copy of the covered work, then the patent license
-you grant is automatically extended to all recipients of the covered
-work and works based on it.
-
-  A patent license is "discriminatory" if it does not include within
-the scope of its coverage, prohibits the exercise of, or is
-conditioned on the non-exercise of one or more of the rights that are
-specifically granted under this License.  You may not convey a covered
-work if you are a party to an arrangement with a third party that is
-in the business of distributing software, under which you make payment
-to the third party based on the extent of your activity of conveying
-the work, and under which the third party grants, to any of the
-parties who would receive the covered work from you, a discriminatory
-patent license (a) in connection with copies of the covered work
-conveyed by you (or copies made from those copies), or (b) primarily
-for and in connection with specific products or compilations that
-contain the covered work, unless you entered into that arrangement,
-or that patent license was granted, prior to 28 March 2007.
-
-  Nothing in this License shall be construed as excluding or limiting
-any implied license or other defenses to infringement that may
-otherwise be available to you under applicable patent law.
-
-  12. No Surrender of Others' Freedom.
-
-  If conditions are imposed on you (whether by court order, agreement or
-otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot convey a
-covered work so as to satisfy simultaneously your obligations under this
-License and any other pertinent obligations, then as a consequence you may
-not convey it at all.  For example, if you agree to terms that obligate you
-to collect a royalty for further conveying from those to whom you convey
-the Program, the only way you could satisfy both those terms and this
-License would be to refrain entirely from conveying the Program.
-
-  13. Use with the GNU Affero General Public License.
-
-  Notwithstanding any other provision of this License, you have
-permission to link or combine any covered work with a work licensed
-under version 3 of the GNU Affero General Public License into a single
-combined work, and to convey the resulting work.  The terms of this
-License will continue to apply to the part which is the covered work,
-but the special requirements of the GNU Affero General Public License,
-section 13, concerning interaction through a network will apply to the
-combination as such.
-
-  14. Revised Versions of this License.
-
-  The Free Software Foundation may publish revised and/or new versions of
-the GNU General Public License from time to time.  Such new versions will
-be similar in spirit to the present version, but may differ in detail to
-address new problems or concerns.
-
-  Each version is given a distinguishing version number.  If the
-Program specifies that a certain numbered version of the GNU General
-Public License "or any later version" applies to it, you have the
-option of following the terms and conditions either of that numbered
-version or of any later version published by the Free Software
-Foundation.  If the Program does not specify a version number of the
-GNU General Public License, you may choose any version ever published
-by the Free Software Foundation.
-
-  If the Program specifies that a proxy can decide which future
-versions of the GNU General Public License can be used, that proxy's
-public statement of acceptance of a version permanently authorizes you
-to choose that version for the Program.
-
-  Later license versions may give you additional or different
-permissions.  However, no additional obligations are imposed on any
-author or copyright holder as a result of your choosing to follow a
-later version.
-
-  15. Disclaimer of Warranty.
-
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
-HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-  16. Limitation of Liability.
-
-  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
-DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
-
-  17. Interpretation of Sections 15 and 16.
-
-  If the disclaimer of warranty and limitation of liability provided
-above cannot be given local legal effect according to their terms,
-reviewing courts shall apply local law that most closely approximates
-an absolute waiver of all civil liability in connection with the
-Program, unless a warranty or assumption of liability accompanies a
-copy of the Program in return for a fee.
-
-                     END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Programs
-
-  If you develop a new program, and you want it to be of the greatest
-possible use to the public, the best way to achieve this is to make it
-free software which everyone can redistribute and change under these terms.
-
-  To do so, attach the following notices to the program.  It is safest
-to attach them to the start of each source file to most effectively
-state the exclusion of warranty; and each file should have at least
-the "copyright" line and a pointer to where the full notice is found.
-
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-Also add information on how to contact you by electronic and paper mail.
-
-  If the program does terminal interaction, make it output a short
-notice like this when it starts in an interactive mode:
-
-    <program>  Copyright (C) <year>  <name of author>
-    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-    This is free software, and you are welcome to redistribute it
-    under certain conditions; type `show c' for details.
-
-The hypothetical commands `show w' and `show c' should show the appropriate
-parts of the General Public License.  Of course, your program's commands
-might be different; for a GUI interface, you would use an "about box".
-
-  You should also get your employer (if you work as a programmer) or school,
-if any, to sign a "copyright disclaimer" for the program, if necessary.
-For more information on this, and how to apply and follow the GNU GPL, see
-<https://www.gnu.org/licenses/>.
-
-  The GNU General Public License does not permit incorporating your program
-into proprietary programs.  If your program is a subroutine library, you
-may consider it more useful to permit linking proprietary applications with
-the library.  If this is what you want to do, use the GNU Lesser General
-Public License instead of this License.  But first, please read
-<https://www.gnu.org/licenses/why-not-lgpl.html>.
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#F6F4EF">
+<title>Cadence — emploi du temps par blocs</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+  :root{
+    --paper:#F6F4EF;
+    --surface:#FFFFFF;
+    --ink:#2A2822;
+    --ink-soft:#6E6A61;
+    --ink-faint:#9A9587;
+    --line:#DEDACF;
+    --line-light:#EAE7DE;
+    --accent:#3E5C50;
+    --accent-ink:#F6F4EF;
+    --accent-soft:#DCE6E0;
+    --danger:#A5473A;
+    --radius:7px;
+    --font-serif:Georgia,'Iowan Old Style','Noto Serif',serif;
+    --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --hour-h:64px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  button{
+    font-family:inherit;
+    cursor:pointer;
+  }
+  input,select{
+    font-family:inherit;
+  }
+  #app{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:12px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--font-serif);
+    font-size:22px;
+    letter-spacing:0.2px;
+    color:var(--ink);
+    margin-right:4px;
+  }
+  .view-toggle{
+    display:flex;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .view-toggle button{
+    border:none;
+    background:var(--surface);
+    padding:7px 14px;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .view-toggle button.active{
+    background:var(--accent);
+    color:var(--accent-ink);
+  }
+  .date-nav{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:1;
+    min-width:220px;
+  }
+  .date-nav button{
+    border:1px solid var(--line);
+    background:var(--surface);
+    border-radius:var(--radius);
+    width:30px;height:30px;
+    font-size:15px;
+    color:var(--ink-soft);
+  }
+  #todayBtn{
+    width:auto;
+    padding:0 10px;
+    font-size:13px;
+  }
+  #dateLabel{
+    font-size:15px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .actions button{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    border-radius:var(--radius);
+    padding:7px 12px;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .actions button svg{flex:none;}
+  .actions button:hover{border-color:var(--accent);}
+  #editModeBtn{font-weight:600;}
+  #editModeBtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  #editModeBtn:not(.active){color:var(--ink-soft);}
+  body:not(.edit-mode) .block{cursor:default;}
+  body:not(.edit-mode) .block:hover{filter:none;box-shadow:0 1px 2px rgba(42,40,34,.15);}
+  .edit-locked-note{font-size:11px;color:var(--ink-faint);margin-left:4px;}
+  #menuBtn{display:none;}
+  .help-btn{
+    width:30px;height:30px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    border-radius:50%;
+    font-weight:600;
+    font-size:14px;
+    line-height:28px;
+    padding:0;
+    cursor:pointer;
+    flex:none;
+  }
+  .help-btn:hover{color:var(--accent);border-color:var(--accent);}
+
+  /* ---------- Body layout ---------- */
+  .body{
+    display:flex;
+    flex:1;
+    min-height:0;
+  }
+  #sidebar{
+    width:270px;
+    flex:none;
+    border-right:1px solid var(--line);
+    background:var(--surface);
+    overflow-y:auto;
+    padding:14px;
+  }
+  .panel{margin-bottom:26px;}
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .panel-head h2{
+    font-family:var(--font-serif);
+    font-size:15px;
+    font-weight:normal;
+    margin:0;
+    color:var(--ink);
+  }
+  .panel-head button{
+    border:none;
+    background:none;
+    color:var(--accent);
+    font-size:13px;
+    padding:2px 4px;
+  }
+  .empty-hint{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    line-height:1.5;
+    padding:6px 2px;
+  }
+  ul.list{list-style:none;margin:0;padding:0;}
+  li.item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 6px;
+    border-radius:var(--radius);
+    margin-bottom:3px;
+  }
+  li.item:hover{background:var(--paper);}
+  li.item.armed{
+    background:var(--accent-soft);
+    outline:1px dashed var(--accent);
+  }
+  .dot{
+    width:11px;height:11px;
+    border-radius:3px;
+    flex:none;
+  }
+  .item-main{
+    flex:1;
+    min-width:0;
+    cursor:pointer;
+  }
+  .item-title{
+    font-size:13.5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .item-sub{
+    font-size:11.5px;
+    color:var(--ink-faint);
+  }
+  .item-edit{
+    border:none;
+    background:none;
+    color:var(--ink-faint);
+    font-size:14px;
+    padding:2px 4px;
+  }
+  .item-edit:hover{color:var(--accent);}
+  .item-drag{
+    flex:none;
+    color:var(--ink-faint);
+    cursor:grab;
+    font-size:15px;
+    letter-spacing:-3px;
+    width:14px;
+    user-select:none;
+  }
+  li.item.dragging{opacity:.45;}
+  li.item.drag-over{outline:1px dashed var(--accent);background:var(--accent-soft);}
+  @media (max-width:800px){
+    .item-drag{font-size:14px;}
+  }
+  .armed-note{
+    font-size:11.5px;
+    color:var(--accent);
+    padding:2px 6px 8px;
+  }
+
+  /* ---------- Navigation entre les espaces ---------- */
+  /* Navigation des volets principaux : visuellement distincte des vues du planning. */
+  .app-nav{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    padding:3px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--paper);
+    box-shadow:none;
+    overflow:hidden;
+  }
+  .app-nav button{
+    border:none;
+    border-radius:7px;
+    background:transparent;
+    color:var(--ink-soft);
+    padding:6px 11px;
+    font-size:12.5px;
+    white-space:nowrap;
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+  }
+  .app-nav button.active{
+    background:var(--surface);
+    color:var(--ink);
+    box-shadow:var(--shadow-sm);
+    font-weight:600;
+  }
+  .app-nav button:not(.active):hover{background:rgba(255,255,255,.55);color:var(--ink);}
+  .section-title{display:none;font-family:var(--font-serif);font-size:17px;font-weight:500;}
+  body.external-section .section-title{display:block;}
+  body.external-section #sidebar,body.external-section #menuBtn{display:none;}
+  .external-view{max-width:900px;margin:0 auto;}
+  .external-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    padding:22px;
+    margin-bottom:16px;
+  }
+  .external-card h1{font-family:var(--font-serif);font-size:24px;font-weight:500;margin:0 0 7px;}
+  .external-card p{margin:0;color:var(--ink-soft);line-height:1.55;}
+  .integration-status{display:flex;align-items:center;gap:10px;margin-top:18px;padding:12px 14px;background:var(--paper);border:1px solid var(--line-light);border-radius:6px;}
+  .integration-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none;}
+  .integration-status strong{font-size:13px;font-weight:600;}
+  .integration-status span{font-size:12px;color:var(--ink-soft);}
+  .external-note{font-size:12px!important;color:var(--ink-faint)!important;margin-top:12px!important;}
+
+  /* ---------- Todoist ---------- */
+  .todoist-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .todoist-toolbar .btn{min-height:36px;}
+  .todoist-filter{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--paper);}
+  .todoist-filter button{border:0;background:transparent;border-radius:6px;padding:6px 10px;color:var(--ink-soft);font-size:12px;cursor:pointer;}
+  .todoist-filter button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);font-weight:600;}
+  .todoist-list{display:flex;flex-direction:column;gap:7px;margin-top:16px;}
+  .todoist-task{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line-light);border-radius:7px;background:var(--paper);}
+  .todoist-task .task-priority{width:4px;min-height:30px;border-radius:4px;background:var(--ink-faint);flex:none;}
+  .todoist-task.p1 .task-priority{background:#d35b68}.todoist-task.p2 .task-priority{background:#df8c57}.todoist-task.p3 .task-priority{background:#d5b34c}
+  .todoist-task-main{min-width:0;flex:1;}
+  .todoist-task-title{font-size:13px;color:var(--ink);line-height:1.4;}
+  .todoist-task-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px;font-size:11px;color:var(--ink-soft);}
+  .todoist-task-link{font-size:11px;color:var(--ink-soft);text-decoration:none;flex:none;padding-top:2px;}
+  .todoist-task-link:hover{text-decoration:underline;color:var(--ink);}
+  .todoist-empty{padding:22px 10px;text-align:center;color:var(--ink-faint);font-size:13px;}
+  .todoist-error{margin-top:14px;padding:11px 13px;border:1px solid #e4c4c4;border-radius:7px;background:#fff8f8;color:#8a4c4c;font-size:12px;line-height:1.45;}
+  .todoist-loading{padding:20px;text-align:center;color:var(--ink-soft);font-size:12px;}
+  .todoist-connected{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:10px 12px;background:var(--paper);border:1px solid var(--line-light);border-radius:7px;}
+  .todoist-connected .status-dot{width:8px;height:8px;border-radius:50%;background:#72a879;display:inline-block;margin-right:7px;}
+  .todoist-connected span{font-size:12px;color:var(--ink-soft);}
+  @media (max-width:800px){.todoist-toolbar{align-items:stretch}.todoist-filter{flex:1}.todoist-filter button{flex:1}.todoist-connected{align-items:flex-start}}
+
+  /* ---------- Main / grid ---------- */
+  #main{
+    flex:1;
+    overflow:auto;
+    background:var(--paper);
+    padding:16px 20px 40px;
+  }
+  .schedule{
+    display:flex;
+    align-items:flex-start;
+  }
+  .schedule[hidden]{
+    display:none;
+  }
+  .time-axis{
+    flex:none;
+    width:52px;
+    padding-top:70px;
+    position:relative;
+  }
+  .time-axis .tick{
+    position:absolute;
+    left:0;right:8px;
+    text-align:right;
+    font-size:11px;
+    color:var(--ink-faint);
+    transform:translateY(-6px);
+  }
+  .columns{
+    display:flex;
+    flex:1;
+    min-width:0;
+    overflow-x:auto;
+    gap:10px;
+  }
+  .day-col-wrap{
+    flex:1 1 0;
+    min-width:0;
+    max-width:100%;
+  }
+  #dayView .day-col-wrap{min-width:0;max-width:640px;margin:0 auto;width:100%;}
+  .col-head{
+    height:70px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    padding-top:6px;
+    margin-bottom:6px;
+  }
+  .col-head .wd{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .col-head .dt{
+    font-size:11px;
+    color:var(--ink-faint);
+  }
+  .col-head .day-actions{display:flex;gap:4px;align-items:center;margin-top:3px;}
+  .col-head select.template-select{
+    margin-top:3px;
+    font-size:11px;
+    padding:2px 3px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:var(--surface);
+    color:var(--ink-soft);
+    max-width:100%;
+  }
+  .halfday-add{
+    border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);
+    border-radius:5px;font-size:13px;line-height:1;padding:4px 7px;flex:none;
+  }
+  .halfday-add:hover{color:var(--accent);border-color:var(--accent);}
+  .halfday-summary{font-size:10.5px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .halfday-chip{display:inline-block;margin-right:4px;}
+
+  .grid-column{
+    position:relative;
+    min-width:0;
+    width:100%;
+    box-sizing:border-box;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(var(--line-light) 1px, transparent 1px);
+    background-size:100% var(--hour-h), 100% calc(var(--hour-h) / 2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background-color:var(--surface);
+    touch-action:none;
+  }
+  .ghost{
+    position:absolute;
+    left:3px;right:3px;
+    background:var(--accent-soft);
+    border:1.5px dashed var(--accent);
+    border-radius:5px;
+    pointer-events:none;
+  }
+  .block{
+    position:absolute;
+    left:3px;right:3px;
+    box-sizing:border-box;
+    border-radius:5px;
+    padding:4px 6px;
+    overflow:hidden;
+    color:#fff;
+    font-size:11.5px;
+    line-height:1.3;
+    box-shadow:0 1px 2px rgba(0,0,0,.15);
+    cursor:grab;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .block .b-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .block .b-time{opacity:.85;font-size:10.5px;}
+  .block .b-tag{
+    display:inline-block;
+    margin-top:2px;
+    font-size:10px;
+    background:rgba(42,40,34,.10);
+    padding:0 5px;
+    border-radius:8px;
+  }
+  .resize-handle{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:7px;
+    cursor:ns-resize;
+  }
+
+  /* ---------- Help tutorial ---------- */
+  .help-modal{
+    background:var(--surface);
+    border-radius:10px;
+    width:100%;
+    max-width:560px;
+    max-height:88vh;
+    overflow-y:auto;
+    padding:22px;
+  }
+  .help-hero{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:16px;
+  }
+  .help-icon{
+    width:38px;height:38px;
+    flex:none;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-size:18px;
+  }
+  .help-hero h3{
+    font-family:var(--font-serif);
+    font-weight:normal;
+    font-size:21px;
+    margin:0 0 3px;
+  }
+  .help-hero p{margin:0;color:var(--ink-soft);font-size:12.5px;}
+  .help-steps{display:flex;flex-direction:column;gap:12px;}
+  .help-step{display:flex;gap:11px;align-items:flex-start;}
+  .help-step>span{
+    width:23px;height:23px;flex:none;
+    border:1px solid var(--line);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;color:var(--accent);
+    margin-top:1px;
+  }
+  .help-step strong{font-size:13px;color:var(--ink);}
+  .help-step p{margin:2px 0 0;font-size:12px;line-height:1.45;color:var(--ink-soft);}
+  .help-tip{
+    margin-top:17px;
+    padding:10px 12px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:7px;
+    display:flex;gap:8px;
+    font-size:11.5px;line-height:1.45;color:var(--ink-soft);
+  }
+  .help-tip strong{color:var(--ink);white-space:nowrap;}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;
+    background:rgba(30,28,22,.35);
+    display:flex;align-items:center;justify-content:center;
+    z-index:100;
+    padding:16px;
+    overscroll-behavior:contain;
+  }
+  .modal{
+    background:var(--surface);
+    border-radius:10px;
+    width:100%;
+    max-width:420px;
+    max-height:90vh;
+    overflow-y:auto;
+    padding:20px 22px;
+    overscroll-behavior:contain;
+  }
+  .modal.wide{max-width:640px;}
+  .modal h3{
+    font-family:var(--font-serif);
+    font-weight:normal;
+    font-size:19px;
+    margin:0 0 16px;
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .field input[type=text],
+  .field input[type=time],
+  .field input[type=number]{
+    width:100%;
+    padding:8px 9px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--paper);
+  }
+  .row-2{display:flex;gap:12px;}
+  .row-2 .field{flex:1;}
+  .swatches{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+  .swatch{
+    width:26px;height:26px;
+    border-radius:6px;
+    border:2px solid transparent;
+    cursor:pointer;
+  }
+  .swatch.selected{border-color:var(--ink);}
+  .swatch.custom{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper);
+    border:1px dashed var(--ink-faint);
+    font-size:14px;
+    color:var(--ink-faint);
+    position:relative;
+    overflow:hidden;
+  }
+  .swatch.custom input{
+    position:absolute;inset:0;
+    opacity:0;cursor:pointer;
+  }
+  .checkbox-field{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .modal-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:18px;
+    gap:10px;
+  }
+  .modal-actions .left{display:flex;gap:8px;}
+  .btn{
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:6px;
+    padding:8px 15px;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:background .12s ease,border-color .12s ease,color .12s ease,transform .06s ease;
+  }
+  .btn:hover{background:var(--paper);border-color:var(--ink-faint);}
+  .btn:active{transform:translateY(1px);}
+  .btn:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .btn.danger{background:none;border:none;color:var(--danger);padding:8px 4px;}
+
+  /* template editor embedded schedule */
+  .tmpl-editor-wrap{
+    display:flex;
+    margin-top:6px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .tmpl-editor-wrap .time-axis{padding-top:8px;width:44px;}
+  .tmpl-editor-wrap .grid-column{border:none;border-radius:0;border-left:1px solid var(--line);}
+  .tmpl-scroll{max-height:50vh;overflow-y:auto;flex:1;display:flex;}
+
+  /* ---------- Sidebar collapsible sections ---------- */
+  .panel-head{cursor:pointer;}
+  .panel-head .panel-toggle{
+    border:none;background:none;color:var(--ink-faint);font-size:12px;padding:2px 4px;
+    width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .panel-head .panel-title-wrap{display:flex;align-items:center;gap:4px;min-width:0;}
+  .panel.collapsed .panel-head{margin-bottom:0;}
+  .panel.collapsed .panel-content{display:none;}
+  .panel-toggle .chevron{display:inline-block;transition:transform .15s ease;}
+  .panel.collapsed .panel-toggle .chevron{transform:rotate(-90deg);}
+  .tag-group{margin:0 0 8px;}
+  .tag-group-head{
+    display:flex;align-items:center;gap:4px;width:100%;border:none;background:none;
+    padding:4px 4px;color:var(--ink-soft);font-size:11.5px;text-align:left;cursor:pointer;
+  }
+  .tag-group-head .chevron{font-size:10px;color:var(--ink-faint);transition:transform .15s ease;}
+  .tag-group.collapsed .tag-group-head .chevron{transform:rotate(-90deg);}
+  .tag-group.collapsed .tag-group-list{display:none;}
+  .tag-group-head .tag-count{margin-left:auto;color:var(--ink-faint);font-size:10.5px;}
+  .saved-block-drag-hint{font-size:10.5px;color:var(--ink-faint);padding:0 4px 5px;}
+  li.item.drag-over{outline:1px dashed var(--accent);background:var(--accent-soft);}
+
+  /* ---------- Half-day templates overview ---------- */
+  #halfDayTemplatesView .col-head .wd{font-size:14px;}
+  #halfDayTemplatesView .col-head .dt{font-size:11.5px;}
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:800px){
+    #sidebar{
+      position:fixed;
+      top:calc(var(--mobile-topbar-offset, 0px) + 2px);bottom:0;left:0;
+      height:calc(100vh - var(--mobile-topbar-offset, 0px));
+      transform:translateX(-100%);
+      transition:transform .18s ease;
+      z-index:80;
+      box-shadow:2px 0 12px rgba(0,0,0,.15);
+    }
+    #sidebar.open{transform:translateX(0);}
+    #menuBtn{display:inline-block;}
+    .help-btn{width:28px;height:28px;line-height:26px;font-size:13px;}
+    .brand{font-size:19px;}
+    #dateLabel{font-size:13.5px;}
+    .actions button span.lbl{display:none;}
+    .topbar button{min-width:30px;min-height:30px;}
+    .btn{min-height:36px;padding:8px 13px;}
+    #main{padding:12px 8px 20px;}
+    /* Barre des volets : véritable barre de navigation de l'application.
+       Elle occupe sa propre ligne en bas du layout : elle ne flotte donc
+       jamais au-dessus du contenu ni du menu latéral sur Android. */
+    .app-nav{
+      position:static;
+      order:3;
+      flex:none;
+      width:100%;
+      box-sizing:border-box;
+      display:flex;
+      justify-content:stretch;
+      gap:0;
+      padding:4px 4px calc(4px + env(safe-area-inset-bottom));
+      border:0;
+      border-top:1px solid var(--line);
+      border-radius:0;
+      background:var(--surface);
+      box-shadow:0 -2px 8px rgba(42,40,34,.06);
+      z-index:40;
+    }
+    .app-nav button{flex:1;min-height:50px;padding:7px 5px;font-size:11.5px;}
+    .topbar{backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .section-title{display:block;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .external-view{padding:4px 2px 18px;}
+    .external-card{padding:18px 16px;}
+    .external-card h1{font-size:21px;}
+    body.external-section #main{padding-bottom:20px;}
+    .topbar{position:sticky;top:0;z-index:90;gap:7px;padding:8px 8px;transition:padding .18s ease,gap .18s ease;}
+    .topbar.compact{padding:4px 8px;gap:5px;}
+    .topbar.compact .brand{font-size:16px;}
+    .topbar.compact .view-toggle button{padding:4px 8px;font-size:12px;}
+    .topbar.compact .date-nav{min-width:150px;}
+    .topbar.compact .date-nav button{width:26px;height:26px;font-size:13px;}
+    .topbar.compact #dateLabel{font-size:12px;}
+    .topbar.compact .actions{gap:4px;}
+    .topbar.compact .actions button{padding:4px 7px;}
+    .view-toggle{flex:none;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+    .view-toggle::-webkit-scrollbar{display:none;}
+    .view-toggle button{min-width:58px;min-height:38px;padding:8px 10px;font-size:13px;white-space:nowrap;}
+    .date-nav{min-width:0;flex:1 1 auto;gap:5px;}
+    .date-nav button{width:38px;height:38px;min-width:38px;font-size:20px;flex:none;}
+    #todayBtn{width:auto;min-width:78px;padding:0 9px;font-size:12px;}
+    .topbar .actions{flex:none;gap:5px;}
+    .topbar .actions button{width:38px;height:38px;min-width:38px;min-height:38px;padding:0;justify-content:center;}
+    .col-head{height:78px;padding-top:4px;}
+    .col-head .wd{font-size:12px;}
+    .col-head .dt{font-size:10.5px;margin-top:1px;}
+    .col-head .day-actions{margin-top:5px;width:100%;}
+    .col-head select.template-select{margin-top:0;flex:1;min-width:0;width:auto;font-size:10.5px;padding:3px;}
+    .halfday-add{padding:4px 7px;}
+    .time-axis{padding-top:78px;}
+    .columns{gap:7px;overflow-x:auto;overflow-y:visible;padding-bottom:8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin;}
+    .day-col-wrap{min-width:124px;max-width:124px;scroll-snap-align:start;}
+    #dayView .day-col-wrap{min-width:0;max-width:640px;width:100%;}
+    #weekView .day-col-wrap{flex:0 0 124px;}
+    #weekView .columns{padding-right:16px;}
+    .schedule{min-width:0;}
+    .time-axis{width:46px;}
+    .modal-backdrop{padding:10px;}
+    .modal{max-height:92vh;padding:18px 16px;border-radius:9px;}
+    .help-modal{max-height:92vh;padding:18px 16px;}
+    .row-2{gap:8px;}
+  }
+
+  /* ---------- App / webapp polish ---------- */
+  :root{
+    --shadow-sm:0 1px 2px rgba(42,40,34,.05);
+    --shadow-md:0 4px 14px rgba(42,40,34,.07);
+  }
+  body{overflow:hidden;}
+  #app{background:var(--paper);}
+  .topbar{
+    position:relative;
+    z-index:50;
+    min-height:58px;
+    box-shadow:0 1px 0 rgba(42,40,34,.03);
+    backdrop-filter:saturate(120%) blur(8px);
+  }
+  .brand{font-weight:500;}
+  .view-toggle{box-shadow:var(--shadow-sm);}
+  .view-toggle button{transition:background .15s ease,color .15s ease;}
+  .view-toggle button:not(.active):hover{background:var(--paper);color:var(--ink);}
+  .date-nav button,.actions button,.help-btn,#menuBtn{
+    transition:background .15s ease,border-color .15s ease,color .15s ease,transform .06s ease;
+  }
+  .date-nav button:hover,.actions button:hover,.help-btn:hover,#menuBtn:hover{
+    background:var(--paper);
+  }
+  .date-nav button:active,.actions button:active,.help-btn:active,#menuBtn:active{transform:translateY(1px);}
+  .body{min-height:0;}
+  #sidebar{
+    box-shadow:1px 0 0 rgba(42,40,34,.02);
+    scrollbar-width:thin;
+  }
+  #sidebar::-webkit-scrollbar,#main::-webkit-scrollbar{width:8px;height:8px;}
+  #sidebar::-webkit-scrollbar-thumb,#main::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px;}
+  #sidebar::-webkit-scrollbar-track,#main::-webkit-scrollbar-track{background:transparent;}
+  .panel{margin-bottom:20px;padding-bottom:2px;}
+  .panel-head{padding:3px 2px;border-radius:6px;}
+  .panel-head:hover{background:var(--paper);}
+  .panel-head h2{font-size:14px;}
+  li.item{min-height:38px;transition:background .12s ease,transform .08s ease;}
+  li.item:hover{transform:translateX(1px);}
+  .item-edit{width:28px;height:28px;border-radius:6px;}
+  .item-edit:hover{background:var(--surface);}
+  #main{scroll-behavior:smooth;}
+  .schedule{width:100%;}
+  .schedule > div{min-width:0;}
+  .columns{padding:0 2px 8px 0;}
+  .day-col-wrap{min-width:0;}
+  .col-head{position:relative;}
+  .col-head .wd{letter-spacing:.1px;}
+  .grid-column{
+    box-shadow:var(--shadow-sm);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .block{
+    transition:filter .12s ease,box-shadow .12s ease,transform .08s ease;
+    user-select:none;
+  }
+  .block:hover{
+    filter:saturate(1.04) brightness(1.02);
+    box-shadow:0 2px 5px rgba(42,40,34,.18);
+    z-index:25;
+  }
+  .block:active{transform:scale(.998);}
+  .ghost{z-index:24;}
+  .current-time-overlay{z-index:30;}
+  .modal-backdrop{backdrop-filter:blur(3px);}
+  .modal,.help-modal{box-shadow:0 14px 40px rgba(30,28,22,.16);}
+  .btn.primary{box-shadow:0 1px 2px rgba(42,40,34,.12);}
+
+  @media (min-width:801px){
+    /* Sur grand écran, on conserve l'aspect de la V1.0 : la navigation des
+       volets reste visuellement dans le bandeau supérieur. */
+    .app-nav{
+      position:absolute;
+      top:12px;
+      right:18px;
+      flex:none;
+    }
+    .app-nav button{padding:6px 10px;}
+    .external-view{padding-top:4px;}
+    .topbar{position:sticky;top:0;}
+    #main{padding:18px 24px 44px;}
+    #sidebar{width:276px;padding:16px 14px;}
+    .schedule{max-width:1600px;margin:0 auto;}
+    .day-col-wrap{min-width:0;}
+    #dayView .day-col-wrap{max-width:720px;}
+    .columns{gap:12px;}
+  }
+
+  @media (max-width:800px){
+    body{overflow:hidden;}
+    #main{overscroll-behavior-x:none;}
+    .topbar{box-shadow:0 2px 8px rgba(42,40,34,.06);}
+    .columns{padding-left:1px;padding-right:17px;}
+    .grid-column{box-shadow:0 1px 3px rgba(42,40,34,.08);}
+    .block{font-size:11px;padding:5px 6px;}
+    .block .b-time{font-size:10px;}
+    .block .b-tag{font-size:9.5px;}
+    .modal,.help-modal{box-shadow:0 10px 30px rgba(30,28,22,.18);}
+  }
+
+  /* ---------- Current-time indicator ---------- */
+  .current-time-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:20;
+  }
+  .elapsed-shade{
+    position:absolute;
+    left:0; right:0; top:0;
+    background:rgba(42,40,34,.075);
+  }
+  .current-time-line{
+    position:absolute;
+    left:-1px; right:-1px;
+    height:2px;
+    background:#C94A43;
+    box-shadow:0 0 0 1px rgba(201,74,67,.08);
+  }
+  .current-time-line::before{
+    content:'';
+    position:absolute;
+    left:-4px; top:50%;
+    width:8px; height:8px;
+    transform:translateY(-50%);
+    border-radius:50%;
+    background:#C94A43;
+  }
+  .col-head.is-today{
+    box-shadow:inset 0 -2px 0 #C94A43;
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    .current-time-overlay{display:none !important;}
+    .col-head.is-today{box-shadow:none !important;}
+    .topbar, #sidebar, #menuBtn, #sidebarOverlay, .app-nav{display:none !important;}
+    #main{overflow:visible;padding:0;}
+    #app,.body{display:block;height:auto;}
+    .columns{overflow:visible;}
+    .print-title{
+      display:block !important;
+      font-family:var(--font-serif);
+      font-size:20px;
+      margin:0 0 14px;
+    }
+    @page{size:landscape;margin:10mm;}
+  }
+  .print-title{display:none;}
+</style>
+  <!-- Configuration PWA -->
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">Cadence</div>
+    <button id="menuBtn">☰</button>
+    <button id="helpBtn" class="help-btn" title="Aide et tutoriel" aria-label="Aide et tutoriel">?</button>
+    <div class="section-title" id="sectionTitle"></div>
+    <div class="cadence-controls" id="cadenceControls" style="display:flex;align-items:center;gap:18px;flex:1;flex-wrap:wrap;">
+      <nav class="view-toggle">
+        <button data-view="week" class="active">Semaine</button>
+        <button data-view="day">Jour</button>
+        <button data-view="templates">Journées</button>
+        <button data-view="halfday-templates">½ journées</button>
+      </nav>
+      <div class="date-nav">
+        <button id="prevBtn">‹</button>
+        <div id="dateLabel"></div>
+        <button id="nextBtn">›</button>
+        <button id="todayBtn">Aujourd'hui</button>
+      </div>
+    </div>
+    <div class="actions cadence-controls" id="cadenceActions">
+      <button id="editModeBtn" title="Activer le mode édition" aria-label="Activer le mode édition" aria-pressed="false"><span class="edit-icon">✎</span> <span class="lbl">Modifier</span></button>
+      <button id="printBtn" title="Imprimer / Enregistrer en PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span class="lbl">Imprimer / PDF</span></button>
+      <button id="exportBtn" title="Exporter les données en JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg> <span class="lbl">Exporter</span></button>
+      <button id="importBtn" title="Importer des données JSON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 21V9"></path><polyline points="7 14 12 9 17 14"></polyline><path d="M5 3h14"></path></svg> <span class="lbl">Importer</span></button>
+      <input type="file" id="importFile" hidden accept="application/json">
+    </div>
+  </header>
+
+  <div class="body">
+    <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:70;"></div>
+    <aside id="sidebar">
+      <section class="panel" id="templatePanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Journées type</h2></div><button id="newTemplateBtn">+ Nouveau</button></div>
+        <div class="panel-content"><ul class="list" id="templateList"></ul>
+        <div class="empty-hint" id="templateEmptyHint">Aucune journée type pour l'instant. Créez-en une (ex. « journée de travail ») pour l'appliquer à n'importe quel jour.</div></div>
+      </section>
+      <section class="panel" id="halfDayPanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Demi-journées types</h2></div><button id="newHalfDayBtn">+ Nouveau</button></div>
+        <div class="panel-content"><ul class="list" id="halfDayList"></ul>
+        <div class="empty-hint" id="halfDayEmptyHint">Aucune demi-journée type. Créez-en une (ex. « Soirée AMHE ») pour l’appliquer à une plage de la journée.</div></div>
+      </section>
+      <section class="panel" id="savedBlockPanel">
+        <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Blocs enregistrés</h2></div><button id="newSavedBlockBtn">+ Nouveau</button></div>
+        <div class="panel-content"><div class="armed-note" id="armedNote" style="display:none;">Bloc sélectionné : touchez la grille pour le placer.</div>
+        <div class="saved-block-drag-hint">Glissez-déposez les blocs pour les réorganiser au sein de leur étiquette.</div>
+        <div id="savedBlockList"></div>
+        <div class="empty-hint" id="savedEmptyHint">Aucun bloc enregistré. Enregistrez ici vos activités récurrentes pour les replacer en un clic.</div></div>
+      </section>
+    </aside>
+
+    <main id="main">
+      <div class="print-title" id="printTitle"></div>
+      <div id="weekView" class="schedule"></div>
+      <div id="dayView" class="schedule" hidden></div>
+      <div id="templatesView" class="schedule" hidden></div>
+      <div id="halfDayTemplatesView" class="schedule" hidden></div>
+
+      <section id="tasksView" class="external-view" hidden aria-labelledby="tasksTitle">
+        <div class="external-card">
+          <h1 id="tasksTitle">Tâches</h1>
+          <p>Vos tâches Todoist, directement dans Cadence.</p>
+          <div id="todoistContent"></div>
+        </div>
+      </section>
+      <section id="calendarView" class="external-view" hidden aria-labelledby="calendarTitle">
+        <div class="external-card">
+          <h1 id="calendarTitle">Agenda</h1>
+          <p>Un espace pour afficher vos événements Google Calendar aux côtés de votre emploi du temps.</p>
+          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Connexion disponible à l’étape suivante.</span></div></div>
+          <p class="external-note">V1.0 — aucune connexion Google n’est effectuée à ce stade.</p>
+        </div>
+      </section>
+      <section id="moreView" class="external-view" hidden aria-labelledby="moreTitle">
+        <div class="external-card">
+          <h1 id="moreTitle">Plus</h1>
+          <p>Les réglages et connexions de Cadence trouveront ici leur place.</p>
+        </div>
+        <div class="external-card">
+          <div class="integration-status" style="margin-top:0"><span class="dot"></span><div><strong>Todoist</strong><br><span>Non connecté — intégration à venir.</span></div></div>
+          <div class="integration-status"><span class="dot"></span><div><strong>Google Calendar</strong><br><span>Non connecté — intégration à venir.</span></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="app-nav" id="appNav" aria-label="Espaces de Cadence">
+    <button data-section="cadence" class="active">Cadence</button>
+    <button data-section="tasks">Tâches</button>
+    <button data-section="calendar">Agenda</button>
+    <button data-section="more">Plus</button>
+  </nav>
+</div>
+
+<div id="modalRoot"></div>
+
+<script src="integrations/todoist.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ============ constants ============ */
+const PX_PER_MIN = 64/60; // matches --hour-h:64px
+const BLOCK_GAP = 3; // px — purely visual inset between adjacent blocks, never affects start/end minutes
+const DAY_START = 6*60;   // 06:00
+const DAY_END   = 23*60;  // 23:00
+const PALETTE = ['#F3B6C8','#F2A6A0','#F6C29A','#F4D77D','#B9D99A','#9FD3B6','#9FD8D2','#A9CBEF','#AEB9E8','#C5B1E8','#D7B5D8','#D9B99B'];
+const WEEKDAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const STORE_KEY = 'cadence-data-v1';
+
+/* ============ utils ============ */
+function pad(n){return n.toString().padStart(2,'0');}
+function minToPx(m){return m*PX_PER_MIN;}
+function pxToMin(px){return px/PX_PER_MIN;}
+function snap(min,step=5){return Math.round(min/step)*step;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function minToTimeStr(min){return pad(Math.floor(min/60))+':'+pad(min%60);}
+function timeStrToMin(str){const p=str.split(':').map(Number);return p[0]*60+p[1];}
+function dateKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function startOfWeek(d){const date=new Date(d);const day=(date.getDay()+6)%7;date.setDate(date.getDate()-day);date.setHours(0,0,0,0);return date;}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
+function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+
+/* ============ state ============ */
+function defaultState(){
+  return {version:1, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}};
+}
+function normalizeState(data){
+  const base=defaultState();
+  if(!data || typeof data!=='object' || Array.isArray(data)) return base;
+  const out=Object.assign(base,data);
+  out.version=1;
+  out.savedBlocks=Array.isArray(out.savedBlocks)?out.savedBlocks:[];
+  out.templates=Array.isArray(out.templates)?out.templates:[];
+  out.halfDayTemplates=Array.isArray(out.halfDayTemplates)?out.halfDayTemplates:[];
+  out.days=(out.days && typeof out.days==='object' && !Array.isArray(out.days))?out.days:{};
+  const validBlock=b=>{
+    if(!b || typeof b!=='object') return false;
+    const st=Number(b.start), en=Number(b.end);
+    return Number.isFinite(st) && Number.isFinite(en) && st>=DAY_START && en<=DAY_END && en>st;
+  };
+  out.savedBlocks=out.savedBlocks.filter(b=>b && typeof b==='object');
+  out.templates=out.templates.filter(t=>t && typeof t==='object').map(t=>Object.assign({},t,{blocks:Array.isArray(t.blocks)?t.blocks.filter(validBlock):[]}));
+  out.halfDayTemplates=out.halfDayTemplates.filter(h=>h && typeof h==='object').map(h=>Object.assign({},h,{blocks:Array.isArray(h.blocks)?h.blocks.filter(validBlock):[]}));
+  Object.keys(out.days).forEach(k=>{
+    const d=out.days[k];
+    if(!d || typeof d!=='object' || Array.isArray(d)) out.days[k]={templateId:null,blocks:[]};
+    else {
+      d.templateId=d.templateId==null?null:d.templateId;
+      d.blocks=Array.isArray(d.blocks)?d.blocks.filter(validBlock):[];
+      if(Array.isArray(d.appliedHalfDays)) d.appliedHalfDays=d.appliedHalfDays.filter(h=>h&&typeof h==='object');
+    }
+  });
+  return out;
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultState();
+    return normalizeState(JSON.parse(raw));
+  }catch(e){ console.error('Lecture des données impossible', e); return defaultState(); }
+}
+let STATE = loadState();
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }
+  catch(e){ console.error('Enregistrement des données impossible', e); }
+}
+function getDay(key){
+  if(!STATE.days[key]) STATE.days[key] = {templateId:null, blocks:[]};
+  return STATE.days[key];
+}
+
+/* ============ view state ============ */
+let appSection = 'cadence';
+let currentView = 'week';
+let refDate = new Date(); refDate.setHours(0,0,0,0);
+let armedSavedBlockId = null;
+let editMode = false; // Le planning est en lecture seule par défaut.
+
+/* ============ DOM refs ============ */
+const weekViewEl = document.getElementById('weekView');
+const dayViewEl = document.getElementById('dayView');
+const templatesViewEl = document.getElementById('templatesView');
+const halfDayTemplatesViewEl = document.getElementById('halfDayTemplatesView');
+const tasksViewEl = document.getElementById('tasksView');
+const calendarViewEl = document.getElementById('calendarView');
+const moreViewEl = document.getElementById('moreView');
+const todoistContentEl = document.getElementById('todoistContent');
+let todoistTasks = [];
+let todoistLoaded = false;
+let todoistFilter = 'today';
+const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
+const sectionTitleEl = document.getElementById('sectionTitle');
+const dateLabelEl = document.getElementById('dateLabel');
+const printTitleEl = document.getElementById('printTitle');
+const templateListEl = document.getElementById('templateList');
+const savedBlockListEl = document.getElementById('savedBlockList');
+const halfDayListEl = document.getElementById('halfDayList');
+const sidebarEl = document.getElementById('sidebar');
+const armedNoteEl = document.getElementById('armedNote');
+  const topbarEl = document.querySelector('.topbar');
+  const mainEl = document.getElementById('main');
+  function updateTopbarOnScroll(){
+    const isMobile = window.matchMedia('(max-width:800px)').matches;
+    const compact = isMobile && mainEl.scrollTop > 24;
+    topbarEl.classList.toggle('compact', compact);
+    if(isMobile){
+      document.documentElement.style.setProperty('--mobile-topbar-offset', Math.ceil(topbarEl.getBoundingClientRect().bottom) + 'px');
+    }else{
+      document.documentElement.style.removeProperty('--mobile-topbar-offset');
+    }
+  }
+  mainEl.addEventListener('scroll', updateTopbarOnScroll, {passive:true});
+  window.addEventListener('resize', updateTopbarOnScroll);
+  topbarEl.addEventListener('transitionend', updateTopbarOnScroll);
+  requestAnimationFrame(updateTopbarOnScroll);
+
+/* ============ mode édition ============ */
+function setEditMode(enabled){
+  editMode = !!enabled;
+  if(!editMode) armedSavedBlockId = null;
+  document.body.classList.toggle('edit-mode', editMode);
+  const importBtn = document.getElementById('importBtn');
+  if(importBtn){ importBtn.disabled = !editMode; importBtn.title = editMode ? 'Importer des données JSON' : 'Activez le mode édition pour importer des données'; }
+  const btn = document.getElementById('editModeBtn');
+  if(btn){
+    btn.classList.toggle('active', editMode);
+    btn.setAttribute('aria-pressed', String(editMode));
+    btn.title = editMode ? 'Désactiver le mode édition' : 'Activer le mode édition';
+    btn.querySelector('.edit-icon').textContent = editMode ? '✓' : '✎';
+    const label = btn.querySelector('.lbl');
+    if(label) label.textContent = editMode ? 'Édition' : 'Modifier';
+  }
+  renderApp();
+}
+
+/* ============ navigation entre espaces ============ */
+document.querySelectorAll('#appNav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    appSection = btn.dataset.section;
+    document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderApp();
+  });
+});
+
+/* ============ header controls ============ */
+document.querySelectorAll('.view-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentView = btn.dataset.view;
+    document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderApp();
+  });
+});
+document.getElementById('editModeBtn').addEventListener('click', ()=>setEditMode(!editMode));
+document.getElementById('prevBtn').addEventListener('click', ()=>{ nav(-1); });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ nav(1); });
+document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); });
+function nav(dir){
+  if(appSection!=='cadence') return;
+  refDate = currentView==='day' ? addDays(refDate,dir) : addDays(refDate, dir*7);
+  renderApp();
+}
+
+// Navigation clavier : les flèches changent la journée / semaine sans gêner les champs de formulaire.
+document.addEventListener('keydown',e=>{
+  if(modalRoot.firstElementChild) return;
+  const tag=(document.activeElement && document.activeElement.tagName)||'';
+  if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+  if(e.key==='ArrowLeft'){ e.preventDefault(); nav(-1); }
+  else if(e.key==='ArrowRight'){ e.preventDefault(); nav(1); }
+  else if(e.key==='Home'){ e.preventDefault(); refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); }
+  else if(e.key==='Escape' && sidebarEl.classList.contains('open')) closeSidebar();
+});
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  sidebarEl.classList.add('open');
+  document.getElementById('sidebarOverlay').style.display='block';
+});
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+function closeSidebar(){
+  sidebarEl.classList.remove('open');
+  document.getElementById('sidebarOverlay').style.display='none';
+}
+
+// Sur téléphone, un balayage horizontal sur la grille permet de passer rapidement à la semaine suivante/précédente.
+let weekTouchStartX=null, weekTouchStartY=null;
+weekViewEl.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1) return;
+  weekTouchStartX=e.touches[0].clientX;
+  weekTouchStartY=e.touches[0].clientY;
+},{passive:true});
+weekViewEl.addEventListener('touchend',e=>{
+  if(weekTouchStartX===null || e.changedTouches.length!==1) return;
+  const dx=e.changedTouches[0].clientX-weekTouchStartX;
+  const dy=e.changedTouches[0].clientY-weekTouchStartY;
+  weekTouchStartX=weekTouchStartY=null;
+  if(Math.abs(dx)<80 || Math.abs(dx)<Math.abs(dy)*1.35) return;
+  const target=e.target.closest('button,select,input,a');
+  if(target) return;
+  nav(dx<0?1:-1);
+},{passive:true});
+document.getElementById('printBtn').addEventListener('click', ()=>{ window.print(); });
+document.getElementById('exportBtn').addEventListener('click', exportData);
+document.getElementById('importBtn').addEventListener('click', ()=>{ if(editMode) document.getElementById('importFile').click(); });
+document.getElementById('importFile').addEventListener('change', importData);
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(STATE,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cadence-'+dateKey(new Date())+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      const normalized = normalizeState(data);
+      if(!confirm('Remplacer toutes les données actuelles par celles de ce fichier ?')) return;
+      STATE = normalized;
+      saveState();
+      renderApp();
+    }catch(err){ alert('Ce fichier ne peut pas être lu (JSON invalide ou structure incompatible).'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* ============ date label ============ */
+function fmtLong(d){ return d.toLocaleDateString('fr-FR',{weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
+function fmtShort(d){ return d.toLocaleDateString('fr-FR',{day:'numeric', month:'short'}); }
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function updateDateLabel(){
+  const dateNavBtns = [document.getElementById('prevBtn'), document.getElementById('nextBtn'), document.getElementById('todayBtn')];
+  if(currentView==='templates' || currentView==='halfday-templates'){
+    dateNavBtns.forEach(b=>b.style.visibility='hidden');
+    dateLabelEl.textContent = currentView==='templates' ? 'Toutes les journées type' : 'Toutes les demi-journées type';
+    printTitleEl.textContent = currentView==='templates' ? 'Journées type' : 'Demi-journées type';
+    return;
+  }
+  dateNavBtns.forEach(b=>b.style.visibility='');
+  if(currentView==='day'){
+    const label = capitalize(fmtLong(refDate));
+    dateLabelEl.textContent = label;
+    printTitleEl.textContent = label;
+  }else{
+    const start = startOfWeek(refDate);
+    const end = addDays(start,6);
+    const label = 'Semaine du '+fmtShort(start)+' au '+fmtShort(end)+' '+end.getFullYear();
+    dateLabelEl.textContent = label;
+    printTitleEl.textContent = label;
+  }
+}
+
+/* ============ hour axis ============ */
+function buildTimeAxis(opts){
+  opts = opts || {};
+  const axis = document.createElement('div');
+  axis.className = 'time-axis';
+  axis.style.height = minToPx(DAY_END-DAY_START)+'px';
+  // The time axis must start where the grid starts, i.e. below the day header.
+  // Desktop: 70px header + 6px margin; mobile: 78px header + 6px margin.
+  const headerOffset = opts.headerOffset != null ? opts.headerOffset : (window.matchMedia('(max-width:800px)').matches ? 84 : 76);
+  for(let m=DAY_START; m<=DAY_END; m+=60){
+    const t = document.createElement('div');
+    t.className = 'tick';
+    t.style.top = (headerOffset + minToPx(m-DAY_START))+'px';
+    t.textContent = minToTimeStr(m);
+    axis.appendChild(t);
+  }
+  return axis;
+}
+
+/* ============ schedule column (reusable for day/week/template editor) ============ */
+// ctx = { getBlocks(), setBlocks(arr) }
+function buildColumn(ctx, opts){
+  opts = opts||{};
+  const wrap = document.createElement('div');
+  wrap.className = 'grid-column';
+  wrap.style.height = minToPx(DAY_END-DAY_START)+'px';
+
+  function renderCurrentTime(){
+    wrap.querySelectorAll('.current-time-overlay').forEach(n=>n.remove());
+    const key = opts.dayKey || null;
+    if(!key) return;
+    const todayKey = dateKey(new Date());
+    const dayStartPx = 0;
+    const overlay = document.createElement('div');
+    overlay.className = 'current-time-overlay';
+    const shade = document.createElement('div');
+    shade.className = 'elapsed-shade';
+    const now = new Date();
+    let elapsedEnd = null;
+    if(key < todayKey) elapsedEnd = DAY_END;
+    else if(key === todayKey){
+      const nowMin = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
+      elapsedEnd = clamp(nowMin, DAY_START, DAY_END);
+    }
+    if(elapsedEnd !== null && elapsedEnd > DAY_START){
+      shade.style.height = minToPx(elapsedEnd-DAY_START)+'px';
+      overlay.appendChild(shade);
+    }
+    if(key === todayKey){
+      const nowMin = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
+      if(nowMin >= DAY_START && nowMin <= DAY_END){
+        const line = document.createElement('div');
+        line.className = 'current-time-line';
+        line.style.top = minToPx(nowMin-DAY_START)+'px';
+        overlay.appendChild(line);
+      }
+    }
+    if(overlay.children.length) wrap.appendChild(overlay);
+  }
+
+  function render(){
+    wrap.querySelectorAll('.block, .ghost').forEach(n=>n.remove());
+    layoutBlocks(ctx.getBlocks()).forEach(b=>{
+      const el = document.createElement('div');
+      el.className = 'block';
+      el.style.top = (minToPx(b.start-DAY_START)+BLOCK_GAP/2)+'px';
+      el.style.height = Math.max(minToPx(b.end-b.start)-BLOCK_GAP,13)+'px';
+      el.style.background = b.color;
+      // Keep every block strictly inside its visual sub-column: the 3px
+      // inset is expressed in pixels, while the column position stays percentage-based.
+      // The previous formula mixed `3` with `%`, which made the block overflow
+      // when a column was wide (notably in Day view on desktop).
+      el.style.left = 'calc('+(b.col*(100/b.cols))+'% + 3px)';
+      el.style.width = 'calc('+(100/b.cols)+'% - 6px)';
+      el.innerHTML = '<div class="b-title">'+esc(b.title)+'</div>'+
+        '<div class="b-time">'+minToTimeStr(b.start)+'–'+minToTimeStr(b.end)+'</div>'+
+        (b.tag?'<div class="b-tag">'+esc(b.tag)+'</div>':'');
+      const handle = document.createElement('div');
+      handle.className = 'resize-handle';
+      el.appendChild(handle);
+      wrap.appendChild(el);
+      attachBlockInteractions(el, b, ctx, render);
+    });
+    renderCurrentTime();
+  }
+
+  wrap.addEventListener('pointerdown', (e)=>{
+    if(!editMode) return;
+    if(e.target !== wrap) return; // clicked a block, ignore here
+    const rect = wrap.getBoundingClientRect();
+    const y0 = e.clientY - rect.top;
+
+    if(armedSavedBlockId){
+      const sb = STATE.savedBlocks.find(x=>x.id===armedSavedBlockId);
+      if(sb){
+        let start = snap(DAY_START + pxToMin(y0));
+        start = clamp(start, DAY_START, DAY_END-15);
+        let end = clamp(start+(sb.duration||60), start+15, DAY_END);
+        const blocks = ctx.getBlocks();
+        blocks.push({id:uid(), title:sb.title, color:sb.color, tag:sb.tag, start, end, sourceId:sb.id});
+        ctx.setBlocks(blocks);
+        armedSavedBlockId = null;
+        renderSidebar();
+        render();
+      }
+      return;
+    }
+
+    const ghost = document.createElement('div');
+    ghost.className = 'ghost';
+    ghost.style.top = y0+'px';
+    ghost.style.height = '0px';
+    wrap.appendChild(ghost);
+    wrap.setPointerCapture(e.pointerId);
+
+    let moved = false;
+    function onMove(ev){
+      const y1 = ev.clientY - rect.top;
+      moved = Math.abs(y1-y0) > 4;
+      const top = Math.min(y0,y1);
+      const h = Math.abs(y1-y0);
+      ghost.style.top = top+'px';
+      ghost.style.height = h+'px';
+    }
+    function onUp(ev){
+      wrap.removeEventListener('pointermove', onMove);
+      wrap.removeEventListener('pointerup', onUp);
+      const y1 = moved ? ev.clientY - rect.top : y0+60*PX_PER_MIN;
+      let start = snap(DAY_START + pxToMin(Math.min(y0,y1)));
+      let end = snap(DAY_START + pxToMin(Math.max(y0,y1)));
+      if(end-start < 15) end = start+60;
+      start = clamp(start, DAY_START, DAY_END-15);
+      end = clamp(end, start+15, DAY_END);
+      ghost.remove();
+      openBlockModal({mode:'create', ctx, start, end, onDone:render});
+    }
+    wrap.addEventListener('pointermove', onMove);
+    wrap.addEventListener('pointerup', onUp);
+  });
+
+  render();
+  return {el:wrap, render};
+}
+
+// simple overlap layout: assign side-by-side columns to overlapping blocks
+function layoutBlocks(blocks){
+  const sorted = [...blocks].sort((a,b)=>a.start-b.start);
+  const groups = [];
+  let cur = [];
+  let curEnd = -1;
+  sorted.forEach(b=>{
+    if(cur.length && b.start >= curEnd){ groups.push(cur); cur=[]; curEnd=-1; }
+    cur.push(b);
+    curEnd = Math.max(curEnd, b.end);
+  });
+  if(cur.length) groups.push(cur);
+  const out = [];
+  groups.forEach(g=>{
+    // assign columns greedily
+    const cols = [];
+    g.forEach(b=>{
+      let placed=false;
+      for(let i=0;i<cols.length;i++){
+        if(cols[i] <= b.start){ cols[i]=b.end; b._col=i; placed=true; break; }
+      }
+      if(!placed){ cols.push(b.end); b._col=cols.length-1; }
+    });
+    g.forEach(b=> out.push(Object.assign({}, b, {col:b._col, cols:cols.length})));
+  });
+  return out;
+}
+
+function attachBlockInteractions(el, block, ctx, rerender){
+  el.addEventListener('pointerdown', (e)=>{
+    if(!editMode) return;
+    e.stopPropagation();
+    const isResize = e.target.classList.contains('resize-handle');
+    const startY = e.clientY;
+    const originStart = block.start, originEnd = block.end;
+    let moved = false;
+    el.setPointerCapture(e.pointerId);
+
+    function onMove(ev){
+      const deltaMin = snap(pxToMin(ev.clientY-startY));
+      if(Math.abs(ev.clientY-startY) > 4) moved = true;
+      if(isResize){
+        let end = clamp(originEnd+deltaMin, originStart+15, DAY_END);
+        el.style.height = minToPx(end-originStart)+'px';
+        el._pendingEnd = end;
+      }else{
+        let start = originStart+deltaMin;
+        let end = originEnd+deltaMin;
+        if(start < DAY_START){ end += DAY_START-start; start = DAY_START; }
+        if(end > DAY_END){ start -= end-DAY_END; end = DAY_END; }
+        el.style.top = minToPx(start-DAY_START)+'px';
+        el._pendingStart = start; el._pendingEnd = end;
+      }
+    }
+    function onUp(){
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      if(!moved){
+        openBlockModal({mode:'edit', ctx, block, onDone:rerender});
+        return;
+      }
+      const blocks = ctx.getBlocks();
+      const b = blocks.find(x=>x.id===block.id);
+      if(b){
+        if(isResize && el._pendingEnd!=null) b.end = el._pendingEnd;
+        if(!isResize && el._pendingStart!=null){ b.start = el._pendingStart; b.end = el._pendingEnd; }
+        ctx.setBlocks(blocks);
+      }
+      rerender();
+    }
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+  });
+}
+
+/* ============ contexts ============ */
+function dayContext(key){
+  return {
+    getBlocks(){ return getDay(key).blocks; },
+    setBlocks(arr){ getDay(key).blocks = arr; saveState(); }
+  };
+}
+function templateContext(tmpl){
+  return {
+    getBlocks(){ return tmpl.blocks; },
+    setBlocks(arr){ tmpl.blocks = arr; },
+  };
+}
+function templateOverviewContext(tmpl){
+  return {
+    getBlocks(){ return tmpl.blocks; },
+    setBlocks(arr){ tmpl.blocks = arr; saveState(); },
+  };
+}
+
+/* ============ half-day templates ============ */
+function getHalfDayTemplates(){ return STATE.halfDayTemplates || (STATE.halfDayTemplates=[]); }
+function dayHalfDays(key){
+  const d=getDay(key);
+  if(!Array.isArray(d.appliedHalfDays)) d.appliedHalfDays=[];
+  return d.appliedHalfDays;
+}
+function halfDayLabel(h){ return esc(h.name)+' · '+minToTimeStr(h.start)+'–'+minToTimeStr(h.end); }
+function applyHalfDayToDay(templateId,key,overrideStart,overrideEnd,cb){
+  const h=getHalfDayTemplates().find(x=>x.id===templateId);
+  if(!h) return;
+  const dayObj=getDay(key);
+  const start=overrideStart!=null?overrideStart:h.start;
+  const end=overrideEnd!=null?overrideEnd:h.end;
+  const proceed=()=>{
+    // Remove only blocks that intersect the target range; preserve and trim blocks crossing the boundaries.
+    const next=[];
+    dayObj.blocks.forEach(b=>{
+      if(b.end<=start || b.start>=end){ next.push(b); return; }
+      if(b.start<start) next.push(Object.assign({},b,{id:uid(),end:start}));
+      if(b.end>end) next.push(Object.assign({},b,{id:uid(),start:end}));
+    });
+    h.blocks.forEach(b=>{
+      const bs=Math.max(start,b.start), be=Math.min(end,b.end);
+      if(be>bs) next.push(Object.assign({},b,{id:uid(),start:bs,end:be}));
+    });
+    dayObj.blocks=next;
+    dayHalfDays(key).push({id:uid(),templateId:h.id,start,end});
+    saveState();
+    cb&&cb();
+  };
+  if(dayObj.blocks.some(b=>b.start<end && b.end>start)){
+    if(confirm('Cette plage contient déjà des blocs. Les remplacer par cette demi-journée type ?')) proceed();
+  }else proceed();
+}
+function openHalfDayApplyModal(key){
+  const hs=getHalfDayTemplates();
+  if(!hs.length){ alert('Créez d’abord une demi-journée type dans la barre latérale.'); return; }
+  const options=hs.map(h=>'<option value="'+h.id+'">'+halfDayLabel(h)+'</option>').join('');
+  const first=hs[0];
+  const html='<h3>Ajouter une demi-journée type</h3>'+
+    '<div class="field"><label>Demi-journée</label><select id="f-halfday" style="width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:6px;font-size:14px;background:var(--paper);color:var(--ink)">'+options+'</select></div>'+
+    '<div class="row-2"><div class="field"><label>Début d’application</label><input type="time" id="f-hstart" value="'+minToTimeStr(first.start)+'"></div><div class="field"><label>Fin d’application</label><input type="time" id="f-hend" value="'+minToTimeStr(first.end)+'"></div></div>'+
+    '<div class="empty-hint">La plage choisie remplace le programme existant sur cette période. Les blocs qui la traversent sont automatiquement tronqués.</div>'+
+    '<div class="modal-actions"><div></div><div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-apply">Appliquer</button></div></div>';
+  const modal=openModalShell(html);
+  const select=modal.querySelector('#f-halfday');
+  function sync(){ const h=hs.find(x=>x.id===select.value); if(h){modal.querySelector('#f-hstart').value=minToTimeStr(h.start);modal.querySelector('#f-hend').value=minToTimeStr(h.end);} }
+  select.addEventListener('change',sync);
+  modal.querySelector('#f-cancel').addEventListener('click',closeModal);
+  modal.querySelector('#f-apply').addEventListener('click',()=>{
+    let st=timeStrToMin(modal.querySelector('#f-hstart').value), en=timeStrToMin(modal.querySelector('#f-hend').value);
+    st=clamp(st,DAY_START,DAY_END-15); en=clamp(en,st+15,DAY_END);
+    applyHalfDayToDay(select.value,key,st,en,()=>{closeModal();renderApp();});
+  });
+}
+
+/* ============ week / day views ============ */
+function renderWeekView(){
+  weekViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  const start = startOfWeek(refDate);
+  for(let i=0;i<7;i++){
+    const d = addDays(start,i);
+    const key = dateKey(d);
+    const dayObj = getDay(key);
+
+    const colWrap = document.createElement('div');
+    colWrap.className = 'day-col-wrap';
+    colWrap.dataset.dayKey = key;
+
+    const head = document.createElement('div');
+    const isToday = dateKey(new Date())===key;
+    head.className = 'col-head'+(isToday?' is-today':'');
+    head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+WEEKDAYS[i]+'</div><div class="dt">'+fmtShort(d)+'</div>';
+    const select = document.createElement('select');
+    select.className = 'template-select';
+    select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+    select.disabled = !editMode;
+    select.title = editMode ? 'Appliquer une journée type' : 'Activez le mode édition pour modifier cette journée';
+    select.addEventListener('change', ()=>{
+      if(!editMode){ renderApp(); return; }
+      const tid = select.value;
+      applyTemplateToDay(tid, key, ()=>renderApp());
+    });
+    const actions = document.createElement('div');
+    actions.className='day-actions';
+    actions.appendChild(select);
+    const addHalf = document.createElement('button');
+    addHalf.className='halfday-add'; addHalf.type='button'; addHalf.title='Ajouter une demi-journée type'; addHalf.textContent='＋';
+    addHalf.disabled = !editMode;
+    addHalf.title = editMode ? 'Ajouter une demi-journée type' : 'Activez le mode édition pour modifier cette journée';
+    addHalf.addEventListener('click',()=>{ if(editMode) openHalfDayApplyModal(key); });
+    actions.appendChild(addHalf);
+    head.appendChild(actions);
+    const applied=dayHalfDays(key);
+    if(applied.length){
+      const sum=document.createElement('div'); sum.className='halfday-summary';
+      sum.textContent=applied.map(a=>{const h=getHalfDayTemplates().find(x=>x.id===a.templateId);return h?h.name+' '+minToTimeStr(a.start)+'–'+minToTimeStr(a.end):''}).filter(Boolean).join(' · ');
+      head.appendChild(sum);
+    }
+    colWrap.appendChild(head);
+
+    const col = buildColumn(dayContext(key), {dayKey:key});
+    colWrap.appendChild(col.el);
+    cols.appendChild(colWrap);
+  }
+  container.appendChild(axis);
+  container.appendChild(cols);
+  weekViewEl.appendChild(container);
+}
+
+function renderDayView(){
+  dayViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  const key = dateKey(refDate);
+  const dayObj = getDay(key);
+  const colWrap = document.createElement('div');
+  colWrap.className = 'day-col-wrap';
+  colWrap.dataset.dayKey = key;
+
+  const head = document.createElement('div');
+  const isToday = dateKey(new Date())===key;
+  head.className = 'col-head'+(isToday?' is-today':'');
+  const wd = WEEKDAYS[(refDate.getDay()+6)%7];
+  head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+wd+(isToday?' · Aujourd\'hui':'')+'</div><div class="dt">'+fmtShort(refDate)+'</div>';
+  const select = document.createElement('select');
+  select.className = 'template-select';
+  select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
+  select.disabled = !editMode;
+  select.title = editMode ? 'Appliquer une journée type' : 'Activez le mode édition pour modifier cette journée';
+  select.addEventListener('change', ()=>{
+    if(!editMode){ renderApp(); return; }
+    applyTemplateToDay(select.value, key, ()=>renderApp());
+  });
+  head.appendChild(select);
+  colWrap.appendChild(head);
+
+  const col = buildColumn(dayContext(key), {dayKey:key});
+  colWrap.appendChild(col.el);
+  cols.appendChild(colWrap);
+  container.appendChild(axis);
+  container.appendChild(cols);
+  dayViewEl.appendChild(container);
+}
+
+function renderTemplatesView(){
+  templatesViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+
+  if(!STATE.templates.length){
+    const empty = document.createElement('div');
+    empty.className = 'empty-hint';
+    empty.style.padding = '30px 12px';
+    empty.textContent = "Aucune journée type pour l'instant. Créez-en une depuis la barre latérale (« Journées type ») pour la voir apparaître ici.";
+    cols.appendChild(empty);
+  }else{
+    STATE.templates.forEach(t=>{
+      const colWrap = document.createElement('div');
+      colWrap.className = 'day-col-wrap';
+
+      const head = document.createElement('div');
+      head.className = 'col-head';
+      head.innerHTML = '<div class="wd">'+esc(t.name)+'</div>'+
+        '<div class="dt">'+t.blocks.length+' bloc'+(t.blocks.length>1?'s':'')+'</div>';
+      colWrap.appendChild(head);
+
+      const col = buildColumn(templateOverviewContext(t));
+      colWrap.appendChild(col.el);
+      cols.appendChild(colWrap);
+    });
+  }
+  container.appendChild(axis);
+  container.appendChild(cols);
+  templatesViewEl.appendChild(container);
+}
+
+function renderHalfDayTemplatesView(){
+  halfDayTemplatesViewEl.innerHTML = '';
+  const container = document.createElement('div');
+  container.style.display='flex'; container.style.width='100%';
+  const axis = buildTimeAxis();
+  const cols = document.createElement('div');
+  cols.className = 'columns';
+  const halfDays = getHalfDayTemplates();
+  if(!halfDays.length){
+    const empty=document.createElement('div'); empty.className='empty-hint'; empty.style.padding='30px 12px';
+    empty.textContent='Aucune demi-journée type pour l’instant. Créez-en une depuis la barre latérale (« Demi-journées types ») pour la voir apparaître ici.';
+    cols.appendChild(empty);
+  }else{
+    halfDays.forEach(h=>{
+      const colWrap=document.createElement('div'); colWrap.className='day-col-wrap';
+      const head=document.createElement('div'); head.className='col-head';
+      head.innerHTML='<div class="wd">'+esc(h.name)+'</div>'+
+        '<div class="dt">'+minToTimeStr(h.start)+'–'+minToTimeStr(h.end)+' · '+h.blocks.length+' bloc'+(h.blocks.length>1?'s':'')+'</div>';
+      colWrap.appendChild(head);
+      const col=buildColumn(templateOverviewContext(h));
+      colWrap.appendChild(col.el); cols.appendChild(colWrap);
+    });
+  }
+  container.appendChild(axis); container.appendChild(cols); halfDayTemplatesViewEl.appendChild(container);
+}
+
+function applyTemplateToDay(templateId, key, cb){
+  const dayObj = getDay(key);
+  const proceed = ()=>{
+    if(!templateId){
+      dayObj.templateId = null; dayObj.blocks = [];
+    }else{
+      const tmpl = STATE.templates.find(t=>t.id===templateId);
+      dayObj.templateId = templateId;
+      dayObj.blocks = tmpl.blocks.map(b=>Object.assign({}, b, {id:uid()}));
+    }
+    saveState();
+    cb && cb();
+  };
+  if(dayObj.blocks.length){
+    if(confirm('Ce jour contient déjà des blocs. Les remplacer ?')) proceed();
+    else renderApp(); // reset select to previous state
+  }else{
+    proceed();
+  }
+}
+
+/* ============ sidebar: templates & saved blocks ============ */
+function renderSidebar(){
+  // templates
+  templateListEl.innerHTML = '';
+  document.getElementById('templateEmptyHint').style.display = STATE.templates.length? 'none':'block';
+  STATE.templates.forEach(t=>{
+    const li = document.createElement('li');
+    li.className = 'item';
+    li.draggable = true;
+    li.dataset.templateId = t.id;
+    li.innerHTML = '<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span>'+
+      '<div class="item-main"><div class="item-title">'+esc(t.name)+'</div>'+
+      '<div class="item-sub">'+t.blocks.length+' bloc'+(t.blocks.length>1?'s':'')+'</div></div>'+
+      '<button class="item-edit" title="Modifier">✎</button>';
+    li.querySelector('.item-edit').addEventListener('click', ()=>openTemplateModal(t));
+    li.querySelector('.item-main').addEventListener('click', ()=>openTemplateModal(t));
+    li.addEventListener('dragstart', e=>{
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain', t.id);
+      li.classList.add('dragging');
+    });
+    li.addEventListener('dragend', ()=>{ li.classList.remove('dragging'); templateListEl.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over')); });
+    li.addEventListener('dragover', e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      const dragging = templateListEl.querySelector('.item.dragging');
+      if(!dragging || dragging===li) return;
+      li.classList.add('drag-over');
+    });
+    li.addEventListener('dragleave', ()=>li.classList.remove('drag-over'));
+    li.addEventListener('drop', e=>{
+      e.preventDefault();
+      li.classList.remove('drag-over');
+      const fromId = e.dataTransfer.getData('text/plain');
+      if(!fromId || fromId===t.id) return;
+      const fromIndex = STATE.templates.findIndex(x=>x.id===fromId);
+      const toIndex = STATE.templates.findIndex(x=>x.id===t.id);
+      if(fromIndex<0 || toIndex<0) return;
+      const [moved] = STATE.templates.splice(fromIndex,1);
+      const rect = li.getBoundingClientRect();
+      const insertBefore = e.clientY < rect.top + rect.height/2;
+      let targetIndex = STATE.templates.findIndex(x=>x.id===t.id);
+      if(!insertBefore) targetIndex += 1;
+      STATE.templates.splice(targetIndex,0,moved);
+      saveState();
+      renderSidebar();
+      if(currentView==='templates') renderTemplatesView();
+    });
+    templateListEl.appendChild(li);
+  });
+
+  // half-day templates
+  halfDayListEl.innerHTML='';
+  const halfDays=getHalfDayTemplates();
+  document.getElementById('halfDayEmptyHint').style.display=halfDays.length?'none':'block';
+  halfDays.forEach(h=>{
+    const li=document.createElement('li'); li.className='item'; li.draggable=true; li.dataset.halfdayId=h.id;
+    li.innerHTML='<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span><div class="item-main"><div class="item-title">'+esc(h.name)+'</div><div class="item-sub">'+minToTimeStr(h.start)+'–'+minToTimeStr(h.end)+' · '+h.blocks.length+' bloc'+(h.blocks.length>1?'s':'')+'</div></div><button class="item-edit" title="Modifier">✎</button>';
+    li.querySelector('.item-main').addEventListener('click',()=>openHalfDayModal(h));
+    li.querySelector('.item-edit').addEventListener('click',e=>{e.stopPropagation();openHalfDayModal(h);});
+    li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',h.id);li.classList.add('dragging');});
+    li.addEventListener('dragend',()=>{li.classList.remove('dragging');halfDayListEl.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over'));});
+    li.addEventListener('dragover',e=>{e.preventDefault();const d=halfDayListEl.querySelector('.item.dragging');if(d&&d!==li)li.classList.add('drag-over');});
+    li.addEventListener('dragleave',()=>li.classList.remove('drag-over'));
+    li.addEventListener('drop',e=>{e.preventDefault();li.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(!id||id===h.id)return;const a=halfDays.findIndex(x=>x.id===id);const b=halfDays.findIndex(x=>x.id===h.id);if(a<0||b<0)return;const [m]=halfDays.splice(a,1);let ti=halfDays.findIndex(x=>x.id===h.id);if(e.clientY>=li.getBoundingClientRect().top+li.getBoundingClientRect().height/2)ti++;halfDays.splice(ti,0,m);saveState();renderSidebar();});
+    halfDayListEl.appendChild(li);
+  });
+
+  // saved blocks — grouped by tag, with drag & drop inside each group
+  const savedRoot = savedBlockListEl;
+  savedRoot.innerHTML = '';
+  document.getElementById('savedEmptyHint').style.display = STATE.savedBlocks.length? 'none':'block';
+  armedNoteEl.style.display = armedSavedBlockId ? 'block':'none';
+
+  const groups=[];
+  const groupMap=new Map();
+  STATE.savedBlocks.forEach(b=>{
+    const tag=(b.tag||'').trim();
+    const key=tag || '__untagged__';
+    if(!groupMap.has(key)){ const g={key,tag,blocks:[]}; groupMap.set(key,g); groups.push(g); }
+    groupMap.get(key).blocks.push(b);
+  });
+
+  groups.forEach(g=>{
+    const section=document.createElement('div'); section.className='tag-group'; section.dataset.tagKey=g.key;
+    const head=document.createElement('button'); head.type='button'; head.className='tag-group-head';
+    head.innerHTML='<span class="chevron">▾</span><span>'+esc(g.tag||'Sans étiquette')+'</span><span class="tag-count">'+g.blocks.length+'</span>';
+    const list=document.createElement('ul'); list.className='list tag-group-list';
+    head.addEventListener('click',()=>section.classList.toggle('collapsed'));
+    section.appendChild(head); section.appendChild(list); savedRoot.appendChild(section);
+
+    g.blocks.forEach(b=>{
+      const li=document.createElement('li'); li.className='item'+(armedSavedBlockId===b.id?' armed':'');
+      li.draggable=true; li.dataset.blockId=b.id;
+      li.innerHTML='<span class="item-drag" title="Réorganiser" aria-label="Réorganiser">⋮⋮</span>'+
+        '<span class="dot" style="background:'+b.color+'"></span>'+
+        '<div class="item-main"><div class="item-title">'+esc(b.title)+'</div>'+
+        '<div class="item-sub">'+(b.duration||60)+' min</div></div>'+
+        '<button class="item-edit" title="Modifier">✎</button>';
+      li.querySelector('.item-main').addEventListener('click',()=>{
+        if(!editMode) return;
+        armedSavedBlockId=(armedSavedBlockId===b.id)?null:b.id; renderSidebar();
+        if(window.innerWidth<=800) closeSidebar();
+      });
+      li.querySelector('.item-edit').addEventListener('click',e=>{e.stopPropagation();openSavedBlockModal(b);});
+      li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',b.id);li.classList.add('dragging');});
+      li.addEventListener('dragend',()=>{li.classList.remove('dragging');list.querySelectorAll('.item').forEach(x=>x.classList.remove('drag-over'));});
+      li.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';const d=list.querySelector('.item.dragging');if(d&&d!==li)li.classList.add('drag-over');});
+      li.addEventListener('dragleave',()=>li.classList.remove('drag-over'));
+      li.addEventListener('drop',e=>{
+        e.preventDefault(); li.classList.remove('drag-over');
+        const fromId=e.dataTransfer.getData('text/plain'); if(!fromId||fromId===b.id)return;
+        const fromIndex=STATE.savedBlocks.findIndex(x=>x.id===fromId);
+        const toIndex=STATE.savedBlocks.findIndex(x=>x.id===b.id);
+        if(fromIndex<0||toIndex<0)return;
+        if((STATE.savedBlocks[fromIndex].tag||'').trim()!==(b.tag||'').trim())return;
+        const [moved]=STATE.savedBlocks.splice(fromIndex,1);
+        let target=STATE.savedBlocks.findIndex(x=>x.id===b.id);
+        if(e.clientY>=li.getBoundingClientRect().top+li.getBoundingClientRect().height/2)target++;
+        STATE.savedBlocks.splice(target,0,moved); saveState(); renderSidebar();
+      });
+      list.appendChild(li);
+    });
+  });
+}
+document.getElementById('newTemplateBtn').addEventListener('click', ()=>openTemplateModal(null));
+document.getElementById('newHalfDayBtn').addEventListener('click', ()=>openHalfDayModal(null));
+document.getElementById('newSavedBlockBtn').addEventListener('click', ()=>openSavedBlockModal(null));
+
+/* ============ modals ============ */
+const modalRoot = document.getElementById('modalRoot');
+let modalPreviousFocus = null;
+function closeModal(){
+  modalRoot.innerHTML = '';
+  if(modalPreviousFocus && document.contains(modalPreviousFocus)){
+    try{ modalPreviousFocus.focus(); }catch(e){}
+  }
+  modalPreviousFocus = null;
+}
+function openModalShell(innerHtml, wide){
+  modalPreviousFocus = document.activeElement;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.setAttribute('role','presentation');
+  backdrop.innerHTML = '<div class="modal'+(wide?' wide':'')+'" role="dialog" aria-modal="true">'+innerHtml+'</div>';
+  backdrop.addEventListener('mousedown', (e)=>{ if(e.target===backdrop) closeModal(); });
+  modalRoot.innerHTML = '';
+  modalRoot.appendChild(backdrop);
+  const modal=backdrop.querySelector('.modal');
+  requestAnimationFrame(()=>{
+    const first=modal.querySelector('input,select,textarea,button');
+    if(first) first.focus();
+  });
+  return modal;
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && modalRoot.firstElementChild) closeModal();
+});
+function swatchesHtml(selected, inputId){
+  return '<div class="swatches" id="'+inputId+'">'+
+    PALETTE.map(c=>'<div class="swatch'+(c===selected?' selected':'')+'" data-color="'+c+'" style="background:'+c+'"></div>').join('')+
+    '<label class="swatch custom" title="Couleur personnalisée">🎨<input type="color" value="'+(selected||PALETTE[0])+'"></label>'+
+    '</div>';
+}
+function wireSwatches(container, onPick){
+  let current = null;
+  container.querySelectorAll('.swatch[data-color]').forEach(sw=>{
+    if(sw.classList.contains('selected')) current = sw.dataset.color;
+    sw.addEventListener('click', ()=>{
+      container.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+      sw.classList.add('selected');
+      current = sw.dataset.color;
+      onPick(current);
+    });
+  });
+  const colorInput = container.querySelector('input[type=color]');
+  colorInput.addEventListener('input', ()=>{
+    container.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+    current = colorInput.value;
+    onPick(current);
+  });
+  if(!current){ current = colorInput.value; }
+  return { get(){ return current; } };
+}
+
+/* ---- block create/edit modal ---- */
+function openBlockModal({mode, ctx, block, start, end, onDone}){
+  const isEdit = mode==='edit';
+  const title = isEdit ? block.title : '';
+  const color = isEdit ? block.color : PALETTE[0];
+  const tag = isEdit ? (block.tag||'') : '';
+  const s = isEdit ? block.start : start;
+  const e = isEdit ? block.end : end;
+
+  const html =
+    '<h3>'+(isEdit?'Modifier le bloc':'Nouveau bloc')+'</h3>'+
+    '<div class="field"><label>Titre</label><input type="text" id="f-title" value="'+esc(title)+'" placeholder="Ex. Réunion, sport, trajet..."></div>'+
+    '<div class="row-2">'+
+      '<div class="field"><label>Début</label><input type="time" id="f-start" value="'+minToTimeStr(s)+'"></div>'+
+      '<div class="field"><label>Fin</label><input type="time" id="f-end" value="'+minToTimeStr(e)+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>Couleur</label>'+swatchesHtml(color,'f-color')+'</div>'+
+    '<div class="field"><label>Étiquette (optionnel)</label><input type="text" id="f-tag" value="'+esc(tag)+'" placeholder="Ex. travail, perso..."></div>'+
+    (isEdit? '' : '<div class="checkbox-field"><input type="checkbox" id="f-save-recurring"><label for="f-save-recurring" style="margin:0;">Enregistrer comme bloc réutilisable</label></div>')+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit? '<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+
+  const modal = openModalShell(html);
+  const swatchApi = wireSwatches(modal.querySelector('#f-color'), ()=>{});
+  modal.querySelector('#f-cancel').addEventListener('click', closeModal);
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer ce bloc ?')) return;
+      const blocks = ctx.getBlocks().filter(b=>b.id!==block.id);
+      ctx.setBlocks(blocks);
+      closeModal();
+      onDone && onDone();
+      renderSidebar();
+    });
+  }
+  modal.querySelector('#f-save').addEventListener('click', ()=>{
+    const t = modal.querySelector('#f-title').value.trim() || 'Sans titre';
+    let ns = timeStrToMin(modal.querySelector('#f-start').value);
+    let ne = timeStrToMin(modal.querySelector('#f-end').value);
+    if(ne<=ns) ne = ns+15;
+    ns = clamp(ns, DAY_START, DAY_END-5);
+    ne = clamp(ne, ns+5, DAY_END);
+    const col = swatchApi.get();
+    const tg = modal.querySelector('#f-tag').value.trim();
+
+    if(isEdit){
+      const blocks = ctx.getBlocks();
+      const b = blocks.find(x=>x.id===block.id);
+      Object.assign(b, {title:t, color:col, tag:tg, start:ns, end:ne});
+      ctx.setBlocks(blocks);
+    }else{
+      const blocks = ctx.getBlocks();
+      const saveRecurring = modal.querySelector('#f-save-recurring');
+      let sourceId = null;
+      if(saveRecurring && saveRecurring.checked){
+        sourceId = uid();
+        STATE.savedBlocks.push({id:sourceId, title:t, color:col, tag:tg, duration:ne-ns});
+      }
+      blocks.push({id:uid(), title:t, color:col, tag:tg, start:ns, end:ne, ...(sourceId?{sourceId}: {})});
+      ctx.setBlocks(blocks);
+      if(sourceId) saveState();
+    }
+    closeModal();
+    onDone && onDone();
+    renderSidebar();
+  });
+}
+
+/* ---- saved block modal ---- */
+function openSavedBlockModal(existing){
+  const isEdit = !!existing;
+  const html =
+    '<h3>'+(isEdit?'Modifier le bloc enregistré':'Nouveau bloc enregistré')+'</h3>'+
+    '<div class="field"><label>Titre</label><input type="text" id="f-title" value="'+esc(isEdit?existing.title:'')+'"></div>'+
+    '<div class="field"><label>Couleur</label>'+swatchesHtml(isEdit?existing.color:PALETTE[0],'f-color')+'</div>'+
+    '<div class="row-2">'+
+      '<div class="field"><label>Étiquette (optionnel)</label><input type="text" id="f-tag" value="'+esc(isEdit?(existing.tag||''):'')+'"></div>'+
+      '<div class="field"><label>Durée par défaut (min)</label><input type="number" id="f-duration" min="5" step="5" value="'+(isEdit?existing.duration:60)+'"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Annuler</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+  const modal = openModalShell(html);
+  const swatchApi = wireSwatches(modal.querySelector('#f-color'), ()=>{});
+  modal.querySelector('#f-cancel').addEventListener('click', closeModal);
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer ce bloc enregistré ?')) return;
+      STATE.savedBlocks = STATE.savedBlocks.filter(b=>b.id!==existing.id);
+      saveState(); closeModal(); renderSidebar();
+    });
+  }
+  modal.querySelector('#f-save').addEventListener('click', ()=>{
+    const t = modal.querySelector('#f-title').value.trim() || 'Sans titre';
+    const tg = modal.querySelector('#f-tag').value.trim();
+    const dur = Math.max(5, parseInt(modal.querySelector('#f-duration').value,10) || 60);
+    const col = swatchApi.get();
+    if(isEdit){
+      // La durée par défaut ne modifie jamais les blocs déjà placés.
+      Object.assign(existing, {title:t, tag:tg, duration:dur, color:col});
+
+      // Synchroniser uniquement les propriétés d'identité/présentation
+      // de toutes les occurrences liées à ce bloc réutilisable.
+      const updateLinkedBlocks = blocks => {
+        let changed = false;
+        blocks.forEach(b=>{
+          if(b.sourceId===existing.id){
+            b.title = t;
+            b.tag = tg;
+            b.color = col;
+            changed = true;
+          }
+        });
+        return changed;
+      };
+      Object.values(STATE.days).forEach(day=>updateLinkedBlocks(day.blocks||[]));
+      STATE.templates.forEach(tmpl=>updateLinkedBlocks(tmpl.blocks||[]));
+    }else{
+      STATE.savedBlocks.push({id:uid(), title:t, tag:tg, duration:dur, color:col});
+    }
+    saveState(); closeModal(); renderApp();
+  });
+}
+
+/* ---- half-day template modal ---- */
+function openHalfDayModal(existing){
+  const isEdit=!!existing;
+  const working={id:isEdit?existing.id:uid(),name:isEdit?existing.name:'',start:isEdit?existing.start:18*60,end:isEdit?existing.end:23*60,blocks:isEdit?existing.blocks.map(b=>Object.assign({},b)):[]};
+  const html='<h3>'+(isEdit?'Modifier la demi-journée type':'Nouvelle demi-journée type')+'</h3>'+
+    '<div class="field"><label>Nom</label><input type="text" id="f-name" value="'+esc(working.name)+'" placeholder="Ex. Soirée AMHE, Matinée productive..."></div>'+
+    '<div class="row-2"><div class="field"><label>Début de la plage</label><input type="time" id="f-start" value="'+minToTimeStr(working.start)+'"></div><div class="field"><label>Fin de la plage</label><input type="time" id="f-end" value="'+minToTimeStr(working.end)+'"></div></div>'+
+    '<div class="field"><label>Blocs de cette demi-journée — placez-les dans la plage définie</label></div>'+
+    '<div class="tmpl-editor-wrap"><div class="tmpl-scroll" id="tmplScroll"></div></div>'+
+    '<div class="modal-actions"><div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer</button>':'')+'</div><div><button class="btn" id="f-cancel">Fermer</button> <button class="btn primary" id="f-save">Enregistrer</button></div></div>';
+  const modal=openModalShell(html,true); const scroll=modal.querySelector('#tmplScroll');
+  const axis=buildTimeAxis({headerOffset:8}); const ctx=templateContext(working); let dirty=false; const saveBtn=modal.querySelector('#f-save');
+  const original=ctx.setBlocks.bind(ctx); ctx.setBlocks=arr=>{original(arr);dirty=true;saveBtn.textContent='Enregistrer *';};
+  const col=buildColumn(ctx); scroll.appendChild(axis);scroll.appendChild(col.el);col.el.style.flex='1';
+  const save=()=>{let name=modal.querySelector('#f-name').value.trim();if(!name){alert('Merci de donner un nom à cette demi-journée type.');return false;}let st=timeStrToMin(modal.querySelector('#f-start').value),en=timeStrToMin(modal.querySelector('#f-end').value);st=clamp(st,DAY_START,DAY_END-15);en=clamp(en,st+15,DAY_END);if(working.blocks.some(b=>b.start<st||b.end>en)){alert('Tous les blocs de la demi-journée doivent être entièrement compris dans sa plage horaire.');return false;}working.name=name;working.start=st;working.end=en;if(isEdit)Object.assign(existing,{name:working.name,start:working.start,end:working.end,blocks:working.blocks.map(b=>Object.assign({},b))});else getHalfDayTemplates().push({id:working.id,name:working.name,start:working.start,end:working.end,blocks:working.blocks.map(b=>Object.assign({},b))});saveState();dirty=false;return true;};
+  modal.querySelector('#f-cancel').addEventListener('click',()=>{if(dirty&&confirm('Cette demi-journée type a été modifiée. Enregistrer les modifications ?')){if(save()){closeModal();renderApp();}}else if(!dirty)closeModal();else closeModal();});
+  if(isEdit)modal.querySelector('#f-delete').addEventListener('click',()=>{if(!confirm('Supprimer cette demi-journée type ? Les jours déjà configurés garderont leurs blocs.'))return;STATE.halfDayTemplates=getHalfDayTemplates().filter(h=>h.id!==existing.id);saveState();closeModal();renderApp();});
+  saveBtn.addEventListener('click',()=>{if(save()){closeModal();renderApp();}});
+}
+
+/* ---- template modal (with embedded mini schedule) ---- */
+function openTemplateModal(existing){
+  const isEdit = !!existing;
+  const workingTmpl = isEdit ? {id:existing.id, name:existing.name, blocks: existing.blocks.map(b=>Object.assign({},b))} : {id:uid(), name:'', blocks:[]};
+
+  const html =
+    '<h3>'+(isEdit?'Modifier la journée type':'Nouvelle journée type')+'</h3>'+
+    '<div class="field"><label>Nom</label><input type="text" id="f-name" value="'+esc(workingTmpl.name)+'" placeholder="Ex. Journée de travail, Week-end, Déplacement..."></div>'+
+    '<div class="field"><label>Blocs de cette journée type — cliquez-glissez sur la grille pour ajouter un bloc</label></div>'+
+    '<div class="tmpl-editor-wrap"><div class="tmpl-scroll" id="tmplScroll"></div></div>'+
+    '<div class="modal-actions">'+
+      '<div class="left">'+(isEdit?'<button class="btn danger" id="f-delete">Supprimer la journée type</button>':'')+'</div>'+
+      '<div><button class="btn" id="f-cancel">Fermer</button> <button class="btn primary" id="f-save">Enregistrer</button></div>'+
+    '</div>';
+
+  const modal = openModalShell(html, true);
+  const scroll = modal.querySelector('#tmplScroll');
+  const axis = buildTimeAxis({headerOffset:8});
+  const ctx = templateContext(workingTmpl);
+  let templateDirty = false;
+  const saveBtn = modal.querySelector('#f-save');
+  const saveTemplate = ()=>{
+    const name = modal.querySelector('#f-name').value.trim();
+    if(!name){ alert('Merci de donner un nom à cette journée type.'); return false; }
+    workingTmpl.name = name;
+    if(isEdit){
+      Object.assign(existing, {name:workingTmpl.name, blocks:workingTmpl.blocks.map(b=>Object.assign({},b))});
+    }else{
+      STATE.templates.push({id:workingTmpl.id, name:workingTmpl.name, blocks:workingTmpl.blocks.map(b=>Object.assign({},b))});
+    }
+    saveState();
+    templateDirty = false;
+    saveBtn.textContent = 'Enregistrer';
+    return true;
+  };
+  const originalSetBlocks = ctx.setBlocks.bind(ctx);
+  ctx.setBlocks = arr => { originalSetBlocks(arr); templateDirty = true; saveBtn.textContent = 'Enregistrer *'; };
+  const col = buildColumn(ctx);
+  scroll.appendChild(axis);
+  scroll.appendChild(col.el);
+  col.el.style.flex = '1';
+
+  modal.querySelector('#f-cancel').addEventListener('click', ()=>{
+    if(templateDirty){
+      if(confirm('Cette journée type a été modifiée. Enregistrer les modifications ?')){
+        if(saveTemplate()){ closeModal(); renderApp(); }
+      }else{ closeModal(); }
+    }else{ closeModal(); }
+  });
+  if(isEdit){
+    modal.querySelector('#f-delete').addEventListener('click', ()=>{
+      if(!confirm('Supprimer cette journée type ? Les jours qui l\'utilisent garderont leurs blocs actuels.')) return;
+      STATE.templates = STATE.templates.filter(t=>t.id!==existing.id);
+      saveState(); closeModal(); renderApp();
+    });
+  }
+  saveBtn.addEventListener('click', ()=>{
+    if(saveTemplate()){ closeModal(); renderApp(); }
+  });
+}
+
+/* ============ help / tutorial ============ */
+function openHelpModal(){
+  const html =
+    '<div class="help-modal">'+
+      '<div class="help-hero">'+
+        '<div class="help-icon">?</div>'+
+        '<div><h3>Bienvenue dans Cadence</h3><p>Un petit guide pour prendre l’application en main.</p></div>'+
+      '</div>'+
+      '<div class="help-steps">'+
+        '<div class="help-step"><span>1</span><div><strong>Organisez votre semaine</strong><p>Utilisez <b>Semaine</b> pour voir vos journées côte à côte, ou <b>Jour</b> pour vous concentrer sur une seule journée.</p></div></div>'+
+        '<div class="help-step"><span>2</span><div><strong>Créez une journée type</strong><p>Dans le menu de gauche, créez une <b>Journée type</b> (travail, week-end, déplacement…). Vous pourrez ensuite l’appliquer à n’importe quel jour.</p></div></div>'+
+        '<div class="help-step"><span>3</span><div><strong>Ajoutez vos activités</strong><p>Cliquez ou faites glisser sur la grille pour créer un bloc. Vous pouvez modifier son titre, ses horaires, sa couleur et son étiquette.</p></div></div>'+
+        '<div class="help-step"><span>4</span><div><strong>Réutilisez vos blocs</strong><p>Enregistrez une activité récurrente dans <b>Blocs enregistrés</b>. Un clic sur un bloc enregistré permet ensuite de le placer rapidement dans votre planning.</p></div></div>'+
+        '<div class="help-step"><span>5</span><div><strong>Utilisez les demi-journées</strong><p>Les <b>Demi-journées types</b> servent à enregistrer des plages réutilisables, par exemple une matinée ou une soirée. La vue <b>½ journées</b> permet de les consulter et de les modifier.</p></div></div>'+
+        '<div class="help-step"><span>6</span><div><strong>Personnalisez sans tout casser</strong><p>Quand vous appliquez un modèle à une journée, vous pouvez ensuite modifier cette journée indépendamment du modèle. Les modèles restent réutilisables.</p></div></div>'+
+        '<div class="help-step"><span>7</span><div><strong>Gardez vos données avec vous</strong><p><b>Exporter</b> crée une sauvegarde JSON que vous pouvez conserver sur votre ordinateur ou dans votre cloud. <b>Importer</b> permet de la restaurer sur un autre appareil.</p></div></div>'+
+        '<div class="help-step"><span>8</span><div><strong>Imprimez votre planning</strong><p>Le bouton <b>Imprimer / PDF</b> ouvre l’impression du jour ou de la semaine affiché(e), pour enregistrer votre planning en PDF.</p></div></div>'+
+      '</div>'+
+      '<div class="help-tip"><strong>Astuce</strong><span>Sur téléphone, ouvrez le menu <b>☰</b> pour accéder aux journées types et aux blocs enregistrés. Les sections du menu peuvent être repliées pour garder l’écran lisible.</span></div>'+
+      '<div class="modal-actions"><div></div><button class="btn primary" id="helpClose">J’ai compris</button></div>'+
+    '</div>';
+  const modal = openModalShell(html, false);
+  modal.querySelector('#helpClose').addEventListener('click', closeModal);
+}
+
+/* ============ boot / render ============ */
+
+document.getElementById('helpBtn').addEventListener('click', openHelpModal);
+
+window.CadenceTodoistReady.then(result=>{if(result&&result.error){console.warn('Todoist OAuth:',result.error);return;}if(result){appSection='tasks';document.querySelectorAll('#appNav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='tasks'));}renderApp();}).catch(error=>console.warn('Todoist OAuth:',error));
+
+// Collapsible sidebar panels
+document.querySelectorAll('#sidebar > .panel').forEach(panel=>{
+  const toggle=panel.querySelector('.panel-toggle');
+  if(toggle) toggle.addEventListener('click',e=>{e.stopPropagation();panel.classList.toggle('collapsed');});
+  const title=panel.querySelector('.panel-head h2');
+  if(title) title.addEventListener('click',()=>panel.classList.toggle('collapsed'));
+});
+
+function formatTodoistDue(task){
+  if(!task.due || !task.due.date) return 'Sans échéance';
+  const d=task.due.date, date=d.slice(0,10), today=dateKey(new Date()), tomorrowDate=dateKey(addDays(new Date(),1));
+  if(date===today) return d.length>10 ? 'Aujourd’hui · '+d.slice(11,16) : 'Aujourd’hui';
+  if(date===tomorrowDate) return d.length>10 ? 'Demain · '+d.slice(11,16) : 'Demain';
+  const parsed=new Date(d);
+  if(!Number.isNaN(parsed.getTime()) && d.length>10) return parsed.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})+' · '+parsed.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const parts=date.split('-'); return parts.length===3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : date;
+}
+function todoistTaskDateKey(task){return task.due?.date ? task.due.date.slice(0,10) : null;}
+function filterTodoistTasks(){
+  const today=dateKey(new Date()), week=dateKey(addDays(new Date(),7));
+  return todoistTasks.filter(task=>{const d=todoistTaskDateKey(task);if(todoistFilter==='today')return d===today;if(todoistFilter==='week')return d&&d>=today&&d<=week;if(todoistFilter==='unscheduled')return !d;return true;}).sort((a,b)=>{const da=todoistTaskDateKey(a)||'9999-99-99',db=todoistTaskDateKey(b)||'9999-99-99';return da===db?(a.order||0)-(b.order||0):da.localeCompare(db);});
+}
+function renderTodoist(){
+  if(!todoistContentEl)return;
+  if(!window.CadenceTodoist.isConnected()){
+    todoistContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Todoist</strong><br><span>Non connecté.</span></div></div><div class="todoist-toolbar"><button class="btn primary" id="todoistConnectBtn">Connecter Todoist</button></div><p class="external-note">Cadence demande uniquement un accès en lecture à vos tâches. Aucune tâche n’est modifiée.</p>';
+    todoistContentEl.querySelector('#todoistConnectBtn').addEventListener('click',()=>window.CadenceTodoist.startOAuth()); return;
+  }
+  const filtered=filterTodoistTasks();
+  todoistContentEl.innerHTML=`<div class="todoist-connected"><span><span class="status-dot"></span>Todoist connecté</span><button class="btn" id="todoistDisconnectBtn">Déconnecter</button></div><div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${filtered.length?filtered.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${escapeHtml(task.content||'Sans titre')}</div><div class="todoist-task-meta"><span>${escapeHtml(formatTodoistDue(task))}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join(''):'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
+  todoistContentEl.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{todoistFilter=btn.dataset.filter;renderTodoist();}));
+  todoistContentEl.querySelector('#todoistRefreshBtn').addEventListener('click',loadTodoistTasks);
+  todoistContentEl.querySelector('#todoistDisconnectBtn').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistLoaded=false;renderTodoist();});
+}
+async function loadTodoistTasks(){
+  if(!window.CadenceTodoist.isConnected()){renderTodoist();return;}
+  todoistContentEl.innerHTML='<div class="todoist-loading">Chargement des tâches…</div>';
+  try{todoistTasks=await window.CadenceTodoist.getTasks();todoistLoaded=true;renderTodoist();}
+  catch(error){todoistContentEl.innerHTML=`<div class="todoist-error">Impossible de charger Todoist : ${escapeHtml(error.message||String(error))}</div><div class="todoist-toolbar"><button class="btn" id="todoistRetryBtn">Réessayer</button></div>`;todoistContentEl.querySelector('#todoistRetryBtn').addEventListener('click',loadTodoistTasks);}
+}
+function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+function renderApp(){
+  const isCadence = appSection==='cadence';
+  document.body.classList.toggle('external-section', !isCadence);
+  cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
+  sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',more:'Plus'}[appSection] || 'Cadence');
+  weekViewEl.hidden = !isCadence || currentView!=='week';
+  dayViewEl.hidden = !isCadence || currentView!=='day';
+  templatesViewEl.hidden = !isCadence || currentView!=='templates';
+  halfDayTemplatesViewEl.hidden = !isCadence || currentView!=='halfday-templates';
+  tasksViewEl.hidden = appSection!=='tasks';
+  calendarViewEl.hidden = appSection!=='calendar';
+  moreViewEl.hidden = appSection!=='more';
+  if(isCadence){
+    updateDateLabel();
+    if(currentView==='week') renderWeekView();
+    else if(currentView==='day') renderDayView();
+    else if(currentView==='templates') renderTemplatesView();
+    else renderHalfDayTemplatesView();
+    renderSidebar();
+  }else{
+    closeSidebar();
+    if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }
+  }
+}
+setEditMode(false);
+
+// Mise à jour discrète de l'indicateur de l'heure courante, sans reconstruire le planning.
+let currentTimeRefresh = null;
+function refreshCurrentTimeIndicators(){
+  document.querySelectorAll('.grid-column').forEach(col=>{
+    const key = col.closest('.day-col-wrap')?.dataset?.dayKey;
+    if(!key) return;
+    // Rejoue uniquement le rendu de l'indicateur via un événement léger.
+    const ctxKey = key;
+    const todayKey = dateKey(new Date());
+    col.querySelectorAll('.current-time-overlay').forEach(n=>n.remove());
+    const now = new Date();
+    const overlay = document.createElement('div'); overlay.className='current-time-overlay';
+    let elapsedEnd = null;
+    if(ctxKey < todayKey) elapsedEnd = DAY_END;
+    else if(ctxKey === todayKey){
+      const nowMin=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+      elapsedEnd=clamp(nowMin,DAY_START,DAY_END);
+    }
+    if(elapsedEnd !== null && elapsedEnd > DAY_START){
+      const shade=document.createElement('div'); shade.className='elapsed-shade';
+      shade.style.height=minToPx(elapsedEnd-DAY_START)+'px'; overlay.appendChild(shade);
+    }
+    if(ctxKey === todayKey){
+      const nowMin=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+      if(nowMin>=DAY_START && nowMin<=DAY_END){
+        const line=document.createElement('div'); line.className='current-time-line';
+        line.style.top=minToPx(nowMin-DAY_START)+'px'; overlay.appendChild(line);
+      }
+    }
+    if(overlay.children.length) col.appendChild(overlay);
+  });
+}
+// Les colonnes reçoivent leur date via renderApp ci-dessous.
+if(currentTimeRefresh) clearInterval(currentTimeRefresh);
+currentTimeRefresh=setInterval(refreshCurrentTimeIndicators, 30000);
+
+
+// ============ PWA / Service Worker ============
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(registration => {
+        console.log('Cadence : Service Worker actif', registration.scope);
+      })
+      .catch(error => {
+        console.error('Cadence : échec du Service Worker', error);
+      });
+  });
+}
+
+})();
+</script>
+</body>
+</html>

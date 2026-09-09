@@ -138,3 +138,7 @@ La V1.3 ajoute l'affichage en lecture seule de l'agenda Google principal.
 - aucun événement n'est créé, modifié ou supprimé par Cadence.
 
 Le Client ID OAuth est configuré dans `integrations/google-calendar.js`. L'origine JavaScript autorisée dans Google Cloud doit être `https://may8326.github.io`.
+
+
+### Agenda Google – planning
+La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agendas Google, gestion visuelle des chevauchements et indicateur de l’heure actuelle.

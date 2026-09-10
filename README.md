@@ -2,7 +2,7 @@
 
 Cadence est une application web personnelle et autonome pour organiser son temps en **blocs** sur une grille horaire. Elle fonctionne comme une **PWA** installable et conserve les données du planning localement dans le navigateur.
 
-**Application :** https://may8326.github.io/Cadence/
+> [!INFO] **Application :** https://may8326.github.io/Cadence/
 
 ## Version stable — 1.16
 

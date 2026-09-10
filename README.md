@@ -159,3 +159,11 @@ La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agen
 - vue Semaine Cadence en grille 3 colonnes sur téléphone ;
 - zoom de la vue Semaine Cadence conservé avec boutons et pincement ;
 - navigation mobile adaptée au petit écran.
+
+
+## V1.13 — visite guidée interactive
+- Ajout d’un bouton « ? » pour ouvrir le tutoriel à tout moment.
+- Remplacement du guide statique par une visite guidée pas à pas avec fenêtres contextuelles.
+- Navigation « Précédent / Suivant », progression et possibilité de quitter.
+- Les étapes se déplacent automatiquement vers les différentes fonctions de Cadence et s’adaptent à l’affichage mobile ou ordinateur.
+- La visite est proposée automatiquement lors de la première ouverture ; elle peut ensuite être relancée depuis « ? » ou « Aide et tutoriel ».

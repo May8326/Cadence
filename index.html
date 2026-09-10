@@ -602,6 +602,27 @@
   }
   .help-tip strong{color:var(--ink);white-space:nowrap;}
 
+  /* ---------- Guided tutorial ---------- */
+  .tour-overlay{position:fixed;inset:0;z-index:1000;pointer-events:none;}
+  .tour-dim{position:absolute;inset:0;background:rgba(30,28,22,.42);pointer-events:auto;}
+  .tour-focus{position:fixed;border-radius:8px;box-shadow:0 0 0 9999px rgba(30,28,22,.42),0 0 0 3px var(--accent);pointer-events:none;transition:top .22s ease,left .22s ease,width .22s ease,height .22s ease;}
+  .tour-card{position:fixed;width:min(360px,calc(100vw - 28px));background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:17px;box-shadow:0 16px 44px rgba(30,28,22,.24);pointer-events:auto;transition:top .22s ease,left .22s ease;}
+  .tour-progress{font-size:10.5px;color:var(--accent);font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+  .tour-card h3{font-family:var(--font-serif);font-weight:normal;font-size:20px;margin:0 0 6px;color:var(--ink);}
+  .tour-card p{font-size:12.5px;line-height:1.5;color:var(--ink-soft);margin:0;}
+  .tour-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:15px;}
+  .tour-actions .left{display:flex;align-items:center;gap:6px;}
+  .tour-actions .right{display:flex;gap:6px;}
+  .tour-skip{border:0;background:none;color:var(--ink-faint);font-size:11px;padding:6px;cursor:pointer;}
+  .tour-skip:hover{color:var(--ink);}
+  .tour-close{position:absolute;right:9px;top:8px;border:0;background:none;color:var(--ink-faint);font-size:19px;cursor:pointer;padding:2px 5px;}
+  .tour-close:hover{color:var(--ink);}
+  @media(max-width:720px){
+    .tour-card{padding:15px;}
+    .tour-card h3{font-size:18px;}
+    .tour-card p{font-size:12px;}
+  }
+
   /* ---------- Modal ---------- */
   .modal-backdrop{
     position:fixed;inset:0;
@@ -1021,6 +1042,7 @@
   <header class="topbar">
     <div class="brand">Cadence</div>
     <button id="menuBtn">☰</button>
+    <button id="topHelpBtn" class="help-btn" type="button" aria-label="Ouvrir le tutoriel" title="Tutoriel">?</button>
     <div class="section-title" id="sectionTitle"></div>
     <div class="cadence-controls" id="cadenceControls" style="display:flex;align-items:center;gap:18px;flex:1;flex-wrap:wrap;">
       <nav class="view-toggle">
@@ -2299,26 +2321,99 @@ function openTemplateModal(existing){
 
 /* ============ help / tutorial ============ */
 function openHelpModal(){
-  const html =
-    '<div class="help-modal">'+
-      '<div class="help-hero"><div class="help-icon">?</div><div><h3>Bienvenue dans Cadence</h3><p>Le petit guide de prise en main, pensé aussi pour le téléphone.</p></div></div>'+
-      '<div class="help-steps">'+
-      '<div class="help-step"><span>1</span><div><strong>Naviguez entre les espaces</strong><p>En bas de l’écran sur Android, utilisez <b>Cadence</b>, <b>Tâches</b>, <b>Agenda</b> et <b>Paramétrages</b>. Sur ordinateur, la même navigation se trouve en haut.</p></div></div>'+
-      '<div class="help-step"><span>2</span><div><strong>Organisez votre semaine</strong><p>Dans <b>Cadence</b>, utilisez le sélecteur de vue pour choisir <b>Semaine</b>, <b>Jour</b>, <b>Journées</b> ou <b>½ journées</b>. La vue <b>Semaine</b> pour vous concentrer sur une seule journée.</p></div></div>'+
-      '<div class="help-step"><span>3</span><div><strong>Créez vos journées types</strong><p>Dans le menu de gauche, créez des <b>Journées types</b> et des <b>Demi-journées types</b>, puis réutilisez-les.</p></div></div>'+
-      '<div class="help-step"><span>4</span><div><strong>Ajoutez et réutilisez vos blocs</strong><p>En mode édition, créez ou modifiez vos activités. Les <b>Blocs enregistrés</b> permettent de replacer rapidement les activités récurrentes.</p></div></div>'+
-      '<div class="help-step"><span>5</span><div><strong>Utilisez Todoist</strong><p>Dans <b>Tâches</b>, connectez votre compte pour retrouver vos tâches, notamment celles du jour et les tâches en retard. L’accès demandé est en lecture seule.</p></div></div>'+
-      '<div class="help-step"><span>6</span><div><strong>Utilisez Google Calendar</strong><p>Dans <b>Agenda</b>, connectez Google Calendar et choisissez les agendas à afficher. La vue <b>Jour</b> est la vue par défaut ; la vue <b>Semaine</b> affiche vos sept jours.</p></div></div>'+
-      '<div class="help-step"><span>7</span><div><strong>Adaptez l’agenda au téléphone</strong><p>En vue <b>Jour</b>, le planning s’adapte à la largeur de l’écran. En vue <b>Semaine</b>, utilisez <b>−</b> et <b>+</b> pour dézoomer ou zoomer horizontalement.</p></div></div>'+
-      '<div class="help-step"><span>8</span><div><strong>Sauvegardez vos données</strong><p>Le planning Cadence est conservé localement dans votre navigateur. Depuis <b>Paramétrages</b>, exportez une sauvegarde JSON et importez-la en mode édition.</p></div></div>'+
-      '<div class="help-step"><span>9</span><div><strong>Imprimez votre planning</strong><p><b>Imprimer / PDF</b> permet d’enregistrer la vue Cadence affichée en PDF.</p></div></div>'+
-      '</div>'+
-      '<div class="help-tip"><strong>Astuce Android</strong><span>La navigation du bas fait partie de l’écran et ne recouvre pas le contenu. Pour Google Calendar, préférez <b>Jour</b> sur petit écran et dézoomez la <b>Semaine</b> au besoin.</span></div>'+
-      '<div class="modal-actions"><div></div><button class="btn primary" id="helpClose">J’ai compris</button></div>'+
-    '</div>';
-  const modal = openModalShell(html, false);
-  modal.querySelector('#helpClose').addEventListener('click', closeModal);
+  startGuidedTour();
 }
+
+/* ============ visite guidée ============ */
+function startGuidedTour(){
+  closeSidebar();
+  const old=document.getElementById('tourOverlay');
+  if(old) old.remove();
+
+  const mobile=()=>window.matchMedia('(max-width: 720px)').matches;
+  const goSection=(section)=>{
+    if(appSection!==section){
+      appSection=section;
+      document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section===section));
+      renderApp();
+    }
+  };
+  const goView=(view)=>{
+    currentView=view;
+    if(mobileViewSelect) mobileViewSelect.value=view;
+    document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+    renderApp();
+  };
+  const steps=[
+    {title:'Bienvenue dans Cadence',text:'Cette visite vous accompagne pas à pas dans les principales fonctionnalités. Vous pouvez revenir en arrière, avancer ou quitter à tout moment.',target:null,before:()=>{goSection('cadence');goView('week');}},
+    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':' .app-nav-desktop',before:()=>goSection('cadence')},
+    {title:'Le menu de Cadence',text:'Le menu de gauche contient vos Journées types, Demi-journées types et Blocs enregistrés. Sur Android, ouvrez-le avec le bouton ☰.',target:()=>mobile()?'#menuBtn':'#sidebar',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
+    {title:'Choisir une vue',text:'Vous pouvez afficher votre Semaine, un Jour, vos Journées types ou vos Demi-journées types. Le sélecteur s’adapte automatiquement au téléphone.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
+    {title:'Naviguer dans le temps',text:'Les flèches permettent de changer de période et « Aujourd’hui » vous ramène directement à la date actuelle.',target:'#dateLabel',before:()=>{goSection('cadence');goView('week');}},
+    {title:'Le mode édition',text:'Par défaut, le planning est protégé contre les modifications accidentelles. Activez « Modifier » pour créer, déplacer, redimensionner ou supprimer des blocs.',target:'#editModeBtn',before:()=>{goSection('cadence');goView('week');setEditMode(false);}},
+    {title:'Vos Journées types',text:'Une Journée type regroupe les blocs d’une journée complète. Créez-en une dans le menu de gauche, puis appliquez-la aux jours où vous en avez besoin.',target:'#templatePanel',before:()=>{goSection('cadence');goView('templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
+    {title:'Vos Demi-journées types',text:'Une Demi-journée type définit une plage horaire et les blocs qu’elle contient. Elle est pratique pour des matinées, soirées ou activités récurrentes.',target:'#halfDayPanel',before:()=>{goSection('cadence');goView('halfday-templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
+    {title:'Vos Blocs enregistrés',text:'Enregistrez vos activités récurrentes ici pour pouvoir les replacer rapidement dans le planning. Vous pouvez aussi les organiser par étiquette.',target:'#savedBlockPanel',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
+    {title:'Le zoom de la semaine',text:'En vue Semaine, utilisez − et + pour adapter la hauteur de la grille. Sur téléphone, le pincement à deux doigts permet également de zoomer.',target:'#cadenceZoom',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
+    {title:'Vos tâches Todoist',text:'Dans Tâches, retrouvez vos tâches Todoist directement dans Cadence. La connexion se fait depuis Paramétrages et l’accès demandé est en lecture seule.',target:()=>mobile()?'.app-nav-mobile button[data-section="tasks"]':'.app-nav-desktop button[data-section="tasks"]',before:()=>{closeSidebar();goSection('tasks');}},
+    {title:'Votre Google Calendar',text:'Dans Agenda, connectez Google Calendar puis choisissez les calendriers à afficher. Les événements apparaissent directement dans le planning.',target:()=>mobile()?'.app-nav-mobile button[data-section="calendar"]':'.app-nav-desktop button[data-section="calendar"]',before:()=>{closeSidebar();goSection('calendar');}},
+    {title:'Paramétrages',text:'Cet espace rassemble les connexions Todoist et Google Calendar, la sauvegarde des données, le tutoriel et les informations sur Cadence.',target:'#moreHelpCard',before:()=>{closeSidebar();goSection('more');}},
+    {title:'Sauvegarder vos données',text:'Les données de votre planning sont conservées localement dans votre navigateur. Exportez un fichier JSON pour garder une sauvegarde ; l’importation nécessite le mode édition.',target:'#moreDataCard',before:()=>{closeSidebar();goSection('more');}},
+    {title:'Tout est prêt',text:'Vous connaissez maintenant les principales fonctions de Cadence. Vous pourrez rouvrir cette visite à tout moment avec le bouton « ? » ou depuis Aide et tutoriel.',target:'#topHelpBtn',before:()=>{closeSidebar();goSection('more');}}
+  ];
+
+  const overlay=document.createElement('div');
+  overlay.id='tourOverlay'; overlay.className='tour-overlay';
+  overlay.innerHTML='<div class="tour-dim"></div><div class="tour-focus" id="tourFocus"></div><div class="tour-card" id="tourCard"><button class="tour-close" id="tourClose" aria-label="Fermer">×</button><div class="tour-progress" id="tourProgress"></div><h3 id="tourTitle"></h3><p id="tourText"></p><div class="tour-actions"><div class="left"><button class="tour-skip" id="tourSkip">Quitter</button></div><div class="right"><button class="btn" id="tourPrev">Précédent</button><button class="btn primary" id="tourNext">Suivant</button></div></div></div>';
+  document.body.appendChild(overlay);
+
+  let index=0;
+  const focus=overlay.querySelector('#tourFocus'),card=overlay.querySelector('#tourCard');
+  const progress=overlay.querySelector('#tourProgress'),title=overlay.querySelector('#tourTitle'),text=overlay.querySelector('#tourText');
+  const prev=overlay.querySelector('#tourPrev'),next=overlay.querySelector('#tourNext');
+
+  const finish=()=>{localStorage.setItem('cadence-tour-seen-v1','1');closeSidebar();setEditMode(false);overlay.remove();};
+  const position=()=>{
+    const step=steps[index];
+    let el=typeof step.target==='function'?step.target():step.target?document.querySelector(step.target):null;
+    if(el){el.scrollIntoView({block:'nearest',inline:'nearest'});}
+    requestAnimationFrame(()=>{
+      const pad=6;
+      if(el){
+        const r=el.getBoundingClientRect();
+        focus.style.display='block';focus.style.left=(r.left-pad)+'px';focus.style.top=(r.top-pad)+'px';focus.style.width=(r.width+pad*2)+'px';focus.style.height=(r.height+pad*2)+'px';
+        const cr=card.getBoundingClientRect(), margin=12;
+        let left=Math.max(14,Math.min(window.innerWidth-cr.width-14,r.left));
+        let top=r.bottom+14;
+        if(top+cr.height>window.innerHeight-12) top=r.top-cr.height-14;
+        if(top<12) top=Math.min(window.innerHeight-cr.height-12,Math.max(12,r.top+10));
+        if(r.left+cr.width>window.innerWidth-14) left=window.innerWidth-cr.width-14;
+        card.style.left=left+'px';card.style.top=top+'px';
+      }else{
+        focus.style.display='none';
+        const cr=card.getBoundingClientRect();
+        card.style.left=Math.max(14,(window.innerWidth-cr.width)/2)+'px';
+        card.style.top=Math.max(14,(window.innerHeight-cr.height)/2)+'px';
+      }
+    });
+  };
+  const show=(i)=>{
+    index=Math.max(0,Math.min(steps.length-1,i));
+    steps[index].before&&steps[index].before();
+    progress.textContent='Étape '+(index+1)+' sur '+steps.length;
+    title.textContent=steps[index].title;text.textContent=steps[index].text;
+    prev.disabled=index===0;next.textContent=index===steps.length-1?'Terminer':'Suivant';
+    position();
+  };
+  prev.addEventListener('click',()=>show(index-1));
+  next.addEventListener('click',()=>index===steps.length-1?finish():show(index+1));
+  overlay.querySelector('#tourClose').addEventListener('click',finish);
+  overlay.querySelector('#tourSkip').addEventListener('click',finish);
+  overlay.querySelector('.tour-dim').addEventListener('click',finish);
+  window.addEventListener('resize',position);
+  show(0);
+}
+
 
 /* ============ boot / render ============ */
 
@@ -2597,11 +2692,11 @@ function renderMore(){
   const googleConnected=window.CadenceGoogleCalendar?.isConnected?.() || false;
   const editLabel=editMode?'Désactiver le mode édition':'Activer le mode édition';
   moreContentEl.innerHTML=
-    '<section class="more-card"><h2>Todoist</h2><p>Connexion et affichage de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
-    '<section class="more-card"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
-    '<section class="more-card"><h2>Données Cadence</h2><p>Vos données de planning restent stockées localement dans votre navigateur.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
-    '<section class="more-card"><h2>Aide et tutoriel</h2><p>Retrouvez le guide de prise en main, y compris les fonctions Todoist, Agenda et Android.</p><div class="more-actions"><button class="btn" id="moreHelp">Ouvrir le tutoriel</button></div></section>'+
-    '<section class="more-card"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.10 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
+    '<section class="more-card" id="moreTodoistCard"><h2>Todoist</h2><p>Connexion et affichage de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
+    '<section class="more-card" id="moreGoogleCard"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
+    '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données de planning restent stockées localement dans votre navigateur.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
+    '<section class="more-card" id="moreHelpCard"><h2>Aide et tutoriel</h2><p>Retrouvez le guide de prise en main, y compris les fonctions Todoist, Agenda et Android.</p><div class="more-actions"><button class="btn" id="moreHelp">Ouvrir le tutoriel</button></div></section>'+
+    '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.13 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
   const q=(id)=>moreContentEl.querySelector(id);
   if(q('#moreTodoConnect'))q('#moreTodoConnect').addEventListener('click',()=>window.CadenceTodoist.startOAuth());
   if(q('#moreTodoDisconnect'))q('#moreTodoDisconnect').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});
@@ -2611,6 +2706,7 @@ function renderMore(){
   if(q('#moreImport'))q('#moreImport').addEventListener('click',()=>{if(editMode)document.getElementById('importFile').click();});
   if(q('#moreEdit'))q('#moreEdit').addEventListener('click',()=>setEditMode(!editMode));
   if(q('#moreHelp'))q('#moreHelp').addEventListener('click',openHelpModal);
+  const topHelpBtn=document.getElementById('topHelpBtn'); if(topHelpBtn) topHelpBtn.addEventListener('click',openHelpModal);
 }
 
 function renderApp(){
@@ -2643,6 +2739,7 @@ function renderApp(){
   }
 }
 setEditMode(false);
+if(!localStorage.getItem('cadence-tour-seen-v1')) setTimeout(openHelpModal,500);
 
 // Mise à jour discrète de l'indicateur de l'heure courante, sans reconstruire le planning.
 let currentTimeRefresh = null;

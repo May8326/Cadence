@@ -294,9 +294,8 @@
   .more-status.connected .dot{background:#72a879;}
   .more-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;}
   .more-version{margin-top:12px!important;color:var(--ink-faint)!important;font-size:11px!important;}
-  .section-title{display:none;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:17px;font-weight:500;}
-  .section-title svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-  body.external-section .section-title{display:flex;}
+  .section-title{display:none;font-family:var(--font-serif);font-size:17px;font-weight:500;}
+  body.external-section .section-title{display:block;}
   body.external-section #sidebar,body.external-section #menuBtn{display:none;}
   .external-view{max-width:900px;margin:0 auto;}
   .external-card{
@@ -820,8 +819,7 @@
     .app-nav-mobile button{flex:1;min-height:50px;padding:6px 5px;font-size:11px;flex-direction:column;gap:3px;}
     .app-nav-mobile .nav-icon{width:18px;height:18px;}
     .topbar{backdrop-filter:none;-webkit-backdrop-filter:none;}
-    .section-title{display:flex;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .section-title svg{width:20px;height:20px;}
+    .section-title{display:block;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .external-view{padding:4px 2px 18px;}
     .external-card{padding:18px 16px;}
     .more-grid{grid-template-columns:1fr;gap:10px;}
@@ -830,7 +828,7 @@
     body.external-section #main{padding-bottom:20px;}
     body.external-section #cadenceControls,
     body.external-section #cadenceActions{display:none !important;}
-    body.external-section .section-title{display:flex !important;}
+    body.external-section .section-title{display:block !important;}
     .topbar{position:sticky;top:0;z-index:90;gap:7px;padding:8px 8px;transition:padding .18s ease,gap .18s ease;}
     .cadence-controls{width:100%;flex:0 0 100% !important;min-width:0 !important;}
     #cadenceControls{order:2 !important;display:flex !important;gap:7px !important;flex-wrap:wrap !important;}
@@ -1045,7 +1043,7 @@
     <div class="brand">Cadence</div>
     <button id="menuBtn">☰</button>
     <button id="topHelpBtn" class="help-btn" type="button" aria-label="Ouvrir le tutoriel" title="Tutoriel">?</button>
-    <div class="section-title" id="sectionTitle" aria-label="Espace courant"></div>
+    <div class="section-title" id="sectionTitle"></div>
     <div class="cadence-controls" id="cadenceControls" style="display:flex;align-items:center;gap:18px;flex:1;flex-wrap:wrap;">
       <nav class="view-toggle">
         <button data-view="week" class="active">Semaine</button>
@@ -1162,6 +1160,7 @@ const DAY_END   = 23*60;  // 23:00
 const PALETTE = ['#F3B6C8','#F2A6A0','#F6C29A','#F4D77D','#B9D99A','#9FD3B6','#9FD8D2','#A9CBEF','#AEB9E8','#C5B1E8','#D7B5D8','#D9B99B'];
 const WEEKDAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 const STORE_KEY = 'cadence-data-v1';
+const BACKUP_KEY = 'cadence-data-backup-v1';
 
 /* ============ utils ============ */
 function pad(n){return n.toString().padStart(2,'0');}
@@ -1214,12 +1213,27 @@ function loadState(){
     const raw = localStorage.getItem(STORE_KEY);
     if(!raw) return defaultState();
     return normalizeState(JSON.parse(raw));
-  }catch(e){ console.error('Lecture des données impossible', e); return defaultState(); }
+  }catch(e){
+    console.error('Lecture des données impossible', e);
+    try{
+      const backup = localStorage.getItem(BACKUP_KEY);
+      if(backup) return normalizeState(JSON.parse(backup));
+    }catch(backupError){ console.error('Lecture de la sauvegarde de secours impossible', backupError); }
+    return defaultState();
+  }
 }
 let STATE = loadState();
 function saveState(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); }
-  catch(e){ console.error('Enregistrement des données impossible', e); }
+  try{
+    const serialized = JSON.stringify(STATE);
+    localStorage.setItem(STORE_KEY, serialized);
+    try{ localStorage.setItem(BACKUP_KEY, serialized); }catch(backupError){ console.warn('Sauvegarde de secours impossible', backupError); }
+    return true;
+  }catch(e){
+    console.error('Enregistrement des données impossible', e);
+    alert('Impossible d’enregistrer les données de Cadence dans ce navigateur. Vérifiez l’espace de stockage disponible et exportez vos données dès que possible.');
+    return false;
+  }
 }
 function getDay(key){
   if(!STATE.days[key]) STATE.days[key] = {templateId:null, blocks:[]};
@@ -1398,7 +1412,12 @@ document.getElementById('importBtn').addEventListener('click', ()=>{ if(editMode
 document.getElementById('importFile').addEventListener('change', importData);
 
 function exportData(){
-  const blob = new Blob([JSON.stringify(STATE,null,2)], {type:'application/json'});
+  const payload = {
+    cadenceExport: 1,
+    exportedAt: new Date().toISOString(),
+    data: normalizeState(STATE)
+  };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -1412,11 +1431,15 @@ function importData(e){
   const reader = new FileReader();
   reader.onload = ()=>{
     try{
-      const data = JSON.parse(reader.result);
-      const normalized = normalizeState(data);
+      const parsed = JSON.parse(reader.result);
+      const source = parsed && typeof parsed==='object' && parsed.cadenceExport===1 && parsed.data ? parsed.data : parsed;
+      if(!source || typeof source!=='object' || Array.isArray(source)) throw new Error('structure');
+      const normalized = normalizeState(source);
+      const looksLikeCadence = Array.isArray(normalized.savedBlocks) && Array.isArray(normalized.templates) && Array.isArray(normalized.halfDayTemplates) && normalized.days && typeof normalized.days==='object';
+      if(!looksLikeCadence) throw new Error('structure');
       if(!confirm('Remplacer toutes les données actuelles par celles de ce fichier ?')) return;
       STATE = normalized;
-      saveState();
+      if(!saveState()) return;
       renderApp();
     }catch(err){ alert('Ce fichier ne peut pas être lu (JSON invalide ou structure incompatible).'); }
   };
@@ -2348,10 +2371,10 @@ function startGuidedTour(){
   };
   const steps=[
     {title:'Bienvenue dans Cadence',text:'Cette visite vous accompagne pas à pas dans les principales fonctionnalités. Vous pouvez revenir en arrière, avancer ou quitter à tout moment.',target:null,before:()=>{goSection('cadence');goView('week');}},
-    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':'.app-nav-desktop',before:()=>goSection('cadence')},
+    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':' .app-nav-desktop',before:()=>goSection('cadence')},
     {title:'Le menu de Cadence',text:'Le menu de gauche contient vos Journées types, Demi-journées types et Blocs enregistrés. Sur Android, ouvrez-le avec le bouton ☰.',target:()=>mobile()?'#menuBtn':'#sidebar',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
     {title:'Choisir une vue',text:'Vous pouvez afficher votre Semaine, un Jour, vos Journées types ou vos Demi-journées types. Le sélecteur s’adapte automatiquement au téléphone.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
-    {title:'Naviguer dans le temps',text:'Les flèches permettent de changer de période et « Aujourd’hui » vous ramène directement à la date actuelle.',target:'#cadenceControls .date-nav',before:()=>{goSection('cadence');goView('week');}},
+    {title:'Naviguer dans le temps',text:'Les flèches permettent de changer de période et « Aujourd’hui » vous ramène directement à la date actuelle.',target:'#dateLabel',before:()=>{goSection('cadence');goView('week');}},
     {title:'Le mode édition',text:'Par défaut, le planning est protégé contre les modifications accidentelles. Activez « Modifier » pour créer, déplacer, redimensionner ou supprimer des blocs.',target:'#editModeBtn',before:()=>{goSection('cadence');goView('week');setEditMode(false);}},
     {title:'Vos Journées types',text:'Une Journée type regroupe les blocs d’une journée complète. Créez-en une dans le menu de gauche, puis appliquez-la aux jours où vous en avez besoin.',target:'#templatePanel',before:()=>{goSection('cadence');goView('templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
     {title:'Vos Demi-journées types',text:'Une Demi-journée type définit une plage horaire et les blocs qu’elle contient. Elle est pratique pour des matinées, soirées ou activités récurrentes.',target:'#halfDayPanel',before:()=>{goSection('cadence');goView('halfday-templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
@@ -2359,7 +2382,7 @@ function startGuidedTour(){
     {title:'Le zoom de la semaine',text:'En vue Semaine, utilisez − et + pour adapter la hauteur de la grille. Sur téléphone, le pincement à deux doigts permet également de zoomer.',target:'#cadenceZoom',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
     {title:'Vos tâches Todoist',text:'Dans Tâches, retrouvez vos tâches Todoist directement dans Cadence. La connexion se fait depuis Paramétrages et l’accès demandé est en lecture seule.',target:()=>mobile()?'.app-nav-mobile button[data-section="tasks"]':'.app-nav-desktop button[data-section="tasks"]',before:()=>{closeSidebar();goSection('tasks');}},
     {title:'Votre Google Calendar',text:'Dans Agenda, connectez Google Calendar puis choisissez les calendriers à afficher. Les événements apparaissent directement dans le planning.',target:()=>mobile()?'.app-nav-mobile button[data-section="calendar"]':'.app-nav-desktop button[data-section="calendar"]',before:()=>{closeSidebar();goSection('calendar');}},
-    {title:'Paramétrages',text:'Cet espace rassemble les connexions Todoist et Google Calendar, la sauvegarde des données, le tutoriel et les informations sur Cadence.',target:'#moreView',before:()=>{closeSidebar();goSection('more');}},
+    {title:'Paramétrages',text:'Cet espace rassemble les connexions Todoist et Google Calendar, la sauvegarde des données, le tutoriel et les informations sur Cadence.',target:'#moreHelpCard',before:()=>{closeSidebar();goSection('more');}},
     {title:'Sauvegarder vos données',text:'Les données de votre planning sont conservées localement dans votre navigateur. Exportez un fichier JSON pour garder une sauvegarde ; l’importation nécessite le mode édition.',target:'#moreDataCard',before:()=>{closeSidebar();goSection('more');}},
     {title:'Tout est prêt',text:'Vous connaissez maintenant les principales fonctions de Cadence. Vous pourrez rouvrir cette visite à tout moment avec le bouton « ? » ou depuis Aide et tutoriel.',target:'#topHelpBtn',before:()=>{closeSidebar();goSection('more');}}
   ];
@@ -2711,21 +2734,6 @@ function renderMore(){
   const topHelpBtn=document.getElementById('topHelpBtn'); if(topHelpBtn) topHelpBtn.addEventListener('click',openHelpModal);
 }
 
-function renderSectionTitle(){
-  const sectionTitleEl=document.getElementById('sectionTitle');
-  if(!sectionTitleEl) return;
-  const icons={
-    tasks:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="m7 9 1.5 1.5L11 8"></path><line x1="13" y1="9" x2="18" y2="9"></line><path d="m7 14 1.5 1.5L11 13"></path><line x1="13" y1="14" x2="18" y2="14"></line></svg>',
-    calendar:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"></path></svg>',
-    more:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.41 1.41-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.02 1.56V21h-2v-.09a1.7 1.7 0 0 0-1.02-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.41-1.41.06-.06A1.7 1.7 0 0 0 9.46 15a1.7 1.7 0 0 0-1.56-1.02H7v-2h.9a1.7 1.7 0 0 0 1.56-1.02 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.41-1.41.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.96 11H22v2h-1.04A1.7 1.7 0 0 0 19.4 15Z"></path><circle cx="14.43" cy="12" r="2.3"></circle></svg>'
-  };
-  const names={tasks:'Tâches',calendar:'Agenda',more:'Paramétrages'};
-  const key=appSection==='cadence'?null:appSection;
-  sectionTitleEl.innerHTML=key&&icons[key]?icons[key]:'';
-  sectionTitleEl.setAttribute('aria-label',key?(names[key]||'Espace'):'Cadence');
-  sectionTitleEl.title=key?(names[key]||'Espace'):'Cadence';
-}
-
 function renderApp(){
   const isCadence = appSection==='cadence';
   if(mobileViewSelect) mobileViewSelect.value=currentView;
@@ -2733,7 +2741,7 @@ function renderApp(){
   const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=cadenceWeekZoom+' %';
   document.body.classList.toggle('external-section', !isCadence);
   cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
-  renderSectionTitle();
+  sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',more:'Paramétrages'}[appSection] || 'Cadence');
   weekViewEl.hidden = !isCadence || currentView!=='week';
   dayViewEl.hidden = !isCadence || currentView!=='day';
   templatesViewEl.hidden = !isCadence || currentView!=='templates';

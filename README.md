@@ -169,8 +169,9 @@ La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agen
 - La visite est proposée automatiquement lors de la première ouverture ; elle peut ensuite être relancée depuis « ? » ou « Aide et tutoriel ».
 
 
-## V1.14 — tutoriel guidé et en-têtes allégés
-
-- Le tutoriel guidé met en évidence l’élément précis présenté à chaque étape.
-- La navigation de la visite utilise les boutons Précédent / Suivant et s’adapte aux vues mobile et ordinateur.
-- Dans les espaces Tâches, Agenda et Paramétrages, le titre répété dans la barre supérieure est remplacé par l’icône correspondante ; le titre complet reste affiché dans le contenu du volet.
+## V1.15 — sauvegarde et robustesse
+- Export JSON enrichi avec métadonnées d’export.
+- Import plus strict et compatible avec les anciens exports.
+- Sauvegarde de secours locale des données Cadence.
+- Gestion explicite des erreurs d’écriture dans le stockage local.
+- Robustesse accrue de la reprise OAuth Todoist.

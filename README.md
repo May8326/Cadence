@@ -151,3 +151,11 @@ La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agen
 - zoom/dézoom de la vue « Semaine » ;
 - espace « Paramétrages » pour les connexions, données, aide et informations ;
 - tutoriel mis à jour pour Android, Todoist et Google Calendar.
+
+
+## V1.12 — ergonomie Android
+
+- menu latéral Cadence sous le bouton de menu, avec ouverture/fermeture animée ;
+- vue Semaine Cadence en grille 3 colonnes sur téléphone ;
+- zoom de la vue Semaine Cadence conservé avec boutons et pincement ;
+- navigation mobile adaptée au petit écran.

@@ -1,4 +1,4 @@
-const CACHE = 'cadence-pwa-v14'; // v1.7 : force le renouvellement du cache
+const CACHE = 'cadence-pwa-v15'; // v1.7 : force le renouvellement du cache
 
 const APP = [
   './',

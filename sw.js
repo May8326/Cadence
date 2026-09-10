@@ -1,10 +1,10 @@
-const CACHE = 'cadence-pwa-v3'; // v2 -> v3 : force le renouvellement du cache
+const CACHE = 'cadence-pwa-v19'; // V1.16 : version stable documentée
 
 const APP = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg'
+  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js'
 ];
 
 self.addEventListener('install', event => {

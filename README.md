@@ -1,109 +1,132 @@
-# 🗓️ Cadence — emploi du temps par blocs
+# Cadence — emploi du temps par blocs
 
-> Application web personnelle et autonome pour organiser son temps en **blocs** posés sur une grille horaire. Un seul fichier HTML/CSS/JS, sans compte ni serveur : tout reste sur l'appareil.
+Cadence est une application web personnelle et autonome pour organiser son temps en **blocs** sur une grille horaire. Elle fonctionne comme une **PWA** installable et conserve les données du planning localement dans le navigateur.
 
-**🔗 Application en ligne :** [may8326.github.io/Cadence](https://may8326.github.io/Cadence/)
+> [!INFO] **Application :** https://may8326.github.io/Cadence/
 
----
+## Version stable — 1.16
 
-## ✨ Fonctionnalités
+La V1.16 constitue une version de stabilisation et de documentation après les développements des intégrations Todoist et Google Calendar et les adaptations Android.
 
-| | |
-|---|---|
-| 🗓️ **Vues Semaine et Jour** | Grille horaire de 6h à 23h, avec indicateur de l'heure actuelle |
-| 📋 **Journées type** | Modèles de journée complète, applicables à n'importe quel jour en un clic |
-| 🌗 **Demi-journées types** | Modèles sur une plage horaire, avec troncature automatique des blocs qui chevauchent |
-| 🧩 **Blocs personnalisables** | Titre, horaires, couleur, étiquette ; création par glisser sur la grille |
-| ⭐ **Blocs enregistrés** | Activités récurrentes à replacer en un clic, réorganisables par glisser-déposer |
-| 🖨️ **Impression / PDF** | Export de la vue affichée au format paysage |
-| 🔄 **Export / import JSON** | Sauvegarde manuelle et synchronisation entre appareils |
-| 📲 **PWA installable** | Fonctionne hors connexion une fois installée |
+### Fonctionnalités
 
----
+- **Planning** : vues Semaine et Jour, navigation par date, grille de 6 h à 23 h et indicateur de l'heure actuelle.
+- **Blocs** : création, déplacement, redimensionnement, modification, suppression, couleur et étiquette.
+- **Blocs enregistrés** : activités réutilisables et réorganisation par glisser-déposer.
+- **Journées types** : modèles de journée complète applicables à un jour.
+- **Demi-journées types** : modèles sur une plage horaire, applicables à un jour.
+- **Impression / PDF** : impression de la vue affichée.
+- **Données** : export et import JSON, avec validation et sauvegarde de secours locale.
+- **Todoist** : consultation des tâches en lecture seule via OAuth 2.0 + PKCE.
+- **Google Calendar** : consultation de plusieurs agendas, en vue Jour ou Semaine, avec couleurs, chevauchements et indicateur de l'heure actuelle.
+- **Tutoriel interactif** : visite guidée pas à pas avec mise en évidence des éléments de l'interface, navigation Précédent / Suivant et adaptation à Android ou ordinateur.
+- **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache.
 
-## 🧭 Mode d'emploi
+## Utilisation
 
-<details>
-<summary><strong>Créer et modifier un bloc</strong></summary>
+### Modifier le planning
 
-- Cliquez-glissez sur la grille pour créer un bloc sur la plage voulue (un simple clic crée un bloc de 60 minutes par défaut).
-- Renseignez titre, horaires, couleur et étiquette, puis validez. Cochez « Enregistrer comme bloc réutilisable » pour le retrouver dans les blocs enregistrés.
-- Glissez un bloc existant pour le déplacer, ou sa poignée basse pour le redimensionner.
-- Touchez un bloc sans le déplacer pour l'ouvrir en édition (modification ou suppression).
+Le planning est en lecture seule par défaut. Activez **Modifier** pour effectuer les opérations d'édition.
 
-</details>
+- Cliquez-glissez sur la grille pour créer un bloc.
+- Touchez ou cliquez sur un bloc pour l'ouvrir en édition.
+- Faites glisser un bloc pour le déplacer.
+- Utilisez sa poignée basse pour le redimensionner.
+- Les blocs peuvent être enregistrés pour être replacés ultérieurement.
 
-<details>
-<summary><strong>Journées type</strong></summary>
+### Journées et demi-journées types
 
-- Depuis le menu latéral (« Journées type »), créez un modèle de journée en y plaçant des blocs.
-- Appliquez-le à un jour via le menu déroulant en haut de chaque colonne, en vue Semaine ou Jour.
-- L'onglet « Journées » affiche tous les modèles côte à côte.
+Les modèles sont accessibles dans le menu latéral de l'espace **Cadence**.
 
-</details>
+- Une **journée type** contient une organisation complète de la journée.
+- Une **demi-journée type** correspond à une plage horaire définie.
+- Les modèles peuvent être appliqués depuis les commandes prévues dans les en-têtes des journées.
 
-<details>
-<summary><strong>Demi-journées types</strong></summary>
+### Sauvegarde des données
 
-- Créez un modèle sur une plage horaire donnée (« Demi-journées types »).
-- Ajoutez-le à un jour via le bouton **+** dans l'en-tête de sa colonne, puis ajustez la plage d'application si besoin.
-- L'onglet « ½ journées » permet de les consulter et de les modifier.
+Les données du planning sont conservées **localement dans le navigateur**. Cadence ne possède pas de compte utilisateur ni de base de données distante pour le planning.
 
-</details>
+Pour sauvegarder ou transférer un planning :
 
-<details>
-<summary><strong>Blocs enregistrés</strong></summary>
+1. Activez le mode **Modifier** si nécessaire.
+2. Utilisez **Exporter** pour obtenir un fichier JSON.
+3. Conservez ce fichier dans un emplacement de sauvegarde de votre choix.
+4. Sur un autre appareil, utilisez **Importer** pour restaurer le fichier.
 
-- Enregistrez une activité récurrente (titre, couleur, étiquette, durée par défaut) depuis « Blocs enregistrés ».
-- Touchez le bloc dans la liste pour l'« armer », puis touchez la grille pour le placer.
-- Glissez-déposez les blocs pour les réorganiser au sein d'une même étiquette.
+L'importation remplace les données actuelles après confirmation. Les anciens exports Cadence restent pris en charge par le système d'importation.
 
-</details>
+### Tutoriel
 
-<details>
-<summary><strong>Sauvegarde et synchronisation entre appareils</strong></summary>
+Le bouton **?** ouvre la visite guidée interactive. Chaque étape met en évidence l'espace ou le bouton concerné et explique son utilisation. Les boutons **Précédent**, **Suivant** et **Quitter** permettent de parcourir ou d'interrompre la visite.
 
-Les données sont stockées **localement** dans le navigateur, sans compte ni serveur.
+La visite est proposée automatiquement lors de la première utilisation et peut ensuite être relancée depuis l'aide.
 
-1. **Exporter** télécharge un fichier JSON des données.
-2. Placez ce fichier dans un dossier synchronisé (Google Drive, OneDrive, Dropbox…).
-3. Sur l'autre appareil, **Importer** charge ce fichier (les données actuelles sont remplacées, après confirmation).
+## Todoist
 
-> [!TIP]
-> Un bandeau de rappel s'affiche après toute modification, pour ne pas oublier d'exporter.
+La connexion Todoist utilise OAuth 2.0 avec PKCE et demande uniquement la portée de lecture `data:read`.
 
-</details>
+Cadence peut consulter les tâches actives et les présenter selon plusieurs filtres. Les tâches ne sont ni créées, ni modifiées, ni supprimées par Cadence.
 
-<details>
-<summary><strong>Impression</strong></summary>
+La connexion et la déconnexion se gèrent dans **Paramétrages → Todoist**.
 
-Le bouton **Imprimer / PDF** imprime, ou enregistre en PDF, la vue actuellement affichée.
+## Google Calendar
 
-</details>
+La connexion Google Calendar utilise Google Identity Services directement dans le navigateur.
 
-Une aide intégrée est aussi disponible dans l'application via le bouton **?** en haut à gauche.
+Cadence demande les accès en lecture nécessaires à l'affichage des événements et des calendriers. Plusieurs calendriers peuvent être sélectionnés et leurs couleurs sont reprises dans l'affichage.
 
----
+Les événements ne sont ni créés, ni modifiés, ni supprimés par Cadence.
 
-## 📲 Installation
+La connexion et la sélection des calendriers se gèrent dans **Paramétrages → Google Calendar**.
 
-### Sur Android (Chrome)
-1. Ouvrez [may8326.github.io/Cadence](https://may8326.github.io/Cadence/) dans Chrome.
-2. Menu **⋮** → **Installer l'application** (ou via la bannière proposée automatiquement).
-3. Cadence s'ouvre comme une application autonome, sans barre d'adresse, utilisable hors connexion.
+## Installation
 
-### Sur ordinateur (Chrome / Edge)
-1. Ouvrez le lien ci-dessus.
-2. Cliquez sur l'icône d'installation dans la barre d'adresse (ou menu **⋮** → **Installer Cadence**).
+### Android
 
-### Sans installation
-L'application fonctionne aussi telle quelle : ouvrez simplement le lien dans un navigateur récent, rien n'est requis côté serveur.
+1. Ouvrez l'application dans Chrome : https://may8326.github.io/Cadence/
+2. Utilisez **Installer l'application** depuis le menu du navigateur lorsque l'option est proposée.
+3. Cadence peut ensuite être lancé depuis l'écran d'accueil comme une application autonome.
 
----
+### Ordinateur
 
-## 🛠️ Aspects techniques
+Cadence peut être utilisée directement dans un navigateur récent ou installée comme application lorsque le navigateur propose l'installation de la PWA.
 
-- Application entièrement statique : `index.html` (HTML/CSS/JS), `manifest.json`, `sw.js` (service worker) et `icon.svg`.
-- Aucune dépendance, aucun build, aucun serveur ni base de données : toute la logique s'exécute dans le navigateur.
-- Données persistées via `localStorage` ; le service worker met en cache les fichiers de l'application pour l'usage hors connexion.
-- Hébergée gratuitement via GitHub Pages.
+## Accessibilité
+
+Cadence utilise des boutons et contrôles natifs, des libellés accessibles pour les principales commandes et un tutoriel qui fournit une explication textuelle des éléments de l'interface.
+
+Les améliorations d'accessibilité sont traitées au fil des évolutions de l'application, notamment pour les commandes uniquement représentées par une icône et pour la navigation au clavier.
+
+## Aspects techniques
+
+- application statique : `index.html`, `manifest.json`, `sw.js`, `icon.svg` ;
+- intégrations séparées dans `integrations/` ;
+- aucune dépendance npm ni étape de build ;
+- données du planning stockées dans `localStorage` ;
+- sauvegarde de secours locale des données Cadence ;
+- service worker pour le fonctionnement hors connexion ;
+- hébergement via GitHub Pages.
+
+## Structure
+
+```text
+Cadence/
+├── index.html
+├── manifest.json
+├── sw.js
+├── icon.svg
+├── LICENSE
+├── README.md
+└── integrations/
+    ├── todoist.js
+    ├── todoist-client.json
+    └── google-calendar.js
+```
+
+## Historique récent
+
+- **V1.12** : ergonomie Android, menu Cadence animé, grille Semaine en trois colonnes et zoom mobile.
+- **V1.13** : visite guidée interactive.
+- **V1.14** : amélioration de la mise en évidence des cibles du tutoriel et simplification de l'en-tête des espaces.
+- **V1.15** : renforcement de la sauvegarde locale, de l'import/export et de la robustesse de l'intégration Todoist.
+- **V1.16** : stabilisation et documentation de la version de référence.

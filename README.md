@@ -167,3 +167,10 @@ La vue Agenda propose une vue Jour (par défaut) ou Semaine, avec plusieurs agen
 - Navigation « Précédent / Suivant », progression et possibilité de quitter.
 - Les étapes se déplacent automatiquement vers les différentes fonctions de Cadence et s’adaptent à l’affichage mobile ou ordinateur.
 - La visite est proposée automatiquement lors de la première ouverture ; elle peut ensuite être relancée depuis « ? » ou « Aide et tutoriel ».
+
+
+## V1.14 — tutoriel guidé et en-têtes allégés
+
+- Le tutoriel guidé met en évidence l’élément précis présenté à chaque étape.
+- La navigation de la visite utilise les boutons Précédent / Suivant et s’adapte aux vues mobile et ordinateur.
+- Dans les espaces Tâches, Agenda et Paramétrages, le titre répété dans la barre supérieure est remplacé par l’icône correspondante ; le titre complet reste affiché dans le contenu du volet.

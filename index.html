@@ -286,6 +286,39 @@
   .app-nav button:not(.active):hover{background:rgba(255,255,255,.55);color:var(--ink);}
   .nav-icon{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;}
   .more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .notes-layout{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:14px;min-height:calc(100vh - 150px);}
+  .notes-list-card,.notes-editor-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+  .notes-list-card{padding:14px;}
+  .notes-editor-card{padding:18px;display:flex;flex-direction:column;min-height:520px;}
+  .notes-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+  .notes-list-head h2{font-family:var(--font-serif);font-size:16px;font-weight:500;margin:0;}
+  .notes-list{display:flex;flex-direction:column;gap:4px;}
+  .notes-list-section{margin-top:14px;}
+  .notes-list-section:first-child{margin-top:0;}
+  .notes-list-section-title{padding:6px 4px 5px;color:var(--ink-faint);font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+  .note-list-item{width:100%;border:1px solid transparent;background:transparent;border-radius:7px;padding:9px 10px;text-align:left;color:var(--ink);cursor:pointer;}
+  .note-list-item:hover{background:var(--paper);}
+  .note-list-item.active{background:var(--accent-soft);border-color:var(--line);}
+  .note-list-title{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .note-list-meta{margin-top:3px;color:var(--ink-soft);font-size:10px;}
+  .notes-empty{padding:20px 8px;text-align:center;color:var(--ink-faint);font-size:12px;line-height:1.5;}
+  .notes-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .notes-title-input{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--ink);font-family:var(--font-serif);font-size:22px;padding:4px 0 8px;outline:none;}
+  .notes-title-input:focus{border-bottom-color:var(--accent);}
+  .notes-editor-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;flex:none;}
+  .notes-editor-meta{margin-top:6px;color:var(--ink-faint);font-size:10px;}
+  .notes-content-input{flex:1;width:100%;min-height:360px;resize:vertical;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;padding:13px;outline:none;}
+  .notes-content-input:focus{border-color:var(--accent);background:var(--surface);}
+  .notes-save-status{margin-top:8px;color:var(--ink-faint);font-size:10px;text-align:right;min-height:14px;}
+  .notes-archived-badge{display:inline-block;margin-left:6px;padding:2px 5px;border-radius:4px;background:var(--paper);color:var(--ink-soft);font-size:9px;font-weight:500;}
+  @media (max-width:800px){
+    .notes-layout{grid-template-columns:1fr;min-height:0;}
+    .notes-list-card{order:2;}
+    .notes-editor-card{order:1;min-height:500px;padding:14px;}
+    .notes-editor-head{display:block;}
+    .notes-editor-actions{justify-content:flex-start;margin-top:10px;}
+    .notes-content-input{min-height:300px;}
+  }
   .more-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px;}
   .more-card h2{font-family:var(--font-serif);font-size:17px;font-weight:500;margin:0 0 6px;}
   .more-card p{margin:0;color:var(--ink-soft);font-size:12.5px;line-height:1.5;}
@@ -1078,6 +1111,7 @@
       <button data-section="cadence" class="active"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h2v2H8zM14 14h2v2h-2z"></path></svg><span>Cadence</span></button>
       <button data-section="tasks"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="m7 9 1.5 1.5L11 8"></path><line x1="13" y1="9" x2="18" y2="9"></line><path d="m7 14 1.5 1.5L11 13"></path><line x1="13" y1="14" x2="18" y2="14"></line></svg><span>Tâches</span></button>
       <button data-section="calendar"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"></path></svg><span>Agenda</span></button>
+    <button data-section="notes"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Notes</span></button>
       <button data-section="more"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.41 1.41-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.02 1.56V21h-2v-.09a1.7 1.7 0 0 0-1.02-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.41-1.41.06-.06A1.7 1.7 0 0 0 9.46 15a1.7 1.7 0 0 0-1.56-1.02H7v-2h.9a1.7 1.7 0 0 0 1.56-1.02 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.41-1.41.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.96 11H22v2h-1.04A1.7 1.7 0 0 0 19.4 15Z"></path><circle cx="14.43" cy="12" r="2.3"></circle></svg><span>Paramétrages</span></button>
     </nav>
   </header>
@@ -1125,6 +1159,13 @@
           <div id="calendarContent"></div>
         </div>
       </section>
+      <section id="notesView" class="external-view" hidden aria-labelledby="notesTitle">
+        <div class="external-card">
+          <h1 id="notesTitle">Notes</h1>
+          <p>Des notes courtes, conservées en Markdown et sauvegardées avec vos données Cadence.</p>
+        </div>
+        <div id="notesContent"></div>
+      </section>
       <section id="moreView" class="external-view" hidden aria-labelledby="moreTitle">
         <div class="external-card">
           <h1 id="moreTitle">Paramétrages</h1>
@@ -1139,6 +1180,7 @@
     <button data-section="cadence" class="active"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h2v2H8zM14 14h2v2h-2z"></path></svg><span>Cadence</span></button>
     <button data-section="tasks"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="m7 9 1.5 1.5L11 8"></path><line x1="13" y1="9" x2="18" y2="9"></line><path d="m7 14 1.5 1.5L11 13"></path><line x1="13" y1="14" x2="18" y2="14"></line></svg><span>Tâches</span></button>
     <button data-section="calendar"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"></path></svg><span>Agenda</span></button>
+    <button data-section="notes"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Notes</span></button>
     <button data-section="more"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.41 1.41-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.02 1.56V21h-2v-.09a1.7 1.7 0 0 0-1.02-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.41-1.41.06-.06A1.7 1.7 0 0 0 9.46 15a1.7 1.7 0 0 0-1.56-1.02H7v-2h.9a1.7 1.7 0 0 0 1.56-1.02 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.41-1.41.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.96 11H22v2h-1.04A1.7 1.7 0 0 0 19.4 15Z"></path><circle cx="14.43" cy="12" r="2.3"></circle></svg><span>Paramétrages</span></button>
   </nav>
 
@@ -1178,7 +1220,7 @@ function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s
 
 /* ============ state ============ */
 function defaultState(){
-  return {version:1, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}};
+  return {version:1, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}, notes:[]};
 }
 function normalizeState(data){
   const base=defaultState();
@@ -1189,6 +1231,14 @@ function normalizeState(data){
   out.templates=Array.isArray(out.templates)?out.templates:[];
   out.halfDayTemplates=Array.isArray(out.halfDayTemplates)?out.halfDayTemplates:[];
   out.days=(out.days && typeof out.days==='object' && !Array.isArray(out.days))?out.days:{};
+  out.notes=Array.isArray(out.notes)?out.notes.filter(n=>n&&typeof n==='object').map(n=>({
+    id:String(n.id||uid()),
+    title:typeof n.title==='string'?n.title:'',
+    content:typeof n.content==='string'?n.content:'',
+    createdAt:typeof n.createdAt==='string'?n.createdAt:new Date().toISOString(),
+    updatedAt:typeof n.updatedAt==='string'?n.updatedAt:new Date().toISOString(),
+    archivedAt:typeof n.archivedAt==='string'?n.archivedAt:null
+  })):[];
   const validBlock=b=>{
     if(!b || typeof b!=='object') return false;
     const st=Number(b.start), en=Number(b.end);
@@ -1255,6 +1305,8 @@ const halfDayTemplatesViewEl = document.getElementById('halfDayTemplatesView');
 const tasksViewEl = document.getElementById('tasksView');
 const calendarViewEl = document.getElementById('calendarView');
 const calendarContentEl = document.getElementById('calendarContent');
+const notesViewEl = document.getElementById('notesView');
+const notesContentEl = document.getElementById('notesContent');
 const moreViewEl = document.getElementById('moreView');
 const moreContentEl = document.getElementById('moreContent');
 const todoistContentEl = document.getElementById('todoistContent');
@@ -1269,6 +1321,8 @@ let calendarViewMode = localStorage.getItem('cadence-calendar-view-v1') || 'day'
 let calendarLoadedKey = '';
 let calendarLoading = false;
 let calendarWeekZoom = Number(localStorage.getItem('cadence-calendar-week-zoom-v1') || '100');
+let currentNoteId = null;
+let notesSaveTimer = null;
 if(![50,65,80,100,115,130].includes(calendarWeekZoom)) calendarWeekZoom=100;
 const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
 const sectionTitleEl = document.getElementById('sectionTitle');
@@ -2371,7 +2425,7 @@ function startGuidedTour(){
   };
   const steps=[
     {title:'Bienvenue dans Cadence',text:'Cette visite vous accompagne pas à pas dans les principales fonctionnalités. Vous pouvez revenir en arrière, avancer ou quitter à tout moment.',target:null,before:()=>{goSection('cadence');goView('week');}},
-    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':' .app-nav-desktop',before:()=>goSection('cadence')},
+    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar, à vos Notes et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':'.app-nav-desktop',before:()=>goSection('cadence')},
     {title:'Le menu de Cadence',text:'Le menu de gauche contient vos Journées types, Demi-journées types et Blocs enregistrés. Sur Android, ouvrez-le avec le bouton ☰.',target:()=>mobile()?'#menuBtn':'#sidebar',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
     {title:'Choisir une vue',text:'Vous pouvez afficher votre Semaine, un Jour, vos Journées types ou vos Demi-journées types. Le sélecteur s’adapte automatiquement au téléphone.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
     {title:'Naviguer dans le temps',text:'Les flèches permettent de changer de période et « Aujourd’hui » vous ramène directement à la date actuelle.',target:'#dateLabel',before:()=>{goSection('cadence');goView('week');}},
@@ -2382,6 +2436,7 @@ function startGuidedTour(){
     {title:'Le zoom de la semaine',text:'En vue Semaine, utilisez − et + pour adapter la hauteur de la grille. Sur téléphone, le pincement à deux doigts permet également de zoomer.',target:'#cadenceZoom',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
     {title:'Vos tâches Todoist',text:'Dans Tâches, retrouvez vos tâches Todoist directement dans Cadence. La connexion se fait depuis Paramétrages et l’accès demandé est en lecture seule.',target:()=>mobile()?'.app-nav-mobile button[data-section="tasks"]':'.app-nav-desktop button[data-section="tasks"]',before:()=>{closeSidebar();goSection('tasks');}},
     {title:'Votre Google Calendar',text:'Dans Agenda, connectez Google Calendar puis choisissez les calendriers à afficher. Les événements apparaissent directement dans le planning.',target:()=>mobile()?'.app-nav-mobile button[data-section="calendar"]':'.app-nav-desktop button[data-section="calendar"]',before:()=>{closeSidebar();goSection('calendar');}},
+    {title:'Vos notes',text:'Dans Notes, écrivez rapidement des notes en Markdown. Elles sont enregistrées avec vos données Cadence et peuvent être archivées ; les archives sont classées par date.',target:()=>mobile()?'.app-nav-mobile button[data-section="notes"]':'.app-nav-desktop button[data-section="notes"]',before:()=>{closeSidebar();goSection('notes');}},
     {title:'Paramétrages',text:'Cet espace rassemble les connexions Todoist et Google Calendar, la sauvegarde des données, le tutoriel et les informations sur Cadence.',target:'#moreHelpCard',before:()=>{closeSidebar();goSection('more');}},
     {title:'Sauvegarder vos données',text:'Les données de votre planning sont conservées localement dans votre navigateur. Exportez un fichier JSON pour garder une sauvegarde ; l’importation nécessite le mode édition.',target:'#moreDataCard',before:()=>{closeSidebar();goSection('more');}},
     {title:'Tout est prêt',text:'Vous connaissez maintenant les principales fonctions de Cadence. Vous pourrez rouvrir cette visite à tout moment avec le bouton « ? » ou depuis Aide et tutoriel.',target:'#topHelpBtn',before:()=>{closeSidebar();goSection('more');}}
@@ -2711,6 +2766,77 @@ async function loadCalendarEvents(){
   }catch(error){calendarLoading=false;showCalendarError(error);}
 }
 
+function formatNoteDate(iso, withTime=false){
+  const d=new Date(iso);
+  if(Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('fr-FR',withTime?{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}:{day:'numeric',month:'long',year:'numeric'});
+}
+function noteTitle(note){ return (note.title||'').trim() || 'Sans titre'; }
+function escAttr(s){return esc(s).replace(/"/g,'&quot;');}
+function getCurrentNote(){ return STATE.notes.find(n=>n.id===currentNoteId) || null; }
+function selectNote(id){ currentNoteId=id; renderNotes(); }
+function createNote(){
+  const now=new Date().toISOString();
+  const note={id:uid(),title:'',content:'',createdAt:now,updatedAt:now,archivedAt:null};
+  STATE.notes.unshift(note);
+  currentNoteId=note.id;
+  saveState();
+  renderNotes();
+  requestAnimationFrame(()=>document.getElementById('noteTitleInput')?.focus());
+}
+function updateCurrentNote(field,value){
+  const note=getCurrentNote();
+  if(!note)return;
+  note[field]=value;
+  note.updatedAt=new Date().toISOString();
+  clearTimeout(notesSaveTimer);
+  const status=document.getElementById('notesSaveStatus');
+  if(status)status.textContent='Enregistrement…';
+  notesSaveTimer=setTimeout(()=>{
+    saveState();
+    const current=document.getElementById('notesSaveStatus');
+    if(current)current.textContent='Enregistrée '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  },250);
+}
+function archiveCurrentNote(){
+  const note=getCurrentNote();
+  if(!note)return;
+  note.archivedAt=note.archivedAt?null:new Date().toISOString();
+  note.updatedAt=new Date().toISOString();
+  saveState();
+  renderNotes();
+}
+function renderNotes(){
+  if(!notesContentEl)return;
+  const notes=Array.isArray(STATE.notes)?STATE.notes:[];
+  let note=getCurrentNote();
+  if(!note){
+    note=notes.find(n=>!n.archivedAt)||notes[0]||null;
+    currentNoteId=note?.id||null;
+  }
+  const active=notes.filter(n=>!n.archivedAt).sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+  const archived=notes.filter(n=>n.archivedAt).sort((a,b)=>new Date(b.archivedAt)-new Date(a.archivedAt));
+  const archiveGroups=[];
+  archived.forEach(n=>{
+    const key=dateKey(new Date(n.archivedAt));
+    let group=archiveGroups.find(g=>g.key===key);
+    if(!group){group={key,date:new Date(n.archivedAt),items:[]};archiveGroups.push(group);}
+    group.items.push(n);
+  });
+  const listItems=(items)=>items.length?items.map(n=>'<button class="note-list-item '+(n.id===currentNoteId?'active':'')+'" data-note-id="'+esc(n.id)+'"><div class="note-list-title">'+esc(noteTitle(n))+(n.archivedAt?'<span class="notes-archived-badge">archivée</span>':'')+'</div><div class="note-list-meta">'+formatNoteDate(n.updatedAt,true)+'</div></button>').join(''):'<div class="notes-empty">Aucune note.</div>';
+  const archiveHtml=archiveGroups.length?archiveGroups.map(g=>'<div class="notes-list-section"><div class="notes-list-section-title">'+esc(g.date.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))+'</div>'+listItems(g.items)+'</div>').join(''):'<div class="notes-empty">Aucune note archivée.</div>';
+  const editor=note?'<div class="notes-editor-head"><div style="min-width:0;flex:1"><input id="noteTitleInput" class="notes-title-input" type="text" value="'+esc(note.title)+'" placeholder="Titre de la note" maxlength="160" aria-label="Titre de la note"><div class="notes-editor-meta">Créée le '+formatNoteDate(note.createdAt)+(note.archivedAt?' · archivée le '+formatNoteDate(note.archivedAt):'')+'</div></div><div class="notes-editor-actions"><button class="btn" id="noteArchiveBtn">'+(note.archivedAt?'Désarchiver':'Archiver')+'</button></div></div><textarea id="noteContentInput" class="notes-content-input" spellcheck="true" aria-label="Contenu Markdown" placeholder="# Ma note\n\nÉcrivez ici en Markdown…">'+esc(note.content)+'</textarea><div id="notesSaveStatus" class="notes-save-status">Enregistrée</div>':'<div class="notes-empty" style="margin:auto">Créez une note pour commencer.</div>';
+  notesContentEl.innerHTML='<div class="notes-layout"><aside class="notes-list-card"><div class="notes-list-head"><h2>Mes notes</h2><button class="btn primary" id="newNoteBtn">+ Nouvelle</button></div><div class="notes-list"><div class="notes-list-section"><div class="notes-list-section-title">Actives</div>'+listItems(active)+'</div><div class="notes-list-section"><div class="notes-list-section-title">Archivées</div>'+archiveHtml+'</div></div></aside><section class="notes-editor-card" aria-label="Éditeur de note">'+editor+'</section></div>';
+  notesContentEl.querySelector('#newNoteBtn').addEventListener('click',createNote);
+  notesContentEl.querySelectorAll('[data-note-id]').forEach(btn=>btn.addEventListener('click',()=>selectNote(btn.dataset.noteId)));
+  const titleInput=notesContentEl.querySelector('#noteTitleInput');
+  const contentInput=notesContentEl.querySelector('#noteContentInput');
+  if(titleInput)titleInput.addEventListener('input',e=>updateCurrentNote('title',e.target.value));
+  if(contentInput)contentInput.addEventListener('input',e=>updateCurrentNote('content',e.target.value));
+  const archiveBtn=notesContentEl.querySelector('#noteArchiveBtn');
+  if(archiveBtn)archiveBtn.addEventListener('click',archiveCurrentNote);
+}
+
 function renderMore(){
   if(!moreContentEl)return;
   const todoConnected=window.CadenceTodoist?.isConnected?.() || false;
@@ -2721,7 +2847,7 @@ function renderMore(){
     '<section class="more-card" id="moreGoogleCard"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données de planning restent stockées localement dans votre navigateur.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
     '<section class="more-card" id="moreHelpCard"><h2>Aide et tutoriel</h2><p>Retrouvez le guide de prise en main, y compris les fonctions Todoist, Agenda et Android.</p><div class="more-actions"><button class="btn" id="moreHelp">Ouvrir le tutoriel</button></div></section>'+
-    '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.16 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
+    '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.17 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
   const q=(id)=>moreContentEl.querySelector(id);
   if(q('#moreTodoConnect'))q('#moreTodoConnect').addEventListener('click',()=>window.CadenceTodoist.startOAuth());
   if(q('#moreTodoDisconnect'))q('#moreTodoDisconnect').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});
@@ -2741,13 +2867,14 @@ function renderApp(){
   const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=cadenceWeekZoom+' %';
   document.body.classList.toggle('external-section', !isCadence);
   cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
-  sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',more:'Paramétrages'}[appSection] || 'Cadence');
+  sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',notes:'Notes',more:'Paramétrages'}[appSection] || 'Cadence');
   weekViewEl.hidden = !isCadence || currentView!=='week';
   dayViewEl.hidden = !isCadence || currentView!=='day';
   templatesViewEl.hidden = !isCadence || currentView!=='templates';
   halfDayTemplatesViewEl.hidden = !isCadence || currentView!=='halfday-templates';
   tasksViewEl.hidden = appSection!=='tasks';
   calendarViewEl.hidden = appSection!=='calendar';
+  notesViewEl.hidden = appSection!=='notes';
   moreViewEl.hidden = appSection!=='more';
   if(isCadence){
     updateDateLabel();
@@ -2760,6 +2887,7 @@ function renderApp(){
     closeSidebar();
     if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }
     if(appSection==='calendar'){ renderCalendar(); if(window.CadenceGoogleCalendar.isConnected()){ loadCalendarCalendars().then(()=>{renderCalendar();loadCalendarEvents();}).catch(showCalendarError); } }
+    if(appSection==='notes'){ renderNotes(); }
     if(appSection==='more'){ renderMore(); }
   }
 }

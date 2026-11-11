@@ -1512,6 +1512,7 @@ function syncStatusLabel(){
   return t ? 'Dernière synchronisation : '+new Date(t).toLocaleString('fr-FR') : 'Jamais synchronisé';
 }
 async function runDriveSync(){
+  flushNotesSave();
   if(!window.CadenceDriveSync){ alert('La synchronisation Google Drive n’est pas disponible.'); return; }
   const btn=document.getElementById('moreSync');
   const statusEl=document.querySelector('#moreSyncStatus span:last-child');
@@ -2812,8 +2813,20 @@ function formatNoteDate(iso, withTime=false){
 function noteTitle(note){ return (note.title||'').trim() || 'Sans titre'; }
 function escAttr(s){return esc(s).replace(/"/g,'&quot;');}
 function getCurrentNote(){ return STATE.notes.find(n=>n.id===currentNoteId) || null; }
-function selectNote(id){ currentNoteId=id; renderNotes(); }
+function flushNotesSave(){
+  if(notesSaveTimer===null) return;
+  clearTimeout(notesSaveTimer);
+  notesSaveTimer=null;
+  const ok=saveState();
+  const status=document.getElementById('notesSaveStatus');
+  if(status) status.textContent=ok?'Enregistrée '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'Échec de l’enregistrement';
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flushNotesSave(); });
+window.addEventListener('pagehide',flushNotesSave);
+window.addEventListener('beforeunload',flushNotesSave);
+function selectNote(id){ flushNotesSave(); currentNoteId=id; renderNotes(); }
 function createNote(){
+  flushNotesSave();
   const now=new Date().toISOString();
   const note={id:uid(),title:'',content:'',createdAt:now,updatedAt:now,archivedAt:null};
   STATE.notes.unshift(note);
@@ -2831,16 +2844,28 @@ function updateCurrentNote(field,value){
   const status=document.getElementById('notesSaveStatus');
   if(status)status.textContent='Enregistrement…';
   notesSaveTimer=setTimeout(()=>{
-    saveState();
+    notesSaveTimer=null;
+    const ok=saveState();
     const current=document.getElementById('notesSaveStatus');
-    if(current)current.textContent='Enregistrée '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    if(current)current.textContent=ok?'Enregistrée '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'Échec de l’enregistrement';
   },250);
 }
 function archiveCurrentNote(){
+  flushNotesSave();
   const note=getCurrentNote();
   if(!note)return;
   note.archivedAt=note.archivedAt?null:new Date().toISOString();
   note.updatedAt=new Date().toISOString();
+  saveState();
+  renderNotes();
+}
+function deleteCurrentNote(){
+  flushNotesSave();
+  const note=getCurrentNote();
+  if(!note)return;
+  if(!confirm('Supprimer définitivement la note « '+noteTitle(note)+' » ? Cette action est irréversible.'))return;
+  STATE.notes=STATE.notes.filter(n=>n.id!==note.id);
+  currentNoteId=null;
   saveState();
   renderNotes();
 }
@@ -2863,7 +2888,7 @@ function renderNotes(){
   });
   const listItems=(items)=>items.length?items.map(n=>'<button class="note-list-item '+(n.id===currentNoteId?'active':'')+'" data-note-id="'+esc(n.id)+'"><div class="note-list-title">'+esc(noteTitle(n))+(n.archivedAt?'<span class="notes-archived-badge">archivée</span>':'')+'</div><div class="note-list-meta">'+formatNoteDate(n.updatedAt,true)+'</div></button>').join(''):'<div class="notes-empty">Aucune note.</div>';
   const archiveHtml=archiveGroups.length?archiveGroups.map(g=>'<div class="notes-list-section"><div class="notes-list-section-title">'+esc(g.date.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))+'</div>'+listItems(g.items)+'</div>').join(''):'<div class="notes-empty">Aucune note archivée.</div>';
-  const editor=note?'<div class="notes-editor-head"><div style="min-width:0;flex:1"><input id="noteTitleInput" class="notes-title-input" type="text" value="'+esc(note.title)+'" placeholder="Titre de la note" maxlength="160" aria-label="Titre de la note"><div class="notes-editor-meta">Créée le '+formatNoteDate(note.createdAt)+(note.archivedAt?' · archivée le '+formatNoteDate(note.archivedAt):'')+'</div></div><div class="notes-editor-actions"><button class="btn" id="noteArchiveBtn">'+(note.archivedAt?'Désarchiver':'Archiver')+'</button></div></div><textarea id="noteContentInput" class="notes-content-input" spellcheck="true" aria-label="Contenu Markdown" placeholder="# Ma note\n\nÉcrivez ici en Markdown…">'+esc(note.content)+'</textarea><div id="notesSaveStatus" class="notes-save-status">Enregistrée</div>':'<div class="notes-empty" style="margin:auto">Créez une note pour commencer.</div>';
+  const editor=note?'<div class="notes-editor-head"><div style="min-width:0;flex:1"><input id="noteTitleInput" class="notes-title-input" type="text" value="'+esc(note.title)+'" placeholder="Titre de la note" maxlength="160" aria-label="Titre de la note"><div class="notes-editor-meta">Créée le '+formatNoteDate(note.createdAt)+(note.archivedAt?' · archivée le '+formatNoteDate(note.archivedAt):'')+'</div></div><div class="notes-editor-actions"><button class="btn" id="noteArchiveBtn">'+(note.archivedAt?'Désarchiver':'Archiver')+'</button><button class="btn danger" id="noteDeleteBtn">Supprimer</button></div></div><textarea id="noteContentInput" class="notes-content-input" spellcheck="true" aria-label="Contenu Markdown" placeholder="# Ma note\n\nÉcrivez ici en Markdown…">'+esc(note.content)+'</textarea><div id="notesSaveStatus" class="notes-save-status">Enregistrée</div>':'<div class="notes-empty" style="margin:auto">Créez une note pour commencer.</div>';
   notesContentEl.innerHTML='<div class="notes-layout"><aside class="notes-list-card"><div class="notes-list-head"><h2>Mes notes</h2><button class="btn primary" id="newNoteBtn">+ Nouvelle</button></div><div class="notes-list"><div class="notes-list-section"><div class="notes-list-section-title">Actives</div>'+listItems(active)+'</div><div class="notes-list-section"><div class="notes-list-section-title">Archivées</div>'+archiveHtml+'</div></div></aside><section class="notes-editor-card" aria-label="Éditeur de note">'+editor+'</section></div>';
   notesContentEl.querySelector('#newNoteBtn').addEventListener('click',createNote);
   notesContentEl.querySelectorAll('[data-note-id]').forEach(btn=>btn.addEventListener('click',()=>selectNote(btn.dataset.noteId)));
@@ -2873,6 +2898,8 @@ function renderNotes(){
   if(contentInput)contentInput.addEventListener('input',e=>updateCurrentNote('content',e.target.value));
   const archiveBtn=notesContentEl.querySelector('#noteArchiveBtn');
   if(archiveBtn)archiveBtn.addEventListener('click',archiveCurrentNote);
+  const deleteBtn=notesContentEl.querySelector('#noteDeleteBtn');
+  if(deleteBtn)deleteBtn.addEventListener('click',deleteCurrentNote);
 }
 
 function renderMore(){

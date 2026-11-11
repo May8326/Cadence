@@ -25,6 +25,8 @@ Cadence est une application web personnelle et autonome pour organiser son temps
   * [Journées et demi-journées types](#journées-et-demi-journées-types)
   * [Notes](#notes)
   * [Sauvegarde des données](#sauvegarde-des-données)
+
+  * [Synchronisation Google Drive](#synchronisation-google-drive)
   * [Tutoriel](#tutoriel)
 * [Todoist](#todoist)
 * [Google Calendar](#google-calendar)
@@ -57,13 +59,15 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Demi-journées types** : modèles sur une plage horaire, applicables à un jour.
 
-* **Notes** : création et modification de notes personnelles en **Markdown**, avec sauvegarde automatique dans les données locales de Cadence.
+* **Notes** : création et modification de notes personnelles en **Markdown**, avec sauvegarde automatique dans les données locales de Cadence, suppression avec possibilité d'annuler pendant quelques secondes.
 
 * **Archivage des notes** : les notes peuvent être archivées lorsqu'elles ne sont plus actives. Les notes archivées sont conservées et retrouvées par **date d'archivage**.
 
 * **Impression / PDF** : impression de la vue affichée.
 
 * **Données** : export et import JSON, incluant le planning, les modèles, les blocs enregistrés et les notes, avec validation et sauvegarde de secours locale.
+
+* **Synchronisation Google Drive** : bouton « Synchroniser » pour retrouver ses données sur plusieurs appareils, la version la plus récente étant conservée.
 
 * **Todoist** : consultation des tâches en lecture seule via OAuth 2.0 + PKCE.
 
@@ -117,9 +121,11 @@ La rédaction est sauvegardée automatiquement. Une note peut être **archivée*
 
 Les notes archivées restent accessibles dans l'espace Notes et sont regroupées par **date d'archivage**. Elles peuvent être désarchivées pour redevenir actives.
 
+Une note peut aussi être **supprimée**. Un bouton **Annuler** reste affiché pendant quelques secondes ; ensuite, la suppression est définitive.
+
 ### Sauvegarde des données
 
-Les données du planning et les notes sont conservées **localement dans le navigateur**. Cadence ne possède pas de compte utilisateur ni de base de données distante pour ces données.
+Les données du planning et les notes sont conservées **localement dans le navigateur**. Cadence ne possède pas de compte utilisateur ni de base de données distante. La [synchronisation Google Drive](#synchronisation-google-drive), facultative, permet de retrouver ces données sur d'autres appareils.
 
 Pour sauvegarder ou transférer les données :
 
@@ -140,6 +146,20 @@ L'export contient notamment :
 * les notes actives et archivées.
 
 L'importation remplace les données actuelles après confirmation. Les anciens exports Cadence restent pris en charge par le système d'importation.
+
+### Synchronisation Google Drive
+
+La synchronisation est facultative et se commande depuis **Paramétrages → Synchronisation Google Drive**, avec le bouton **Synchroniser**.
+
+* Cadence enregistre un fichier `cadence-sync.json` dans l'espace privé de l'application sur votre Google Drive. Ce fichier n'apparaît pas dans vos dossiers Drive et n'est lisible que par Cadence (droit `drive.appdata`).
+
+* À chaque synchronisation, la date de dernière modification locale est comparée à celle du fichier Drive : la version **la plus récente** est conservée.
+
+* Avant qu'une version Drive ne remplace les données locales, une copie des données locales est conservée dans le navigateur.
+
+* Les connexions Todoist et Google Calendar ne sont pas synchronisées.
+
+Pour éviter de perdre des modifications, synchronisez avant et après une session de travail. Si deux appareils sont modifiés sans synchronisation intermédiaire, les changements de la version la plus ancienne sont perdus.
 
 ### Tutoriel
 
@@ -199,6 +219,8 @@ Les améliorations d'accessibilité sont traitées au fil des évolutions de l'a
 
 * service worker pour le fonctionnement hors connexion ;
 
+* synchronisation facultative via l'API Google Drive (espace privé `appDataFolder`) ;
+
 * hébergement via GitHub Pages.
 
 ## Structure
@@ -224,7 +246,9 @@ Cadence/
 
     ├── todoist-client.json
 
-    └── google-calendar.js
+    ├── google-calendar.js
+
+    └── drive-sync.js
 ```
 
 ## Historique récent
@@ -242,3 +266,5 @@ Cadence/
 * **V1.17** : ajout de l'espace **Notes**, avec rédaction en Markdown, sauvegarde automatique, archivage et intégration aux données exportées.
 
 * **V2.0** : nouvelle version stable intégrant l'espace Notes dans la navigation principale de Cadence et finalisant son intégration au système de données et au tutoriel.
+
+* **V2.1** : synchronisation facultative avec Google Drive, suppression des notes avec annulation, enregistrement des notes fiabilisé, tutoriel interactif réécrit et textes mis à jour.

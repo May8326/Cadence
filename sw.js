@@ -1,10 +1,10 @@
-const CACHE = 'cadence-pwa-v20'; // V1.17 : espace Notes
+const CACHE = 'cadence-pwa-v21'; // synchro Google Drive
 
 const APP = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js'
+  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js','./integrations/drive-sync.js'
 ];
 
 self.addEventListener('install', event => {

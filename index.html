@@ -1190,6 +1190,7 @@
 
 <script src="integrations/todoist.js"></script>
 <script src="integrations/google-calendar.js"></script>
+<script src="integrations/drive-sync.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1220,13 +1221,14 @@ function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s
 
 /* ============ state ============ */
 function defaultState(){
-  return {version:1, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}, notes:[]};
+  return {version:1, updatedAt:null, savedBlocks:[], templates:[], halfDayTemplates:[], days:{}, notes:[]};
 }
 function normalizeState(data){
   const base=defaultState();
   if(!data || typeof data!=='object' || Array.isArray(data)) return base;
   const out=Object.assign(base,data);
   out.version=1;
+  out.updatedAt=typeof out.updatedAt==='string'?out.updatedAt:null;
   out.savedBlocks=Array.isArray(out.savedBlocks)?out.savedBlocks:[];
   out.templates=Array.isArray(out.templates)?out.templates:[];
   out.halfDayTemplates=Array.isArray(out.halfDayTemplates)?out.halfDayTemplates:[];
@@ -1273,8 +1275,9 @@ function loadState(){
   }
 }
 let STATE = loadState();
-function saveState(){
+function saveState(keepStamp){
   try{
+    if(!keepStamp) STATE.updatedAt = new Date().toISOString();
     const serialized = JSON.stringify(STATE);
     localStorage.setItem(STORE_KEY, serialized);
     try{ localStorage.setItem(BACKUP_KEY, serialized); }catch(backupError){ console.warn('Sauvegarde de secours impossible', backupError); }
@@ -1499,6 +1502,41 @@ function importData(e){
   };
   reader.readAsText(file);
   e.target.value = '';
+}
+
+/* ============ synchronisation Google Drive ============ */
+const LAST_SYNC_KEY = 'cadence-last-sync-v1';
+const PRESYNC_BACKUP_KEY = 'cadence-data-presync-v1';
+function syncStatusLabel(){
+  let t=null; try{ t=localStorage.getItem(LAST_SYNC_KEY); }catch(e){}
+  return t ? 'Dernière synchronisation : '+new Date(t).toLocaleString('fr-FR') : 'Jamais synchronisé';
+}
+async function runDriveSync(){
+  if(!window.CadenceDriveSync){ alert('La synchronisation Google Drive n’est pas disponible.'); return; }
+  const btn=document.getElementById('moreSync');
+  const statusEl=document.querySelector('#moreSyncStatus span:last-child');
+  if(btn) btn.disabled=true;
+  if(statusEl) statusEl.textContent='Synchronisation en cours…';
+  try{
+    const result=await window.CadenceDriveSync.sync({
+      getLocal:()=>({updatedAt:STATE.updatedAt, data:normalizeState(STATE)}),
+      stamp:()=>{ if(!STATE.updatedAt) saveState(); return STATE.updatedAt; },
+      applyRemote:(data)=>{
+        try{ localStorage.setItem(PRESYNC_BACKUP_KEY, JSON.stringify(STATE)); }catch(e){ console.warn('Copie avant synchronisation impossible', e); }
+        STATE=normalizeState(data);
+        if(!saveState(true)) throw new Error('Enregistrement local impossible.');
+        renderApp();
+      }
+    });
+    try{ localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString()); }catch(e){}
+    renderMore();
+    const msg={uploaded:'Synchronisé : vos données ont été envoyées sur Drive.',downloaded:'Synchronisé : les données plus récentes de Drive ont été appliquées.',uptodate:'Déjà à jour.'}[result];
+    const el=document.querySelector('#moreSyncStatus span:last-child');
+    if(el&&msg) el.textContent=msg+' ('+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+')';
+  }catch(err){
+    renderMore();
+    alert('Synchronisation impossible : '+(err.message||err));
+  }
 }
 
 /* ============ date label ============ */
@@ -2845,6 +2883,7 @@ function renderMore(){
   moreContentEl.innerHTML=
     '<section class="more-card" id="moreTodoistCard"><h2>Todoist</h2><p>Connexion et affichage de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreGoogleCard"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
+    '<section class="more-card" id="moreSyncCard"><h2>Synchronisation Google Drive</h2><p>Retrouvez votre planning et vos notes sur vos autres appareils. En cas de différence, la version la plus récente est conservée.</p><div class="more-status" id="moreSyncStatus"><span class="dot"></span><span>'+esc(syncStatusLabel())+'</span></div><div class="more-actions"><button class="btn primary" id="moreSync">Synchroniser</button></div></section>'+
     '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données de planning restent stockées localement dans votre navigateur.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
     '<section class="more-card" id="moreHelpCard"><h2>Aide et tutoriel</h2><p>Retrouvez le guide de prise en main, y compris les fonctions Todoist, Agenda et Android.</p><div class="more-actions"><button class="btn" id="moreHelp">Ouvrir le tutoriel</button></div></section>'+
     '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.17 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
@@ -2853,6 +2892,7 @@ function renderMore(){
   if(q('#moreTodoDisconnect'))q('#moreTodoDisconnect').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});
   if(q('#moreGoogleConnect'))q('#moreGoogleConnect').addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';await loadCalendarCalendars();renderMore();}catch(error){alert(error.message||String(error));}});
   if(q('#moreGoogleDisconnect'))q('#moreGoogleDisconnect').addEventListener('click',()=>{window.CadenceGoogleCalendar.disconnect();calendarEvents=[];calendarCalendars=[];calendarSelectedIds=new Set();calendarLoadedKey='';renderMore();});
+  if(q('#moreSync'))q('#moreSync').addEventListener('click',runDriveSync);
   if(q('#moreExport'))q('#moreExport').addEventListener('click',exportData);
   if(q('#moreImport'))q('#moreImport').addEventListener('click',()=>{if(editMode)document.getElementById('importFile').click();});
   if(q('#moreEdit'))q('#moreEdit').addEventListener('click',()=>setEditMode(!editMode));

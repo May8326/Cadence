@@ -1,4 +1,4 @@
-const CACHE = 'cadence-pwa-v21'; // synchro Google Drive
+const CACHE = 'cadence-pwa-v22'; // tutoriel mis à jour
 
 const APP = [
   './',

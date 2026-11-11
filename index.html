@@ -637,7 +637,7 @@
 
   /* ---------- Guided tutorial ---------- */
   .tour-overlay{position:fixed;inset:0;z-index:1000;pointer-events:none;}
-  .tour-dim{position:absolute;inset:0;background:rgba(30,28,22,.42);pointer-events:auto;}
+  .tour-dim{position:absolute;inset:0;background:rgba(30,28,22,.42);pointer-events:auto;touch-action:none;}
   .tour-focus{position:fixed;border-radius:8px;box-shadow:0 0 0 9999px rgba(30,28,22,.42),0 0 0 3px var(--accent);pointer-events:none;transition:top .22s ease,left .22s ease,width .22s ease,height .22s ease;}
   .tour-card{position:fixed;width:min(360px,calc(100vw - 28px));background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:17px;box-shadow:0 16px 44px rgba(30,28,22,.24);pointer-events:auto;transition:top .22s ease,left .22s ease;}
   .tour-progress{font-size:10.5px;color:var(--accent);font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
@@ -2448,7 +2448,9 @@ function startGuidedTour(){
   const old=document.getElementById('tourOverlay');
   if(old) old.remove();
 
+  const startSection=appSection, startView=currentView;
   const mobile=()=>window.matchMedia('(max-width: 720px)').matches;
+  const navBtn=(section)=>(mobile()?'.app-nav-mobile':'.app-nav-desktop')+' button[data-section="'+section+'"]';
   const goSection=(section)=>{
     if(appSection!==section){
       appSection=section;
@@ -2462,74 +2464,138 @@ function startGuidedTour(){
     document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
     renderApp();
   };
+  const openSide=()=>{
+    if(!mobile()) return;
+    sidebarEl.classList.add('open');
+    document.getElementById('sidebarOverlay').style.display='block';
+    document.getElementById('menuBtn').classList.add('menu-open');
+  };
+  // Chaque étape décrit où aller (section, vue), si le mode édition doit être actif, et quoi mettre en évidence.
+  const cad=(view,extra)=>()=>{goSection('cadence');goView(view);extra&&extra();};
   const steps=[
-    {title:'Bienvenue dans Cadence',text:'Cette visite vous accompagne pas à pas dans les principales fonctionnalités. Vous pouvez revenir en arrière, avancer ou quitter à tout moment.',target:null,before:()=>{goSection('cadence');goView('week');}},
-    {title:'Les espaces de Cadence',text:'Utilisez cette navigation pour passer de votre planning aux tâches Todoist, à Google Calendar, à vos Notes et aux Paramétrages. Sur Android, elle se trouve en bas de l’écran.',target:()=>mobile()?'.app-nav-mobile':'.app-nav-desktop',before:()=>goSection('cadence')},
-    {title:'Le menu de Cadence',text:'Le menu de gauche contient vos Journées types, Demi-journées types et Blocs enregistrés. Sur Android, ouvrez-le avec le bouton ☰.',target:()=>mobile()?'#menuBtn':'#sidebar',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
-    {title:'Choisir une vue',text:'Vous pouvez afficher votre Semaine, un Jour, vos Journées types ou vos Demi-journées types. Le sélecteur s’adapte automatiquement au téléphone.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
-    {title:'Naviguer dans le temps',text:'Les flèches permettent de changer de période et « Aujourd’hui » vous ramène directement à la date actuelle.',target:'#dateLabel',before:()=>{goSection('cadence');goView('week');}},
-    {title:'Le mode édition',text:'Par défaut, le planning est protégé contre les modifications accidentelles. Activez « Modifier » pour créer, déplacer, redimensionner ou supprimer des blocs.',target:'#editModeBtn',before:()=>{goSection('cadence');goView('week');setEditMode(false);}},
-    {title:'Vos Journées types',text:'Une Journée type regroupe les blocs d’une journée complète. Créez-en une dans le menu de gauche, puis appliquez-la aux jours où vous en avez besoin.',target:'#templatePanel',before:()=>{goSection('cadence');goView('templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
-    {title:'Vos Demi-journées types',text:'Une Demi-journée type définit une plage horaire et les blocs qu’elle contient. Elle est pratique pour des matinées, soirées ou activités récurrentes.',target:'#halfDayPanel',before:()=>{goSection('cadence');goView('halfday-templates');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
-    {title:'Vos Blocs enregistrés',text:'Enregistrez vos activités récurrentes ici pour pouvoir les replacer rapidement dans le planning. Vous pouvez aussi les organiser par étiquette.',target:'#savedBlockPanel',before:()=>{goSection('cadence');goView('week');if(mobile()){sidebarEl.classList.add('open');document.getElementById('sidebarOverlay').style.display='block';document.getElementById('menuBtn').classList.add('menu-open');}}},
-    {title:'Le zoom de la semaine',text:'En vue Semaine, utilisez − et + pour adapter la hauteur de la grille. Sur téléphone, le pincement à deux doigts permet également de zoomer.',target:'#cadenceZoom',before:()=>{closeSidebar();goSection('cadence');goView('week');}},
-    {title:'Vos tâches Todoist',text:'Dans Tâches, retrouvez vos tâches Todoist directement dans Cadence. La connexion se fait depuis Paramétrages et l’accès demandé est en lecture seule.',target:()=>mobile()?'.app-nav-mobile button[data-section="tasks"]':'.app-nav-desktop button[data-section="tasks"]',before:()=>{closeSidebar();goSection('tasks');}},
-    {title:'Votre Google Calendar',text:'Dans Agenda, connectez Google Calendar puis choisissez les calendriers à afficher. Les événements apparaissent directement dans le planning.',target:()=>mobile()?'.app-nav-mobile button[data-section="calendar"]':'.app-nav-desktop button[data-section="calendar"]',before:()=>{closeSidebar();goSection('calendar');}},
-    {title:'Vos notes',text:'Dans Notes, écrivez rapidement des notes en Markdown. Elles sont enregistrées avec vos données Cadence et peuvent être archivées ; les archives sont classées par date.',target:()=>mobile()?'.app-nav-mobile button[data-section="notes"]':'.app-nav-desktop button[data-section="notes"]',before:()=>{closeSidebar();goSection('notes');}},
-    {title:'Paramétrages',text:'Cet espace rassemble les connexions Todoist et Google Calendar, la sauvegarde des données, le tutoriel et les informations sur Cadence.',target:'#moreHelpCard',before:()=>{closeSidebar();goSection('more');}},
-    {title:'Sauvegarder vos données',text:'Les données de votre planning sont conservées localement dans votre navigateur. Exportez un fichier JSON pour garder une sauvegarde ; l’importation nécessite le mode édition.',target:'#moreDataCard',before:()=>{closeSidebar();goSection('more');}},
-    {title:'Tout est prêt',text:'Vous connaissez maintenant les principales fonctions de Cadence. Vous pourrez rouvrir cette visite à tout moment avec le bouton « ? » ou depuis Aide et tutoriel.',target:'#topHelpBtn',before:()=>{closeSidebar();goSection('more');}}
+    {title:'Bienvenue dans Cadence',text:'Cette visite vous montre, étape par étape, comment organiser votre temps en blocs, retrouver vos notes, vos tâches et vos agendas, et garder vos données à jour sur tous vos appareils. Les flèches ← → du clavier fonctionnent aussi.',target:null,before:cad('week')},
+    {title:'Les espaces de Cadence',text:'Cette barre fait passer d’un espace à l’autre : Cadence (le planning), Tâches, Agenda, Notes et Paramétrages.'+(mobile()?' Sur téléphone, elle se trouve en bas de l’écran.':''),target:()=>mobile()?'.app-nav-mobile':'.app-nav-desktop',before:cad('week')},
+    {title:'Le menu de Cadence',text:'Ce menu rassemble vos Journées types, vos Demi-journées types et vos Blocs enregistrés : tout ce qui sert à remplir le planning plus vite.'+(mobile()?' Il s’ouvre avec le bouton ☰.':''),target:'#sidebar',before:cad('week',openSide)},
+    {title:'Choisir une vue',text:'Affichez la Semaine, un Jour, la liste de vos Journées types ou celle de vos Demi-journées types.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:cad('week')},
+    {title:'Naviguer dans le temps',text:'Les flèches changent de période, et « Aujourd’hui » vous ramène à la date du jour.',target:'.date-nav',before:cad('week')},
+    {title:'Activer le mode édition',text:'Le planning est protégé par défaut contre les modifications accidentelles. Le bouton « Modifier » est maintenant activé (il affiche « Édition ») pour cette démonstration : il débloque la création, le déplacement et la suppression de blocs, ainsi que l’import de données.',target:'#editModeBtn',edit:true,before:cad('week')},
+    {title:'Créer et déplacer des blocs',text:'Mode édition actif : faites glisser la souris (ou le doigt) sur la grille pour créer un bloc, touchez un bloc pour le modifier, déplacez-le en le faisant glisser et redimensionnez-le avec sa poignée du bas.',target:'#weekView',edit:true,before:cad('week')},
+    {title:'Vos Journées types',text:'Une Journée type est l’organisation d’une journée complète. Cliquez sur « Nouveau » pour en créer une, puis appliquez-la au jour de votre choix.',target:'#templatePanel',before:cad('templates',openSide)},
+    {title:'Vos Demi-journées types',text:'Une Demi-journée type couvre une plage horaire précise (une matinée, une soirée…). Elle s’applique à un jour sans toucher au reste de la journée.',target:'#halfDayPanel',before:cad('halfday-templates',openSide)},
+    {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
+    {title:'Le zoom de la semaine',text:'En vue Semaine, − et + règlent la hauteur de la grille. Sur téléphone, vous pouvez aussi pincer l’écran à deux doigts.',target:'#cadenceZoom',before:cad('week')},
+    {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist en lecture seule : Cadence n’en crée ni n’en modifie. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
+    {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
+    {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface définitivement.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
+    {title:'Paramétrages',text:'Ici se gèrent les connexions Todoist et Google Calendar, la synchronisation, la sauvegarde de vos données et l’aide.',target:'#moreContent',before:()=>{goSection('more');}},
+    {title:'Synchroniser vos appareils',text:'« Synchroniser » envoie vos données sur votre Google Drive (dans un espace privé réservé à Cadence) ou récupère celles d’un autre appareil. La version la plus récente est conservée : synchronisez avant et après une session de travail.',target:'#moreSyncCard',before:()=>{goSection('more');}},
+    {title:'Sauvegarder vos données',text:'Vos données sont aussi conservées dans ce navigateur. « Exporter » crée un fichier de sauvegarde JSON ; « Importer » le restaure (le mode édition est requis).',target:'#moreDataCard',before:()=>{goSection('more');}},
+    {title:'Tout est prêt',text:'Vous pouvez rouvrir cette visite à tout moment avec le bouton « ? » ou depuis « Aide et tutoriel ».',target:'#topHelpBtn',before:()=>{goSection('more');}}
   ];
 
   const overlay=document.createElement('div');
   overlay.id='tourOverlay'; overlay.className='tour-overlay';
-  overlay.innerHTML='<div class="tour-dim"></div><div class="tour-focus" id="tourFocus"></div><div class="tour-card" id="tourCard"><button class="tour-close" id="tourClose" aria-label="Fermer">×</button><div class="tour-progress" id="tourProgress"></div><h3 id="tourTitle"></h3><p id="tourText"></p><div class="tour-actions"><div class="left"><button class="tour-skip" id="tourSkip">Quitter</button></div><div class="right"><button class="btn" id="tourPrev">Précédent</button><button class="btn primary" id="tourNext">Suivant</button></div></div></div>';
+  overlay.innerHTML='<div class="tour-dim"></div><div class="tour-focus" id="tourFocus"></div><div class="tour-card" id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourText"><button class="tour-close" id="tourClose" aria-label="Fermer la visite">×</button><div class="tour-progress" id="tourProgress"></div><h3 id="tourTitle"></h3><p id="tourText"></p><div class="tour-actions"><div class="left"><button class="tour-skip" id="tourSkip">Quitter</button></div><div class="right"><button class="btn" id="tourPrev">Précédent</button><button class="btn primary" id="tourNext">Suivant</button></div></div></div>';
   document.body.appendChild(overlay);
 
-  let index=0;
-  const focus=overlay.querySelector('#tourFocus'),card=overlay.querySelector('#tourCard');
+  let index=0, timers=[];
+  const focus=overlay.querySelector('#tourFocus'),card=overlay.querySelector('#tourCard'),dim=overlay.querySelector('.tour-dim');
   const progress=overlay.querySelector('#tourProgress'),title=overlay.querySelector('#tourTitle'),text=overlay.querySelector('#tourText');
   const prev=overlay.querySelector('#tourPrev'),next=overlay.querySelector('#tourNext');
 
-  const finish=()=>{localStorage.setItem('cadence-tour-seen-v1','1');closeSidebar();setEditMode(false);overlay.remove();};
-  const position=()=>{
-    const step=steps[index];
-    let el=typeof step.target==='function'?step.target():step.target?document.querySelector(step.target):null;
-    if(el){el.scrollIntoView({block:'nearest',inline:'nearest'});}
-    requestAnimationFrame(()=>{
-      const pad=6;
-      if(el){
-        const r=el.getBoundingClientRect();
-        focus.style.display='block';focus.style.left=(r.left-pad)+'px';focus.style.top=(r.top-pad)+'px';focus.style.width=(r.width+pad*2)+'px';focus.style.height=(r.height+pad*2)+'px';
-        const cr=card.getBoundingClientRect(), margin=12;
-        let left=Math.max(14,Math.min(window.innerWidth-cr.width-14,r.left));
-        let top=r.bottom+14;
-        if(top+cr.height>window.innerHeight-12) top=r.top-cr.height-14;
-        if(top<12) top=Math.min(window.innerHeight-cr.height-12,Math.max(12,r.top+10));
-        if(r.left+cr.width>window.innerWidth-14) left=window.innerWidth-cr.width-14;
-        card.style.left=left+'px';card.style.top=top+'px';
-      }else{
-        focus.style.display='none';
-        const cr=card.getBoundingClientRect();
-        card.style.left=Math.max(14,(window.innerWidth-cr.width)/2)+'px';
-        card.style.top=Math.max(14,(window.innerHeight-cr.height)/2)+'px';
+  const resolveTarget=(step)=>{
+    let t=step.target;
+    if(typeof t==='function') t=t();
+    if(!t) return null;
+    if(typeof t==='string'){
+      for(const sel of t.split(',').map(x=>x.trim()).filter(Boolean)){
+        const found=document.querySelector(sel);
+        if(found && found.offsetParent!==null) return found;
+        if(found && getComputedStyle(found).position==='fixed') return found;
       }
+      return null;
+    }
+    return t;
+  };
+  const overlapArea=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  const position=()=>{
+    if(!document.body.contains(overlay)) return;
+    const step=steps[index];
+    const el=resolveTarget(step);
+    const vw=window.innerWidth, vh=window.innerHeight, m=12, gap=14, pad=6;
+    const cw=card.offsetWidth, ch=card.offsetHeight;
+    if(!el){
+      focus.style.display='none';
+      card.style.left=Math.max(m,(vw-cw)/2)+'px';
+      card.style.top=Math.max(m,(vh-ch)/2)+'px';
+      return;
+    }
+    // zone mise en évidence, limitée à l'écran visible
+    const raw=el.getBoundingClientRect();
+    const r={left:Math.max(0,raw.left-pad),top:Math.max(0,raw.top-pad),right:Math.min(vw,raw.right+pad),bottom:Math.min(vh,raw.bottom+pad)};
+    focus.style.display='block';
+    focus.style.left=r.left+'px';focus.style.top=r.top+'px';
+    focus.style.width=Math.max(0,r.right-r.left)+'px';focus.style.height=Math.max(0,r.bottom-r.top)+'px';
+    // emplacement de la carte : le premier qui ne recouvre pas l'élément, sinon celui qui le recouvre le moins
+    const clampX=x=>Math.max(m,Math.min(vw-cw-m,x)), clampY=y=>Math.max(m,Math.min(vh-ch-m,y));
+    const tall=(r.bottom-r.top)>vh*0.5;
+    const below={x:clampX(r.left),y:r.bottom+gap}, above={x:clampX(r.left),y:r.top-ch-gap};
+    const right={x:r.right+gap,y:clampY(r.top)}, left={x:r.left-cw-gap,y:clampY(r.top)};
+    const corners=[{x:vw-cw-m,y:vh-ch-m},{x:m,y:vh-ch-m},{x:vw-cw-m,y:m},{x:m,y:m},{x:clampX((vw-cw)/2),y:vh-ch-m},{x:clampX((vw-cw)/2),y:m}];
+    const cands=(tall?[right,left,below,above]:[below,above,right,left]).concat(corners);
+    let best=null,bestScore=Infinity;
+    cands.forEach(c=>{
+      const box={left:c.x,top:c.y,right:c.x+cw,bottom:c.y+ch};
+      const outside=Math.max(0,m-box.left)+Math.max(0,m-box.top)+Math.max(0,box.right-(vw-m))+Math.max(0,box.bottom-(vh-m));
+      const score=overlapArea(box,r)+outside*1000;
+      if(score<bestScore){bestScore=score;best=c;}
     });
+    card.style.left=clampX(best.x)+'px';card.style.top=clampY(best.y)+'px';
   };
-  const show=(i)=>{
-    index=Math.max(0,Math.min(steps.length-1,i));
-    steps[index].before&&steps[index].before();
-    progress.textContent='Étape '+(index+1)+' sur '+steps.length;
-    title.textContent=steps[index].title;text.textContent=steps[index].text;
-    prev.disabled=index===0;next.textContent=index===steps.length-1?'Terminer':'Suivant';
+  const schedule=()=>{
+    timers.forEach(clearTimeout); timers=[];
     position();
+    [90,380].forEach(ms=>timers.push(setTimeout(position,ms)));  // 2e passage : après les animations du menu
   };
+
+  const onKey=(e)=>{
+    if(e.key==='Escape'){e.preventDefault();finish();}
+    else if(e.key==='ArrowRight'){e.preventDefault();index===steps.length-1?finish():show(index+1);}
+    else if(e.key==='ArrowLeft'){e.preventDefault();show(index-1);}
+  };
+  const stopScroll=(e)=>e.preventDefault();
+  function finish(){
+    timers.forEach(clearTimeout);
+    window.removeEventListener('resize',schedule);
+    document.removeEventListener('keydown',onKey,true);
+    try{localStorage.setItem('cadence-tour-seen-v1','1');}catch(e){}
+    closeSidebar();setEditMode(false);
+    appSection===startSection||goSection(startSection);
+    if(currentView!==startView) goView(startView);
+    overlay.remove();
+  }
+  function show(i){
+    index=Math.max(0,Math.min(steps.length-1,i));
+    const step=steps[index];
+    closeSidebar();
+    setEditMode(!!step.edit);
+    step.before&&step.before();
+    progress.textContent='Étape '+(index+1)+' sur '+steps.length;
+    title.textContent=step.title;text.textContent=step.text;
+    prev.disabled=index===0;next.textContent=index===steps.length-1?'Terminer':'Suivant';
+    const el=resolveTarget(step);
+    if(el){const r=el.getBoundingClientRect(); if(r.top<0||r.bottom>window.innerHeight) el.scrollIntoView({block:'nearest',inline:'nearest'});}
+    schedule();
+    next.focus({preventScroll:true});
+  }
   prev.addEventListener('click',()=>show(index-1));
   next.addEventListener('click',()=>index===steps.length-1?finish():show(index+1));
   overlay.querySelector('#tourClose').addEventListener('click',finish);
   overlay.querySelector('#tourSkip').addEventListener('click',finish);
-  overlay.querySelector('.tour-dim').addEventListener('click',finish);
-  window.addEventListener('resize',position);
+  dim.addEventListener('wheel',stopScroll,{passive:false});
+  dim.addEventListener('touchmove',stopScroll,{passive:false});
+  window.addEventListener('resize',schedule);
+  document.addEventListener('keydown',onKey,true);
   show(0);
 }
 

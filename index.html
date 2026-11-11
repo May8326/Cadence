@@ -635,6 +635,12 @@
   }
   .help-tip strong{color:var(--ink);white-space:nowrap;}
 
+  /* ---------- Annulation de suppression ---------- */
+  .undo-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:800;display:flex;align-items:center;gap:14px;max-width:calc(100vw - 28px);padding:10px 14px;border-radius:10px;background:var(--ink);color:var(--surface);font-size:13px;box-shadow:0 10px 30px rgba(30,28,22,.28);}
+  .undo-toast button{border:0;background:none;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:6px 4px;min-height:32px;}
+  @media(max-width:720px){ .undo-toast{bottom:calc(76px + env(safe-area-inset-bottom,0px));} }
+  @media print{ .undo-toast{display:none !important;} }
+
   /* ---------- Guided tutorial ---------- */
   .tour-overlay{position:fixed;inset:0;z-index:1000;pointer-events:none;}
   .tour-dim{position:absolute;inset:0;background:rgba(30,28,22,.42);pointer-events:auto;touch-action:none;}
@@ -1524,6 +1530,7 @@ async function runDriveSync(){
       stamp:()=>{ if(!STATE.updatedAt) saveState(); return STATE.updatedAt; },
       applyRemote:(data)=>{
         try{ localStorage.setItem(PRESYNC_BACKUP_KEY, JSON.stringify(STATE)); }catch(e){ console.warn('Copie avant synchronisation impossible', e); }
+        hideUndoToast();
         STATE=normalizeState(data);
         if(!saveState(true)) throw new Error('Enregistrement local impossible.');
         renderApp();
@@ -2486,7 +2493,7 @@ function startGuidedTour(){
     {title:'Le zoom de la semaine',text:'En vue Semaine, − et + règlent la hauteur de la grille. Sur téléphone, vous pouvez aussi pincer l’écran à deux doigts.',target:'#cadenceZoom',before:cad('week')},
     {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist en lecture seule : Cadence n’en crée ni n’en modifie. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
     {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
-    {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface définitivement.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
+    {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
     {title:'Paramétrages',text:'Ici se gèrent les connexions Todoist et Google Calendar, la synchronisation, la sauvegarde de vos données et l’aide.',target:'#moreContent',before:()=>{goSection('more');}},
     {title:'Synchroniser vos appareils',text:'« Synchroniser » envoie vos données sur votre Google Drive (dans un espace privé réservé à Cadence) ou récupère celles d’un autre appareil. La version la plus récente est conservée : synchronisez avant et après une session de travail.',target:'#moreSyncCard',before:()=>{goSection('more');}},
     {title:'Sauvegarder vos données',text:'Vos données sont aussi conservées dans ce navigateur. « Exporter » crée un fichier de sauvegarde JSON ; « Importer » le restaure (le mode édition est requis).',target:'#moreDataCard',before:()=>{goSection('more');}},
@@ -2929,11 +2936,33 @@ function deleteCurrentNote(){
   flushNotesSave();
   const note=getCurrentNote();
   if(!note)return;
-  if(!confirm('Supprimer définitivement la note « '+noteTitle(note)+' » ? Cette action est irréversible.'))return;
+  const index=STATE.notes.indexOf(note);
   STATE.notes=STATE.notes.filter(n=>n.id!==note.id);
   currentNoteId=null;
   saveState();
   renderNotes();
+  showUndoToast('Note « '+noteTitle(note)+' » supprimée.',()=>{
+    STATE.notes.splice(Math.min(index,STATE.notes.length),0,note);
+    currentNoteId=note.id;
+    saveState();
+    renderNotes();
+  });
+}
+let undoTimer=null;
+function hideUndoToast(){
+  clearTimeout(undoTimer); undoTimer=null;
+  const t=document.getElementById('undoToast'); if(t) t.remove();
+}
+function showUndoToast(message,onUndo){
+  hideUndoToast();
+  const toast=document.createElement('div');
+  toast.id='undoToast'; toast.className='undo-toast'; toast.setAttribute('role','status');
+  const span=document.createElement('span'); span.textContent=message;
+  const btn=document.createElement('button'); btn.type='button'; btn.textContent='Annuler';
+  btn.addEventListener('click',()=>{ hideUndoToast(); onUndo(); });
+  toast.appendChild(span); toast.appendChild(btn);
+  document.body.appendChild(toast);
+  undoTimer=setTimeout(hideUndoToast,8000);
 }
 function renderNotes(){
   if(!notesContentEl)return;
@@ -2977,9 +3006,9 @@ function renderMore(){
     '<section class="more-card" id="moreTodoistCard"><h2>Todoist</h2><p>Connexion et affichage de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreGoogleCard"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreSyncCard"><h2>Synchronisation Google Drive</h2><p>Retrouvez votre planning et vos notes sur vos autres appareils. En cas de différence, la version la plus récente est conservée.</p><div class="more-status" id="moreSyncStatus"><span class="dot"></span><span>'+esc(syncStatusLabel())+'</span></div><div class="more-actions"><button class="btn primary" id="moreSync">Synchroniser</button></div></section>'+
-    '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données de planning restent stockées localement dans votre navigateur.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
+    '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données sont conservées dans ce navigateur. La synchronisation Google Drive permet de les retrouver sur vos autres appareils ; l’export JSON sert de sauvegarde manuelle.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+
     '<section class="more-card" id="moreHelpCard"><h2>Aide et tutoriel</h2><p>Retrouvez le guide de prise en main, y compris les fonctions Todoist, Agenda et Android.</p><div class="more-actions"><button class="btn" id="moreHelp">Ouvrir le tutoriel</button></div></section>'+
-    '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 1.17 · PWA · données locales</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
+    '<section class="more-card" id="moreAboutCard"><h2>À propos</h2><p>Cadence · emploi du temps par blocs.</p><p class="more-version">Version 2.1 · PWA · synchronisation Google Drive optionnelle</p><div class="more-actions"><a class="btn" href="https://github.com/May8326/Cadence" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></section>';
   const q=(id)=>moreContentEl.querySelector(id);
   if(q('#moreTodoConnect'))q('#moreTodoConnect').addEventListener('click',()=>window.CadenceTodoist.startOAuth());
   if(q('#moreTodoDisconnect'))q('#moreTodoDisconnect').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});

@@ -1,4 +1,4 @@
-const CACHE = 'cadence-pwa-v22'; // tutoriel mis à jour
+const CACHE = 'cadence-pwa-v23'; // textes, version 2.1, annulation de suppression de note
 
 const APP = [
   './',

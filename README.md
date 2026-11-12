@@ -75,7 +75,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Tutoriel interactif** : visite guidée pas à pas avec mise en évidence des éléments de l'interface, navigation Précédent / Suivant et adaptation à Android ou ordinateur.
 
-* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache.
+* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache. En ligne, l'application récupère toujours la dernière version publiée ; la copie en cache ne sert que hors connexion.
 
 ## Utilisation
 
@@ -219,7 +219,7 @@ Les améliorations d'accessibilité sont traitées au fil des évolutions de l'a
 
 * sauvegarde de secours locale des données Cadence ;
 
-* service worker pour le fonctionnement hors connexion ;
+* service worker pour le fonctionnement hors connexion (stratégie « réseau d'abord » pour les fichiers de Cadence ; les requêtes vers Google et Todoist ne sont jamais mises en cache) ;
 
 * synchronisation facultative via l'API Google Drive (espace privé `appDataFolder`) ;
 

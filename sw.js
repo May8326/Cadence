@@ -1,10 +1,10 @@
-const CACHE = 'cadence-pwa-v23'; // textes, version 2.1, annulation de suppression de note
+const CACHE = 'cadence-pwa-v24'; // aperçu Markdown des notes
 
 const APP = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js','./integrations/drive-sync.js'
+  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js','./integrations/drive-sync.js','./markdown.js'
 ];
 
 self.addEventListener('install', event => {

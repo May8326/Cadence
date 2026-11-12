@@ -69,7 +69,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Synchronisation Google Drive** : bouton « Synchroniser » pour retrouver ses données sur plusieurs appareils, la version la plus récente étant conservée.
 
-* **Todoist** : consultation des tâches en lecture seule via OAuth 2.0 + PKCE, avec titres et descriptions affichés en Markdown (la description se déplie sous « Détails »).
+* **Todoist** : consultation des tâches et possibilité de les cocher (avec annulation) via OAuth 2.0 + PKCE ; les tâches dont le titre commence par `* ` dans Todoist sont non cochables et s'affichent sans l'étoile ; titres et descriptions affichés en Markdown, avec titres et descriptions affichés en Markdown (la description se déplie sous « Détails »).
 
 * **Google Calendar** : consultation de plusieurs agendas, en vue Jour ou Semaine, avec couleurs, chevauchements et indicateur de l'heure actuelle.
 
@@ -171,7 +171,7 @@ La visite est proposée automatiquement lors de la première utilisation et peut
 
 ## Todoist
 
-La connexion Todoist utilise OAuth 2.0 avec PKCE et demande uniquement la portée de lecture `data:read`.
+La connexion Todoist utilise OAuth 2.0 avec PKCE et demande la portée `data:read_write`, utilisée uniquement pour terminer ou rouvrir une tâche. Après une mise à jour qui change cette portée, déconnectez puis reconnectez Todoist dans **Paramétrages**.
 
 Cadence peut consulter les tâches actives et les présenter selon plusieurs filtres. Les tâches ne sont ni créées, ni modifiées, ni supprimées par Cadence.
 

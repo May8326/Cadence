@@ -38,7 +38,7 @@
     sessionStorage.setItem(PENDING_KEY, JSON.stringify({verifier, state, createdAt:Date.now()}));
     const params = new URLSearchParams({
       client_id: CLIENT_ID,
-      scope: 'data:read',
+      scope: 'data:read_write',
       state,
       response_type: 'code',
       redirect_uri: REDIRECT_URI,
@@ -78,7 +78,7 @@
       accessToken:data.access_token,
       refreshToken:data.refresh_token || null,
       expiresAt:Date.now() + ((data.expires_in || 3600) * 1000),
-      scope:data.scope || 'data:read'
+      scope:data.scope || 'data:read_write'
     });
     history.replaceState({}, document.title, window.location.pathname + window.location.hash);
     return data;
@@ -131,7 +131,11 @@
       response = await fetch(API_URL + path, request);
     }
     const data = await response.json().catch(()=>({}));
-    if(!response.ok) throw new Error(data.error || data.error_description || `Erreur Todoist (${response.status}).`);
+    if(!response.ok){
+      const error = new Error(data.error || data.error_description || `Erreur Todoist (${response.status}).`);
+      error.status = response.status;
+      throw error;
+    }
     return data;
   }
 
@@ -161,10 +165,13 @@
     return all;
   }
 
+  async function closeTask(id){ return api('/tasks/' + encodeURIComponent(id) + '/close', {method:'POST'}); }
+  async function reopenTask(id){ return api('/tasks/' + encodeURIComponent(id) + '/reopen', {method:'POST'}); }
+  function canWrite(){ return /data:(read_write|delete)/.test(readStored()?.scope || ''); }
   function isConnected(){ return !!readStored()?.accessToken; }
   function disconnect(){ clearStored(); }
 
-  window.CadenceTodoist = {startOAuth, finishOAuth, getTasks, getSections, isConnected, disconnect, getStored:readStored};
+  window.CadenceTodoist = {startOAuth, finishOAuth, getTasks, getSections, closeTask, reopenTask, canWrite, isConnected, disconnect, getStored:readStored};
 
   window.CadenceTodoistReady = finishOAuth().catch(err => ({error:err.message}));
 })();

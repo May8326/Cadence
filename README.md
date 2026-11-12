@@ -59,7 +59,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Demi-journées types** : modèles sur une plage horaire, applicables à un jour.
 
-* **Notes** : création et modification de notes personnelles en **Markdown**, avec sauvegarde automatique dans les données locales de Cadence, suppression avec possibilité d'annuler pendant quelques secondes.
+* **Notes** : création et modification de notes personnelles en **Markdown**, avec sauvegarde automatique dans les données locales de Cadence, suppression avec possibilité d'annuler pendant quelques secondes, et **aperçu** de la note mise en forme.
 
 * **Archivage des notes** : les notes peuvent être archivées lorsqu'elles ne sont plus actives. Les notes archivées sont conservées et retrouvées par **date d'archivage**.
 
@@ -75,7 +75,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Tutoriel interactif** : visite guidée pas à pas avec mise en évidence des éléments de l'interface, navigation Précédent / Suivant et adaptation à Android ou ordinateur.
 
-* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache.
+* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache. En ligne, l'application récupère toujours la dernière version publiée ; la copie en cache ne sert que hors connexion.
 
 ## Utilisation
 
@@ -116,6 +116,8 @@ Chaque note possède :
 * éventuellement une date d'archivage.
 
 Les notes actives sont accessibles dans l'espace **Notes** et peuvent être créées avec **+ Nouvelle**.
+
+Les boutons **Écrire** et **Aperçu** alternent entre la saisie et la note mise en forme. L'aperçu prend en charge les titres, le gras, l'italique, le barré, le code, les listes (à puces, numérotées, imbriquées, à cocher), les citations, les tableaux, les liens (`http`, `https`, `mailto`) et les séparateurs. Le HTML saisi dans une note n'est jamais interprété.
 
 La rédaction est sauvegardée automatiquement. Une note peut être **archivée** lorsqu'elle n'a plus besoin d'apparaître dans la liste active.
 
@@ -217,7 +219,7 @@ Les améliorations d'accessibilité sont traitées au fil des évolutions de l'a
 
 * sauvegarde de secours locale des données Cadence ;
 
-* service worker pour le fonctionnement hors connexion ;
+* service worker pour le fonctionnement hors connexion (stratégie « réseau d'abord » pour les fichiers de Cadence ; les requêtes vers Google et Todoist ne sont jamais mises en cache) ;
 
 * synchronisation facultative via l'API Google Drive (espace privé `appDataFolder`) ;
 
@@ -233,6 +235,8 @@ Cadence/
 ├── manifest.json
 
 ├── sw.js
+
+├── markdown.js
 
 ├── icon.svg
 
@@ -267,4 +271,4 @@ Cadence/
 
 * **V2.0** : nouvelle version stable intégrant l'espace Notes dans la navigation principale de Cadence et finalisant son intégration au système de données et au tutoriel.
 
-* **V2.1** : synchronisation facultative avec Google Drive, suppression des notes avec annulation, enregistrement des notes fiabilisé, tutoriel interactif réécrit et textes mis à jour.
+* **V2.1** : synchronisation facultative avec Google Drive, suppression des notes avec annulation, aperçu Markdown des notes, enregistrement des notes fiabilisé, tutoriel interactif réécrit et textes mis à jour.

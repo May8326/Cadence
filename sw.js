@@ -1,10 +1,10 @@
-const CACHE = 'cadence-pwa-v23'; // textes, version 2.1, annulation de suppression de note
+const CACHE = 'cadence-pwa-v25'; // stratégie « réseau d'abord » : plus besoin de changer ce numéro à chaque mise à jour
 
 const APP = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js','./integrations/drive-sync.js'
+  './icon.svg','./integrations/todoist.js','./integrations/todoist-client.json','./integrations/google-calendar.js','./integrations/drive-sync.js','./markdown.js'
 ];
 
 self.addEventListener('install', event => {
@@ -30,25 +30,30 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET') return;
 
+  // Seuls les fichiers de Cadence passent par ce cache. Les requêtes vers Google, Todoist, etc.
+  // (agendas, synchronisation Drive…) ne doivent jamais être servies depuis un cache.
+  if (new URL(request.url).origin !== self.location.origin) return;
+
+  // Réseau d'abord : en ligne, on récupère toujours la dernière version publiée
+  // (« no-cache » = vérification auprès du serveur, sans retélécharger si rien n'a changé).
+  // Hors connexion, on utilise la dernière copie enregistrée.
   event.respondWith(
-    caches.match(event.request)
-      .then(cached => {
-        if (cached) return cached;
-
-        return fetch(event.request)
-          .then(response => {
-            // Ne mettre en cache que les réponses valides (évite de figer une 404/500)
-            if (response && response.ok) {
-              const copy = response.clone();
-              caches.open(CACHE)
-                .then(cache => cache.put(event.request, copy))
-                .catch(() => {});
-            }
-            return response;
-          })
-          .catch(() => caches.match('./index.html'));
+    fetch(request, { cache: 'no-cache' })
+      .then(response => {
+        // Ne mettre en cache que les réponses valides (évite de figer une 404/500)
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE)
+            .then(cache => cache.put(request, copy))
+            .catch(() => {});
+        }
+        return response;
       })
+      .catch(() =>
+        caches.match(request).then(cached => cached || caches.match('./index.html'))
+      )
   );
 });

@@ -367,6 +367,14 @@
   .todoist-task.p1 .task-priority{background:#d35b68}.todoist-task.p2 .task-priority{background:#df8c57}.todoist-task.p3 .task-priority{background:#d5b34c}
   .todoist-task-main{min-width:0;flex:1;}
   .todoist-task-title{font-size:13px;color:var(--ink);line-height:1.4;}
+  .todoist-check{flex:none;width:28px;height:28px;margin:-3px -4px -3px -2px;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .todoist-check span{width:18px;height:18px;border:2px solid var(--ink-faint);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;color:transparent;transition:background .12s,color .12s;}
+  .todoist-check span::after{content:'✓';}
+  .todoist-check:hover span,.todoist-check:focus-visible span{background:var(--accent-soft);color:var(--accent);}
+  .todoist-task.p1 .todoist-check span{border-color:#d35b68;} .todoist-task.p2 .todoist-check span{border-color:#df8c57;} .todoist-task.p3 .todoist-check span{border-color:#d5b34c;}
+  .todoist-check.done span{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .todoist-check:disabled{cursor:default;}
+  .todoist-write-notice{margin-top:14px;}
   .todoist-details{margin-top:5px;}
   .todoist-details summary{cursor:pointer;list-style:none;font-size:11px;color:var(--ink-soft);display:inline-block;padding:2px 0;}
   .todoist-details summary::-webkit-details-marker{display:none;}
@@ -2526,7 +2534,7 @@ function startGuidedTour(){
     {title:'Vos Demi-journées types',text:'Une Demi-journée type couvre une plage horaire précise (une matinée, une soirée…). Elle s’applique à un jour sans toucher au reste de la journée.',target:'#halfDayPanel',before:cad('halfday-templates',openSide)},
     {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
     {title:'Le zoom de la semaine',text:'En vue Semaine, − et + règlent la hauteur de la grille. Sur téléphone, vous pouvez aussi pincer l’écran à deux doigts.',target:'#cadenceZoom',before:cad('week')},
-    {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist en lecture seule : Cadence n’en crée ni n’en modifie. Titres et descriptions sont mis en forme (gras, liens…) et la description se déplie avec « Détails ». La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
+    {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist. Cochez le rond à gauche d’une tâche pour la terminer (quelques secondes pour annuler) ; Cadence ne crée ni ne modifie vos tâches autrement. Les titres sont mis en forme, la description se déplie avec « Détails », et les tâches dont le titre commence par « * » dans Todoist ne se cochent pas. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
     {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
     {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe, et « Aperçu » affiche la note mise en forme. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
     {title:'Paramétrages',text:'Ici se gèrent les connexions Todoist et Google Calendar, la synchronisation, la sauvegarde de vos données et l’aide.',target:'#moreContent',before:()=>{goSection('more');}},
@@ -2687,6 +2695,45 @@ function renderTodoistTitle(value){
   const escaped=escapeHtml(value||'Sans titre');
   return escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,label,url)=>`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
 }
+// Dans Todoist, un titre qui commence par « * » désigne une tâche non cochable : on la montre sans l'étoile ni case.
+function todoistIsNonCheckable(task){ return /^\s*\*\s/.test(task.content||''); }
+function todoistDisplayContent(task){ return String(task.content||'').replace(/^\s*\*\s+/,''); }
+function todoistPlainTitle(task){
+  const t=todoistDisplayContent(task).replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/[*_`~]/g,'').trim()||'Sans titre';
+  return t.length>60?t.slice(0,57)+'…':t;
+}
+function todoistCheckHtml(task){
+  if(todoistIsNonCheckable(task)||!window.CadenceTodoist.canWrite()) return '';
+  return '<button type="button" class="todoist-check" data-task-id="'+escapeHtml(task.id)+'" aria-label="Terminer la tâche : '+escapeHtml(todoistPlainTitle(task))+'" title="Terminer la tâche"><span></span></button>';
+}
+function todoistWriteErrorMessage(error){
+  if(error&&(error.status===401||error.status===403)) return 'Autorisation insuffisante : déconnectez puis reconnectez Todoist dans Paramétrages pour activer la modification des tâches.';
+  return (error&&error.message)||String(error);
+}
+async function completeTodoistTask(id,btn){
+  const task=todoistTasks.find(t=>String(t.id)===String(id));
+  if(!task) return;
+  btn.disabled=true; btn.classList.add('done');
+  const name=todoistPlainTitle(task), recurring=!!task.due?.is_recurring;
+  try{ await window.CadenceTodoist.closeTask(id); }
+  catch(error){
+    btn.disabled=false; btn.classList.remove('done');
+    alert('Impossible de terminer la tâche : '+todoistWriteErrorMessage(error));
+    return;
+  }
+  if(recurring){
+    showUndoToast('Tâche récurrente « '+name+' » terminée : la prochaine occurrence est programmée.',null);
+    loadTodoistTasks();
+    return;
+  }
+  todoistTasks=todoistTasks.filter(t=>String(t.id)!==String(id));
+  renderTodoist();
+  showUndoToast('Tâche « '+name+' » terminée.',async()=>{
+    try{ await window.CadenceTodoist.reopenTask(id); }
+    catch(error){ alert('Impossible de rouvrir la tâche : '+todoistWriteErrorMessage(error)); }
+    loadTodoistTasks();
+  });
+}
 function renderTodoistDetails(task){
   const description=String(task.description||'').trim();
   if(!description) return '';
@@ -2710,9 +2757,14 @@ function renderTodoist(){
   }
   const filtered=filterTodoistTasks();
   const groups=todoistSectionGroups(filtered);
-  const groupsHtml=groups.map(group=>`<section class="todoist-section"><div class="todoist-section-title">${escapeHtml(group.name)} <span class="count">${group.tasks.length}</span></div>${group.tasks.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${renderTodoistTitle(task.content)}</div>${renderTodoistDetails(task)}<div class="todoist-task-meta"><span class="${isTodoistOverdue(task)?'todoist-overdue':''}">${escapeHtml(formatTodoistDue(task))}${isTodoistOverdue(task)?' · en retard':''}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join('')}</section>`).join('');
+  const groupsHtml=groups.map(group=>`<section class="todoist-section"><div class="todoist-section-title">${escapeHtml(group.name)} <span class="count">${group.tasks.length}</span></div>${group.tasks.map(task=>`<article class="todoist-task p${task.priority||4}${todoistIsNonCheckable(task)?' todoist-noncheck':''}"><span class="task-priority" aria-hidden="true"></span>${todoistCheckHtml(task)}<div class="todoist-task-main"><div class="todoist-task-title">${renderTodoistTitle(todoistDisplayContent(task))}</div>${renderTodoistDetails(task)}<div class="todoist-task-meta"><span class="${isTodoistOverdue(task)?'todoist-overdue':''}">${escapeHtml(formatTodoistDue(task))}${isTodoistOverdue(task)?' · en retard':''}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join('')}</section>`).join('');
   todoistContentEl.innerHTML=`<div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${groupsHtml||'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
   todoistContentEl.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{todoistFilter=btn.dataset.filter;renderTodoist();}));
+  todoistContentEl.querySelectorAll('.todoist-check').forEach(btn=>btn.addEventListener('click',()=>completeTodoistTask(btn.dataset.taskId,btn)));
+  if(!window.CadenceTodoist.canWrite()){
+    todoistContentEl.insertAdjacentHTML('afterbegin','<div class="integration-status todoist-write-notice"><span class="dot"></span><div>Pour cocher vos tâches depuis Cadence, déconnectez puis reconnectez Todoist dans <button class="inline-link-btn" id="todoistReconnectBtn">Paramétrages</button> (autorisation de modification requise).</div></div>');
+    todoistContentEl.querySelector('#todoistReconnectBtn').addEventListener('click',()=>{appSection='more';document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='more'));renderApp();});
+  }
   todoistContentEl.querySelector('#todoistRefreshBtn').addEventListener('click',loadTodoistTasks);
 }
 async function loadTodoistTasks(){
@@ -3015,9 +3067,12 @@ function showUndoToast(message,onUndo){
   const toast=document.createElement('div');
   toast.id='undoToast'; toast.className='undo-toast'; toast.setAttribute('role','status');
   const span=document.createElement('span'); span.textContent=message;
-  const btn=document.createElement('button'); btn.type='button'; btn.textContent='Annuler';
-  btn.addEventListener('click',()=>{ hideUndoToast(); onUndo(); });
-  toast.appendChild(span); toast.appendChild(btn);
+  toast.appendChild(span);
+  if(onUndo){
+    const btn=document.createElement('button'); btn.type='button'; btn.textContent='Annuler';
+    btn.addEventListener('click',()=>{ hideUndoToast(); onUndo(); });
+    toast.appendChild(btn);
+  }
   document.body.appendChild(toast);
   undoTimer=setTimeout(hideUndoToast,8000);
 }
@@ -3063,7 +3118,7 @@ function renderMore(){
   const googleConnected=window.CadenceGoogleCalendar?.isConnected?.() || false;
   const editLabel=editMode?'Désactiver le mode édition':'Activer le mode édition';
   moreContentEl.innerHTML=
-    '<section class="more-card" id="moreTodoistCard"><h2>Todoist</h2><p>Connexion et affichage de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
+    '<section class="more-card" id="moreTodoistCard"><h2>Todoist</h2><p>Connexion, affichage et validation de vos tâches dans l’espace Tâches.</p><div class="more-status '+(todoConnected?'connected':'')+'"><span class="dot"></span><span>'+(todoConnected?'Connecté · '+(window.CadenceTodoist.canWrite()?'lecture et modification':'lecture seule, reconnectez-vous pour cocher'):'Déconnecté')+'</span></div><div class="more-actions">'+(todoConnected?'<button class="btn" id="moreTodoDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreTodoConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreGoogleCard"><h2>Google Calendar</h2><p>Connexion et affichage de vos agendas dans l’espace Agenda.</p><div class="more-status '+(googleConnected?'connected':'')+'"><span class="dot"></span><span>'+(googleConnected?'Connecté':'Déconnecté')+'</span></div><div class="more-actions">'+(googleConnected?'<button class="btn" id="moreGoogleDisconnect">Déconnecter</button>':'<button class="btn primary" id="moreGoogleConnect">Connecter</button>')+'</div></section>'+
     '<section class="more-card" id="moreSyncCard"><h2>Synchronisation Google Drive</h2><p>Retrouvez votre planning et vos notes sur vos autres appareils. En cas de différence, la version la plus récente est conservée.</p><div class="more-status" id="moreSyncStatus"><span class="dot"></span><span>'+esc(syncStatusLabel())+'</span></div><div class="more-actions"><button class="btn primary" id="moreSync">Synchroniser</button></div></section>'+
     '<section class="more-card" id="moreDataCard"><h2>Données Cadence</h2><p>Vos données sont conservées dans ce navigateur. La synchronisation Google Drive permet de les retrouver sur vos autres appareils ; l’export JSON sert de sauvegarde manuelle.</p><div class="more-actions"><button class="btn" id="moreExport">Exporter</button><button class="btn" id="moreImport" '+(!editMode?'disabled':'')+'>Importer</button><button class="btn" id="moreEdit">'+editLabel+'</button></div><p class="more-version">L’importation nécessite le mode édition.</p></section>'+

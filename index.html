@@ -367,6 +367,12 @@
   .todoist-task.p1 .task-priority{background:#d35b68}.todoist-task.p2 .task-priority{background:#df8c57}.todoist-task.p3 .task-priority{background:#d5b34c}
   .todoist-task-main{min-width:0;flex:1;}
   .todoist-task-title{font-size:13px;color:var(--ink);line-height:1.4;}
+  .todoist-details{margin-top:5px;}
+  .todoist-details summary{cursor:pointer;list-style:none;font-size:11px;color:var(--ink-soft);display:inline-block;padding:2px 0;}
+  .todoist-details summary::-webkit-details-marker{display:none;}
+  .todoist-details summary::before{content:'▸ ';}
+  .todoist-details[open] summary::before{content:'▾ ';}
+  .todoist-description.notes-preview{min-height:0;flex:none;overflow:visible;border:0;background:transparent;padding:4px 0 2px;font-size:13px;}
   .todoist-task-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px;font-size:11px;color:var(--ink-soft);}
   .todoist-task-link{font-size:11px;color:var(--ink-soft);text-decoration:none;flex:none;padding-top:2px;}
   .todoist-task-link:hover{text-decoration:underline;color:var(--ink);}
@@ -2520,7 +2526,7 @@ function startGuidedTour(){
     {title:'Vos Demi-journées types',text:'Une Demi-journée type couvre une plage horaire précise (une matinée, une soirée…). Elle s’applique à un jour sans toucher au reste de la journée.',target:'#halfDayPanel',before:cad('halfday-templates',openSide)},
     {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
     {title:'Le zoom de la semaine',text:'En vue Semaine, − et + règlent la hauteur de la grille. Sur téléphone, vous pouvez aussi pincer l’écran à deux doigts.',target:'#cadenceZoom',before:cad('week')},
-    {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist en lecture seule : Cadence n’en crée ni n’en modifie. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
+    {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist en lecture seule : Cadence n’en crée ni n’en modifie. Titres et descriptions sont mis en forme (gras, liens…) et la description se déplie avec « Détails ». La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
     {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
     {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe, et « Aperçu » affiche la note mise en forme. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
     {title:'Paramétrages',text:'Ici se gèrent les connexions Todoist et Google Calendar, la synchronisation, la sauvegarde de vos données et l’aide.',target:'#moreContent',before:()=>{goSection('more');}},
@@ -2677,8 +2683,15 @@ function filterTodoistTasks(){
   });
 }
 function renderTodoistTitle(value){
+  if(window.CadenceMarkdown) return window.CadenceMarkdown.renderInline(value||'Sans titre');
   const escaped=escapeHtml(value||'Sans titre');
   return escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,label,url)=>`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+}
+function renderTodoistDetails(task){
+  const description=String(task.description||'').trim();
+  if(!description) return '';
+  const body=window.CadenceMarkdown?window.CadenceMarkdown.render(description):'<pre>'+escapeHtml(description)+'</pre>';
+  return '<details class="todoist-details"><summary>Détails</summary><div class="notes-preview todoist-description">'+body+'</div></details>';
 }
 function todoistSectionGroups(tasks){
   const groups=new Map();
@@ -2697,7 +2710,7 @@ function renderTodoist(){
   }
   const filtered=filterTodoistTasks();
   const groups=todoistSectionGroups(filtered);
-  const groupsHtml=groups.map(group=>`<section class="todoist-section"><div class="todoist-section-title">${escapeHtml(group.name)} <span class="count">${group.tasks.length}</span></div>${group.tasks.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${renderTodoistTitle(task.content)}</div><div class="todoist-task-meta"><span class="${isTodoistOverdue(task)?'todoist-overdue':''}">${escapeHtml(formatTodoistDue(task))}${isTodoistOverdue(task)?' · en retard':''}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join('')}</section>`).join('');
+  const groupsHtml=groups.map(group=>`<section class="todoist-section"><div class="todoist-section-title">${escapeHtml(group.name)} <span class="count">${group.tasks.length}</span></div>${group.tasks.map(task=>`<article class="todoist-task p${task.priority||4}"><span class="task-priority" aria-hidden="true"></span><div class="todoist-task-main"><div class="todoist-task-title">${renderTodoistTitle(task.content)}</div>${renderTodoistDetails(task)}<div class="todoist-task-meta"><span class="${isTodoistOverdue(task)?'todoist-overdue':''}">${escapeHtml(formatTodoistDue(task))}${isTodoistOverdue(task)?' · en retard':''}</span>${task.labels?.length?`<span>${escapeHtml(task.labels.join(' · '))}</span>`:''}</div></div><a class="todoist-task-link" href="https://app.todoist.com/app/task/${encodeURIComponent(task.id)}" target="_blank" rel="noopener">Ouvrir ↗</a></article>`).join('')}</section>`).join('');
   todoistContentEl.innerHTML=`<div class="todoist-toolbar"><div class="todoist-filter" role="tablist" aria-label="Filtre des tâches"><button data-filter="today" class="${todoistFilter==='today'?'active':''}">Aujourd’hui</button><button data-filter="week" class="${todoistFilter==='week'?'active':''}">7 jours</button><button data-filter="unscheduled" class="${todoistFilter==='unscheduled'?'active':''}">Sans échéance</button><button data-filter="all" class="${todoistFilter==='all'?'active':''}">Toutes</button></div><button class="btn" id="todoistRefreshBtn">↻ Actualiser</button></div><div class="todoist-list">${groupsHtml||'<div class="todoist-empty">Aucune tâche dans cette vue.</div>'}</div>`;
   todoistContentEl.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{todoistFilter=btn.dataset.filter;renderTodoist();}));
   todoistContentEl.querySelector('#todoistRefreshBtn').addEventListener('click',loadTodoistTasks);

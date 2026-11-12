@@ -155,7 +155,7 @@
     return blocks(String(src==null?'':src).replace(/\r\n?/g,'\n').split('\n'));
   }
 
-  const api={render, escapeHtml};
+  const api={render, renderInline:inline, escapeHtml};
   if(typeof window!=='undefined') window.CadenceMarkdown=api;
   if(typeof module!=='undefined' && module.exports) module.exports=api;
 })();

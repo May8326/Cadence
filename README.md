@@ -69,7 +69,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Synchronisation Google Drive** : bouton « Synchroniser » pour retrouver ses données sur plusieurs appareils, la version la plus récente étant conservée.
 
-* **Todoist** : consultation des tâches en lecture seule via OAuth 2.0 + PKCE.
+* **Todoist** : consultation des tâches en lecture seule via OAuth 2.0 + PKCE, avec titres et descriptions affichés en Markdown (la description se déplie sous « Détails »).
 
 * **Google Calendar** : consultation de plusieurs agendas, en vue Jour ou Semaine, avec couleurs, chevauchements et indicateur de l'heure actuelle.
 

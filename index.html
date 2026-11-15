@@ -1118,6 +1118,47 @@
     @page{size:landscape;margin:10mm;}
   }
   .print-title{display:none;}
+
+  /* ---------- Vues téléphone (phase B) ---------- */
+  .more-actions-btn,.actions-menu,.mobile-view-tabs,.side-views{display:none;}
+  @media screen and (max-width:720px){
+    .topbar{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+    #mobileViewSelect{display:none !important;}
+    #cadenceZoom{display:none !important;}
+    #printBtn,#exportBtn,#importBtn{display:none !important;}
+    .date-nav{order:2;}
+    .mobile-view-tabs{display:flex;order:3;flex:1 1 100%;width:100%;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface);}
+    .mobile-view-tabs button{flex:1;min-height:36px;border:0;border-right:1px solid var(--line);background:transparent;font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;}
+    .mobile-view-tabs button:last-child{border-right:0;}
+    .mobile-view-tabs button.active{background:var(--ink);color:var(--surface);}
+    .date-nav .more-actions-btn{display:inline-flex;align-items:center;justify-content:center;}
+    .actions-menu:not([hidden]){display:block;position:fixed;right:8px;top:120px;z-index:120;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(30,28,22,.22);padding:4px 0;}
+    .actions-menu button[data-act]:not([data-act^="zoom"]){display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:14px;padding:12px 16px;color:var(--ink);cursor:pointer;}
+    .actions-menu button[data-act]:not([data-act^="zoom"]) + button,.actions-menu .menu-zoom{border-top:1px solid var(--line-light);}
+    .menu-zoom{display:flex;align-items:center;gap:12px;padding:8px 16px;font-size:14px;}
+    .menu-zoom[hidden]{display:none;}
+    .menu-zoom > span:first-child{flex:1;}
+    .menu-zoom button{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:inherit;font-size:18px;color:var(--ink);cursor:pointer;}
+    .side-views{display:flex;flex-direction:column;gap:8px;padding:0 0 12px;}
+    .side-views button{border:1px solid var(--line);border-radius:8px;background:var(--surface);font:inherit;font-size:13px;color:var(--ink);padding:10px 12px;text-align:left;cursor:pointer;}
+    #cadenceActions{display:block !important;flex:0 0 0 !important;width:0 !important;height:0 !important;min-height:0 !important;padding:0 !important;margin:-7px 0 0 !important;overflow:visible !important;}
+    #editModeBtn{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:52px;height:52px;min-width:52px;padding:0;border-radius:50%;z-index:60;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--surface);border:0;box-shadow:0 4px 14px rgba(0,0,0,.28);}
+    #editModeBtn .lbl{display:none !important;}
+    #editModeBtn .edit-icon{font-size:22px;line-height:1;}
+    #editModeBtn[aria-pressed="true"]{background:var(--accent);}
+    body:not(.external-section) #main{padding-top:0;}
+    #weekView .time-axis::before{content:'';display:block;position:sticky;top:0;height:48px;background:var(--paper);z-index:5;}
+    #weekView > div{display:flex !important;}
+    #weekView .time-axis{display:block !important;width:34px;flex:none;padding-top:0;}
+    #weekView .time-axis .tick{font-size:10px;right:3px;}
+    #weekView .columns{display:grid !important;grid-template-columns:repeat(var(--ncols,7),minmax(0,1fr));gap:0 !important;overflow:visible !important;padding:0 !important;flex:1;min-width:0;}
+    #weekView .day-col-wrap{min-width:0 !important;max-width:none !important;width:auto !important;flex:none !important;border-left:1px solid var(--line-light);}
+    #weekView .col-head{height:44px;position:sticky;top:0;z-index:4;background:var(--paper);padding:4px 1px;margin-bottom:4px;align-items:center;text-align:center;}
+    #weekView .col-head .wd{font-size:11px;}
+    #weekView .col-head .dt{font-size:11px;}
+    body[data-cview="week"] #weekView .block .b-title,body[data-cview="week"] #weekView .block .b-time,body[data-cview="week"] #weekView .block .b-tag{display:none;}
+    body[data-cview="threeday"] #weekView .block{font-size:11px;}
+  }
 </style>
   <!-- Configuration PWA -->
   <link rel="manifest" href="manifest.json">
@@ -1138,10 +1179,12 @@
       </nav>
       <select id="mobileViewSelect" aria-label="Choisir la vue">
         <option value="week">Semaine</option>
+        <option value="threeday">3 jours</option>
         <option value="day">Jour</option>
         <option value="templates">Journées</option>
         <option value="halfday-templates">½ journées</option>
       </select>
+      <nav class="mobile-view-tabs" id="mobileViewTabs" aria-label="Choisir la vue"><button type="button" data-view="day">Jour</button><button type="button" data-view="threeday">3 jours</button><button type="button" data-view="week">Semaine</button></nav>
       <div class="cadence-zoom" id="cadenceZoom" role="group" aria-label="Zoom de la grille">
         <button id="cadenceZoomOut" aria-label="Dézoomer">−</button><span class="cadence-zoom-label" id="cadenceZoomLabel">100 %</span><button id="cadenceZoomIn" aria-label="Zoomer">+</button>
       </div>
@@ -1150,6 +1193,7 @@
         <div id="dateLabel"></div>
         <button id="nextBtn">›</button>
         <button id="todayBtn">Aujourd'hui</button>
+        <button id="moreActionsBtn" class="more-actions-btn" type="button" aria-label="Plus d'actions" aria-haspopup="true" aria-expanded="false">⋮</button>
       </div>
     </div>
     <div class="actions cadence-controls" id="cadenceActions">
@@ -1171,6 +1215,7 @@
   <div class="body">
     <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:70;"></div>
     <aside id="sidebar">
+      <div class="side-views" id="sideViews"><button type="button" data-side-view="templates">Voir les Journées types</button><button type="button" data-side-view="halfday-templates">Voir les ½ journées types</button></div>
       <section class="panel" id="templatePanel">
         <div class="panel-head"><div class="panel-title-wrap"><button class="panel-toggle" type="button" aria-label="Replier"><span class="chevron">▾</span></button><h2>Journées type</h2></div><button id="newTemplateBtn">+ Nouveau</button></div>
         <div class="panel-content"><ul class="list" id="templateList"></ul>
@@ -1238,6 +1283,12 @@
 
 </div>
 
+<div id="actionsMenu" class="actions-menu" role="menu" hidden>
+  <button type="button" role="menuitem" data-act="print">Imprimer / PDF</button>
+  <button type="button" role="menuitem" data-act="export">Exporter les données</button>
+  <button type="button" role="menuitem" data-act="import">Importer des données</button>
+  <div class="menu-zoom" id="menuZoom"><span>Zoom</span><button type="button" data-act="zoomout" aria-label="Dézoomer">−</button><span id="menuZoomLabel">100 %</span><button type="button" data-act="zoomin" aria-label="Zoomer">+</button></div>
+</div>
 <div id="modalRoot"></div>
 
 <script src="integrations/todoist.js"></script>
@@ -1260,7 +1311,7 @@ const BACKUP_KEY = 'cadence-data-backup-v1';
 
 /* ============ utils ============ */
 function pad(n){return n.toString().padStart(2,'0');}
-function minToPx(m){return m*PX_PER_MIN*(currentView==='week' ? cadenceWeekZoom/100 : 1);}
+function minToPx(m){return m*PX_PER_MIN*((currentView==='week'||currentView==='threeday') ? cadenceWeekZoom/100 : 1);}
 function pxToMin(px){return px/PX_PER_MIN;}
 function snap(min,step=5){return Math.round(min/step)*step;}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -1348,7 +1399,8 @@ function getDay(key){
 
 /* ============ view state ============ */
 let appSection = 'cadence';
-let currentView = 'week';
+let currentView = window.matchMedia('(max-width:720px)').matches ? 'threeday' : 'week';
+let pendingScrollNow = true;
 let refDate = new Date(); refDate.setHours(0,0,0,0);
 let armedSavedBlockId = null;
 let editMode = false; // Le planning est en lecture seule par défaut.
@@ -1504,12 +1556,59 @@ mobileViewSelect.addEventListener('change',()=>{currentView=mobileViewSelect.val
 document.getElementById('cadenceZoomOut').addEventListener('click',()=>setCadenceWeekZoom(cadenceWeekZoom-15));
 document.getElementById('cadenceZoomIn').addEventListener('click',()=>setCadenceWeekZoom(cadenceWeekZoom+15));
 document.getElementById('editModeBtn').addEventListener('click', ()=>setEditMode(!editMode));
+
+/* ---- Téléphone : onglets de vue, menu ⋮, liens du menu ☰, ouverture à l'heure actuelle ---- */
+function scrollGridToNow(){
+  if(!window.matchMedia('(max-width:720px)').matches) return;
+  if(!['day','threeday','week'].includes(currentView)) return;
+  const main=document.getElementById('main'); if(!main) return;
+  const keys=[];
+  if(currentView==='day') keys.push(dateKey(refDate));
+  else{
+    const start=currentView==='threeday' ? refDate : startOfWeek(refDate);
+    const n=currentView==='threeday' ? 3 : 7;
+    for(let i=0;i<n;i++) keys.push(dateKey(addDays(start,i)));
+  }
+  const now=new Date(), nowMin=now.getHours()*60+now.getMinutes();
+  const target=keys.includes(dateKey(now)) ? Math.max(DAY_START,nowMin-60) : 8*60;
+  main.scrollTop=minToPx(target-DAY_START);
+}
+document.querySelectorAll('#mobileViewTabs button').forEach(b=>b.addEventListener('click',()=>{ currentView=b.dataset.view; pendingScrollNow=true; renderApp(); }));
+document.querySelectorAll('#sideViews button').forEach(b=>b.addEventListener('click',()=>{ currentView=b.dataset.sideView; closeSidebar(); renderApp(); }));
+const moreActionsBtn=document.getElementById('moreActionsBtn'), actionsMenu=document.getElementById('actionsMenu');
+function closeActionsMenu(){ actionsMenu.hidden=true; moreActionsBtn.setAttribute('aria-expanded','false'); }
+function openActionsMenu(){
+  const r=moreActionsBtn.getBoundingClientRect();
+  actionsMenu.style.top=(r.bottom+6)+'px';
+  document.getElementById('menuZoom').hidden=!(currentView==='week'||currentView==='threeday');
+  document.getElementById('menuZoomLabel').textContent=cadenceWeekZoom+' %';
+  actionsMenu.hidden=false; moreActionsBtn.setAttribute('aria-expanded','true');
+}
+moreActionsBtn.addEventListener('click',e=>{ e.stopPropagation(); if(actionsMenu.hidden) openActionsMenu(); else closeActionsMenu(); });
+actionsMenu.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const act=b.dataset.act;
+  if(act==='zoomin'||act==='zoomout'){
+    document.getElementById(act==='zoomin'?'cadenceZoomIn':'cadenceZoomOut').click();
+    document.getElementById('menuZoomLabel').textContent=cadenceWeekZoom+' %';
+    return;
+  }
+  closeActionsMenu();
+  if(act==='print') document.getElementById('printBtn').click();
+  else if(act==='export') exportData();
+  else if(act==='import'){
+    if(editMode) document.getElementById('importFile').click();
+    else showUndoToast('Activez le mode édition (bouton ✎) pour importer des données.',null,4000);
+  }
+});
+document.addEventListener('click',e=>{ if(!actionsMenu.hidden && !actionsMenu.contains(e.target) && e.target!==moreActionsBtn) closeActionsMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !actionsMenu.hidden) closeActionsMenu(); });
 document.getElementById('prevBtn').addEventListener('click', ()=>{ nav(-1); });
 document.getElementById('nextBtn').addEventListener('click', ()=>{ nav(1); });
-document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); renderApp(); });
+document.getElementById('todayBtn').addEventListener('click', ()=>{ refDate=new Date(); refDate.setHours(0,0,0,0); pendingScrollNow=true; renderApp(); });
 function nav(dir){
   if(appSection!=='cadence') return;
-  refDate = currentView==='day' ? addDays(refDate,dir) : addDays(refDate, dir*7);
+  refDate = addDays(refDate, dir*(currentView==='day' ? 1 : currentView==='threeday' ? 3 : 7));
   renderApp();
 }
 
@@ -1556,12 +1655,14 @@ weekViewEl.addEventListener('touchend',e=>{if(e.touches.length<2) cadencePinchSt
 
 // Sur téléphone, un balayage horizontal sur la grille permet de passer rapidement à la semaine suivante/précédente.
 let weekTouchStartX=null, weekTouchStartY=null;
-weekViewEl.addEventListener('touchstart',e=>{
+const swipeStart=e=>{
   if(e.touches.length!==1) return;
   weekTouchStartX=e.touches[0].clientX;
   weekTouchStartY=e.touches[0].clientY;
-},{passive:true});
-weekViewEl.addEventListener('touchend',e=>{
+};
+weekViewEl.addEventListener('touchstart',swipeStart,{passive:true});
+dayViewEl.addEventListener('touchstart',swipeStart,{passive:true});
+const swipeEnd=e=>{
   if(weekTouchStartX===null || e.changedTouches.length!==1) return;
   if(Date.now()-lastTouchHoldEnd<400){ weekTouchStartX=weekTouchStartY=null; return; }
   const dx=e.changedTouches[0].clientX-weekTouchStartX;
@@ -1571,7 +1672,9 @@ weekViewEl.addEventListener('touchend',e=>{
   const target=e.target.closest('button,select,input,a');
   if(target) return;
   nav(dx<0?1:-1);
-},{passive:true});
+};
+weekViewEl.addEventListener('touchend',swipeEnd,{passive:true});
+dayViewEl.addEventListener('touchend',swipeEnd,{passive:true});
 document.getElementById('printBtn').addEventListener('click', ()=>{ window.print(); });
 document.getElementById('exportBtn').addEventListener('click', exportData);
 document.getElementById('importBtn').addEventListener('click', ()=>{ if(editMode) document.getElementById('importFile').click(); });
@@ -1666,6 +1769,11 @@ function updateDateLabel(){
   dateNavBtns.forEach(b=>b.style.visibility='');
   if(currentView==='day'){
     const label = capitalize(fmtLong(refDate));
+    dateLabelEl.textContent = label;
+    printTitleEl.textContent = label;
+  }else if(currentView==='threeday'){
+    const end = addDays(refDate,2);
+    const label = fmtShort(refDate)+' – '+fmtShort(end)+' '+end.getFullYear();
     dateLabelEl.textContent = label;
     printTitleEl.textContent = label;
   }else{
@@ -1897,6 +2005,10 @@ function layoutBlocks(blocks){
 }
 
 function attachBlockInteractions(el, block, ctx, rerender){
+  el.addEventListener('click', ()=>{
+    if(editMode || currentView!=='week' || !window.matchMedia('(max-width:720px)').matches) return;
+    showUndoToast(block.title+' · '+minToTimeStr(block.start)+'–'+minToTimeStr(block.end),null,3500);
+  });
   el.addEventListener('pointerdown', (e)=>{
     if(!editMode) return;
     e.stopPropagation();
@@ -2054,12 +2166,15 @@ function renderWeekView(){
   weekViewEl.innerHTML = '';
   const container = document.createElement('div');
   container.style.display='flex'; container.style.width='100%';
-  const axis = buildTimeAxis();
+  const phone = window.matchMedia('(max-width:720px)').matches;
+  const count = currentView==='threeday' ? 3 : 7;
+  const axis = buildTimeAxis(phone ? {headerOffset:48} : undefined);
   const cols = document.createElement('div');
   cols.className = 'columns';
+  cols.style.setProperty('--ncols', String(count));
 
-  const start = startOfWeek(refDate);
-  for(let i=0;i<7;i++){
+  const start = currentView==='threeday' ? new Date(refDate) : startOfWeek(refDate);
+  for(let i=0;i<count;i++){
     const d = addDays(start,i);
     const key = dateKey(d);
     const dayObj = getDay(key);
@@ -2071,7 +2186,10 @@ function renderWeekView(){
     const head = document.createElement('div');
     const isToday = dateKey(new Date())===key;
     head.className = 'col-head'+(isToday?' is-today':'');
-    head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+WEEKDAYS[i]+'</div><div class="dt">'+fmtShort(d)+'</div>';
+    const wdName = WEEKDAYS[(d.getDay()+6)%7];
+    const wdText = phone ? (count===7 ? wdName.slice(0,1) : wdName.slice(0,3)) : wdName;
+    const dtText = (phone && count===7) ? String(d.getDate()) : fmtShort(d);
+    head.innerHTML = '<div class="wd" style="'+(isToday?'color:var(--accent);':'')+'">'+wdText+'</div><div class="dt">'+dtText+'</div>';
     const select = document.createElement('select');
     select.className = 'template-select';
     select.innerHTML = '<option value="">— Vide —</option>'+STATE.templates.map(t=>'<option value="'+t.id+'"'+(dayObj.templateId===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('');
@@ -2662,14 +2780,14 @@ function startGuidedTour(){
     {title:'Bienvenue dans Cadence',text:'Cette visite vous montre, étape par étape, comment organiser votre temps en blocs, retrouver vos notes, vos tâches et vos agendas, et garder vos données à jour sur tous vos appareils. Les flèches ← → du clavier fonctionnent aussi.',target:null,before:cad('week')},
     {title:'Les espaces de Cadence',text:'Cette barre fait passer d’un espace à l’autre : Cadence (le planning), Tâches, Agenda, Notes et Paramétrages.'+(mobile()?' Sur téléphone, elle se trouve en bas de l’écran.':''),target:()=>mobile()?'.app-nav-mobile':'.app-nav-desktop',before:cad('week')},
     {title:'Le menu de Cadence',text:'Ce menu rassemble vos Journées types, vos Demi-journées types et vos Blocs enregistrés : tout ce qui sert à remplir le planning plus vite.'+(mobile()?' Il s’ouvre avec le bouton ☰.':''),target:'#sidebar',before:cad('week',openSide)},
-    {title:'Choisir une vue',text:'Affichez la Semaine, un Jour, la liste de vos Journées types ou celle de vos Demi-journées types.',target:()=>mobile()?'#mobileViewSelect':'.view-toggle',before:cad('week')},
+    {title:'Choisir une vue',text:(mobile()?'Les onglets affichent un Jour, 3 jours ou la Semaine, avec l’axe des heures. Vos Journées types et Demi-journées types s’ouvrent depuis le menu ☰.':'Affichez la Semaine, un Jour, la liste de vos Journées types ou celle de vos Demi-journées types.'),target:()=>mobile()?'#mobileViewTabs':'.view-toggle',before:cad('week')},
     {title:'Naviguer dans le temps',text:'Les flèches changent de période, et « Aujourd’hui » vous ramène à la date du jour.',target:'.date-nav',before:cad('week')},
-    {title:'Activer le mode édition',text:'Le planning est protégé par défaut contre les modifications accidentelles. Le bouton « Modifier » est maintenant activé (il affiche « Édition ») pour cette démonstration : il débloque la création, le déplacement et la suppression de blocs, ainsi que l’import de données.',target:'#editModeBtn',edit:true,before:cad('week')},
+    {title:'Activer le mode édition',text:(mobile()?'Le planning est protégé par défaut contre les modifications accidentelles. Le bouton rond ✎ en bas à droite active le mode édition (il est activé ici pour la démonstration) : il débloque la création, le déplacement et la suppression de blocs, ainsi que l’import de données.':'Le planning est protégé par défaut contre les modifications accidentelles. Le bouton « Modifier » est maintenant activé (il affiche « Édition ») pour cette démonstration : il débloque la création, le déplacement et la suppression de blocs, ainsi que l’import de données.'),target:'#editModeBtn',edit:true,before:cad('week')},
     {title:'Créer et déplacer des blocs',text:'Mode édition actif. Sur ordinateur : glissez la souris sur la grille pour créer un bloc, glissez un bloc pour le déplacer. Sur téléphone : touchez la grille pour créer un bloc d’une heure, ou appuyez longuement puis glissez pour tracer sa durée ; touchez un bloc pour le modifier, ou appuyez longuement dessus puis glissez pour le déplacer. Dans tous les cas, la poignée du bas redimensionne le bloc, et un simple glissement sur le téléphone fait défiler l’écran.',target:'#weekView',edit:true,before:cad('week')},
     {title:'Vos Journées types',text:'Une Journée type est l’organisation d’une journée complète. Cliquez sur « Nouveau » pour en créer une, puis appliquez-la au jour de votre choix.',target:'#templatePanel',before:cad('templates',openSide)},
     {title:'Vos Demi-journées types',text:'Une Demi-journée type couvre une plage horaire précise (une matinée, une soirée…). Elle s’applique à un jour sans toucher au reste de la journée.',target:'#halfDayPanel',before:cad('halfday-templates',openSide)},
     {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
-    {title:'Le zoom de la semaine',text:'En vue Semaine, − et + règlent la hauteur de la grille. Sur téléphone, vous pouvez aussi pincer l’écran à deux doigts.',target:'#cadenceZoom',before:cad('week')},
+    {title:mobile()?'Le menu ⋮ et le zoom':'Le zoom de la semaine',text:(mobile()?'Le menu ⋮ regroupe Imprimer / PDF, Exporter, Importer et le zoom (− et +). Vous pouvez aussi pincer la grille à deux doigts pour changer la hauteur des heures.':'En vue Semaine, − et + règlent la hauteur de la grille.'),target:()=>mobile()?'#moreActionsBtn':'#cadenceZoom',before:cad('week')},
     {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist. Cochez le rond à gauche d’une tâche pour la terminer (quelques secondes pour annuler) ; Cadence ne crée ni ne modifie vos tâches autrement. Les titres sont mis en forme, la description se déplie avec « Détails », et les tâches dont le titre commence par « * » dans Todoist ne se cochent pas. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
     {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
     {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe, et « Aperçu » affiche la note mise en forme. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
@@ -3198,7 +3316,7 @@ function hideUndoToast(){
   clearTimeout(undoTimer); undoTimer=null;
   const t=document.getElementById('undoToast'); if(t) t.remove();
 }
-function showUndoToast(message,onUndo){
+function showUndoToast(message,onUndo,ms){
   hideUndoToast();
   const toast=document.createElement('div');
   toast.id='undoToast'; toast.className='undo-toast'; toast.setAttribute('role','status');
@@ -3210,7 +3328,7 @@ function showUndoToast(message,onUndo){
     toast.appendChild(btn);
   }
   document.body.appendChild(toast);
-  undoTimer=setTimeout(hideUndoToast,8000);
+  undoTimer=setTimeout(hideUndoToast,ms||8000);
 }
 function renderNotes(){
   if(!notesContentEl)return;
@@ -3276,12 +3394,14 @@ function renderMore(){
 function renderApp(){
   const isCadence = appSection==='cadence';
   if(mobileViewSelect) mobileViewSelect.value=currentView;
-  const cadenceZoom=document.getElementById('cadenceZoom'); if(cadenceZoom) cadenceZoom.style.display=(isCadence && currentView==='week') ? 'inline-flex' : 'none';
+  document.body.dataset.cview=currentView;
+  document.querySelectorAll('#mobileViewTabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===currentView));
+  const cadenceZoom=document.getElementById('cadenceZoom'); if(cadenceZoom) cadenceZoom.style.display=(isCadence && (currentView==='week'||currentView==='threeday')) ? 'inline-flex' : 'none';
   const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=cadenceWeekZoom+' %';
   document.body.classList.toggle('external-section', !isCadence);
   cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
   sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',notes:'Notes',more:'Paramétrages'}[appSection] || 'Cadence');
-  weekViewEl.hidden = !isCadence || currentView!=='week';
+  weekViewEl.hidden = !isCadence || (currentView!=='week' && currentView!=='threeday');
   dayViewEl.hidden = !isCadence || currentView!=='day';
   templatesViewEl.hidden = !isCadence || currentView!=='templates';
   halfDayTemplatesViewEl.hidden = !isCadence || currentView!=='halfday-templates';
@@ -3291,11 +3411,12 @@ function renderApp(){
   moreViewEl.hidden = appSection!=='more';
   if(isCadence){
     updateDateLabel();
-    if(currentView==='week') renderWeekView();
+    if(currentView==='week'||currentView==='threeday') renderWeekView();
     else if(currentView==='day') renderDayView();
     else if(currentView==='templates') renderTemplatesView();
     else renderHalfDayTemplatesView();
     renderSidebar();
+    if(pendingScrollNow){ pendingScrollNow=false; scrollGridToNow(); }
   }else{
     closeSidebar();
     if(appSection==='tasks'){ renderTodoist(); if(window.CadenceTodoist.isConnected() && !todoistLoaded) loadTodoistTasks(); }

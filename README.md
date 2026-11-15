@@ -87,7 +87,7 @@ Le planning est en lecture seule par défaut. Activez **Modifier** pour effectue
 
 * Touchez ou cliquez sur un bloc pour l'ouvrir en édition.
 
-* Faites glisser un bloc pour le déplacer.
+* Faites glisser un bloc pour le déplacer (sur téléphone : appui long sur le bloc, puis glissement ; un simple glissement fait défiler l'écran).
 
 * Utilisez sa poignée basse pour le redimensionner.
 

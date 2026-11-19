@@ -518,7 +518,9 @@
     font-size:11px;
     color:var(--ink-faint);
   }
-  .col-head .day-actions{display:flex;gap:4px;align-items:center;margin-top:3px;}
+  .col-head{min-width:0;}
+  .col-head .day-actions{display:flex;gap:4px;align-items:center;margin-top:3px;min-width:0;max-width:100%;}
+  .col-head .day-actions select.template-select{flex:1 1 0;min-width:0;width:auto;}
   .col-head select.template-select{
     margin-top:3px;
     font-size:11px;
@@ -1148,6 +1150,11 @@
     #editModeBtn[aria-pressed="true"]{background:var(--accent);}
     body:not(.external-section) #main{padding-top:0;}
     #weekView .time-axis::before{content:'';display:block;position:sticky;top:0;height:48px;background:var(--paper);z-index:5;}
+    body.edit-mode #weekView .time-axis::before{height:76px;}
+    #dayView .columns{overflow:visible !important;}
+    #dayView .col-head{position:sticky;top:0;z-index:4;background:var(--paper);}
+    #dayView .time-axis{padding-top:0;}
+    #dayView .time-axis::before{content:'';display:block;position:sticky;top:0;height:84px;background:var(--paper);z-index:5;}
     #weekView > div{display:flex !important;}
     #weekView .time-axis{display:block !important;width:34px;flex:none;padding-top:0;}
     #weekView .time-axis .tick{font-size:10px;right:3px;}
@@ -1156,6 +1163,10 @@
     #weekView .col-head{height:44px;position:sticky;top:0;z-index:4;background:var(--paper);padding:4px 1px;margin-bottom:4px;align-items:center;text-align:center;}
     #weekView .col-head .wd{font-size:11px;}
     #weekView .col-head .dt{font-size:11px;}
+    body.edit-mode #weekView .col-head{height:72px;}
+    body.edit-mode #weekView .col-head .day-actions{display:flex;justify-content:center;width:100%;margin-top:3px;}
+    body.edit-mode #weekView .col-head select.template-select{display:none;}
+    body.edit-mode #weekView .halfday-add{min-width:34px;min-height:30px;font-size:16px;padding:0 8px;}
     body[data-cview="week"] #weekView .block .b-title,body[data-cview="week"] #weekView .block .b-time,body[data-cview="week"] #weekView .block .b-tag{display:none;}
     body[data-cview="threeday"] #weekView .block{font-size:11px;}
   }
@@ -2168,7 +2179,7 @@ function renderWeekView(){
   container.style.display='flex'; container.style.width='100%';
   const phone = window.matchMedia('(max-width:720px)').matches;
   const count = currentView==='threeday' ? 3 : 7;
-  const axis = buildTimeAxis(phone ? {headerOffset:48} : undefined);
+  const axis = buildTimeAxis(phone ? {headerOffset: editMode ? 76 : 48} : undefined);
   const cols = document.createElement('div');
   cols.className = 'columns';
   cols.style.setProperty('--ncols', String(count));
@@ -2255,7 +2266,16 @@ function renderDayView(){
     if(!editMode){ renderApp(); return; }
     applyTemplateToDay(select.value, key, ()=>renderApp());
   });
-  head.appendChild(select);
+  const dayActions = document.createElement('div');
+  dayActions.className = 'day-actions';
+  dayActions.appendChild(select);
+  const addHalfDay = document.createElement('button');
+  addHalfDay.className = 'halfday-add'; addHalfDay.type = 'button'; addHalfDay.textContent = '＋';
+  addHalfDay.disabled = !editMode;
+  addHalfDay.title = editMode ? 'Ajouter une demi-journée type' : 'Activez le mode édition pour modifier cette journée';
+  addHalfDay.addEventListener('click', ()=>{ if(editMode) openHalfDayApplyModal(key); });
+  dayActions.appendChild(addHalfDay);
+  head.appendChild(dayActions);
   colWrap.appendChild(head);
 
   const col = buildColumn(dayContext(key), {dayKey:key});

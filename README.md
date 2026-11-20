@@ -75,7 +75,7 @@ La V2.0 constitue une nouvelle version fonctionnelle de Cadence avec l'ajout d'u
 
 * **Tutoriel interactif** : visite guidée pas à pas avec mise en évidence des éléments de l'interface, navigation Précédent / Suivant et adaptation à Android ou ordinateur.
 
-* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache. Sur téléphone : onglets **Jour / 3 jours / Semaine** avec axe des heures et en-têtes de jours fixes, ouverture à l'heure actuelle, menu **⋮** (imprimer, exporter, importer, zoom), bouton rond **✎** pour le mode édition, et accès aux Journées types et ½ journées types depuis le menu **☰**. En ligne, l'application récupère toujours la dernière version publiée ; la copie en cache ne sert que hors connexion.
+* **PWA / Android** : installation sur l'écran d'accueil et fonctionnement hors connexion après mise en cache. Sur PC comme sur Android, le zoom est **ajusté** par défaut : toute la journée (06:00–23:00) tient à l'écran sans défilement, avec zoom manuel (− / +, pincement) et retour à l'ajustement (⤢ sur PC, « Ajuster » dans le menu ⋮ sur téléphone). Sur téléphone : onglets **Jour / 3 jours / Semaine** avec axe des heures et en-têtes de jours fixes, ouverture à l'heure actuelle, menu **⋮** (imprimer, exporter, importer, zoom), bouton rond **✎** pour le mode édition, et accès aux Journées types et ½ journées types depuis le menu **☰**. En ligne, l'application récupère toujours la dernière version publiée ; la copie en cache ne sert que hors connexion.
 
 ## Utilisation
 

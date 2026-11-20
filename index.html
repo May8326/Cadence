@@ -44,6 +44,7 @@
     display:flex;
     flex-direction:column;
     height:100vh;
+    height:100dvh; /* mobile : hauteur réellement visible (barre d'adresse comprise) */
   }
 
   /* ---------- Topbar ---------- */
@@ -851,7 +852,10 @@
   #mobileViewSelect{display:none;}
   .cadence-zoom{display:none;align-items:center;gap:3px;margin-left:auto;}
   .cadence-zoom button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;min-width:30px;height:30px;font-size:14px;}
-  .cadence-zoom-label{min-width:40px;text-align:center;font-size:10px;color:var(--ink-soft);}
+  .cadence-zoom-label{min-width:48px;text-align:center;font-size:10px;color:var(--ink-soft);}
+  body:not(.external-section) #main{padding-bottom:16px;}
+  .block.tiny{padding-top:0;padding-bottom:0;line-height:1.15;font-size:10.5px;}
+  .block.tiny .b-time,.block.tiny .b-tag{display:none;}
 
   /* ---------- Mobile ---------- */
   @media (max-width:800px){
@@ -1140,6 +1144,7 @@
     .menu-zoom{display:flex;align-items:center;gap:12px;padding:8px 16px;font-size:14px;}
     .menu-zoom[hidden]{display:none;}
     .menu-zoom > span:first-child{flex:1;}
+    .menu-zoom button[data-act="zoomfit"]{width:auto;padding:0 10px;font-size:13px;}
     .menu-zoom button{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:inherit;font-size:18px;color:var(--ink);cursor:pointer;}
     .side-views{display:flex;flex-direction:column;gap:8px;padding:0 0 12px;}
     .side-views button{border:1px solid var(--line);border-radius:8px;background:var(--surface);font:inherit;font-size:13px;color:var(--ink);padding:10px 12px;text-align:left;cursor:pointer;}
@@ -1149,12 +1154,12 @@
     #editModeBtn .edit-icon{font-size:22px;line-height:1;}
     #editModeBtn[aria-pressed="true"]{background:var(--accent);}
     body:not(.external-section) #main{padding-top:0;}
-    #weekView .time-axis::before{content:'';display:block;position:sticky;top:0;height:48px;background:var(--paper);z-index:5;}
-    body.edit-mode #weekView .time-axis::before{height:76px;}
+    #weekView .time-axis::before{content:'';display:block;position:sticky;top:0;height:40px;background:var(--paper);z-index:5;}
+    body.edit-mode #weekView .time-axis::before{height:68px;}
     #dayView .columns{overflow:visible !important;}
     #dayView .col-head{position:sticky;top:0;z-index:4;background:var(--paper);}
     #dayView .time-axis{padding-top:0;}
-    #dayView .time-axis::before{content:'';display:block;position:sticky;top:0;height:84px;background:var(--paper);z-index:5;}
+    #dayView .time-axis::before{content:'';display:block;position:sticky;top:0;height:76px;background:var(--paper);z-index:5;}
     #weekView > div{display:flex !important;}
     #weekView .time-axis{display:block !important;width:34px;flex:none;padding-top:0;}
     #weekView .time-axis .tick{font-size:10px;right:3px;}
@@ -1197,7 +1202,7 @@
       </select>
       <nav class="mobile-view-tabs" id="mobileViewTabs" aria-label="Choisir la vue"><button type="button" data-view="day">Jour</button><button type="button" data-view="threeday">3 jours</button><button type="button" data-view="week">Semaine</button></nav>
       <div class="cadence-zoom" id="cadenceZoom" role="group" aria-label="Zoom de la grille">
-        <button id="cadenceZoomOut" aria-label="Dézoomer">−</button><span class="cadence-zoom-label" id="cadenceZoomLabel">100 %</span><button id="cadenceZoomIn" aria-label="Zoomer">+</button>
+        <button id="cadenceZoomOut" aria-label="Dézoomer">−</button><span class="cadence-zoom-label" id="cadenceZoomLabel">100 %</span><button id="cadenceZoomIn" aria-label="Zoomer">+</button><button id="cadenceZoomFit" aria-label="Ajuster à l'écran" title="Ajuster à l'écran">⤢</button>
       </div>
       <div class="date-nav">
         <button id="prevBtn">‹</button>
@@ -1298,7 +1303,7 @@
   <button type="button" role="menuitem" data-act="print">Imprimer / PDF</button>
   <button type="button" role="menuitem" data-act="export">Exporter les données</button>
   <button type="button" role="menuitem" data-act="import">Importer des données</button>
-  <div class="menu-zoom" id="menuZoom"><span>Zoom</span><button type="button" data-act="zoomout" aria-label="Dézoomer">−</button><span id="menuZoomLabel">100 %</span><button type="button" data-act="zoomin" aria-label="Zoomer">+</button></div>
+  <div class="menu-zoom" id="menuZoom"><span>Zoom</span><button type="button" data-act="zoomout" aria-label="Dézoomer">−</button><span id="menuZoomLabel">100 %</span><button type="button" data-act="zoomin" aria-label="Zoomer">+</button><button type="button" data-act="zoomfit" aria-label="Ajuster à l'écran">Ajuster</button></div>
 </div>
 <div id="modalRoot"></div>
 
@@ -1322,8 +1327,10 @@ const BACKUP_KEY = 'cadence-data-backup-v1';
 
 /* ============ utils ============ */
 function pad(n){return n.toString().padStart(2,'0');}
-function minToPx(m){return m*PX_PER_MIN*((currentView==='week'||currentView==='threeday') ? cadenceWeekZoom/100 : 1);}
-function pxToMin(px){return px/PX_PER_MIN;}
+function zoomedView(){ return currentView==='week' || currentView==='threeday' || currentView==='day'; }
+function zoomFactor(){ return zoomedView() ? currentZoom()/100 : 1; }
+function minToPx(m){return m*PX_PER_MIN*zoomFactor();}
+function pxToMin(px){return px/(PX_PER_MIN*zoomFactor());}
 function snap(min,step=5){return Math.round(min/step)*step;}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function minToTimeStr(min){return pad(Math.floor(min/60))+':'+pad(min%60);}
@@ -1560,16 +1567,64 @@ document.querySelectorAll('.view-toggle button').forEach(btn=>{
 });
 const mobileViewSelect=document.getElementById('mobileViewSelect');
 let cadenceWeekZoom=Number(localStorage.getItem('cadence-week-zoom-v1')||'100');
-const CADENCE_ZOOM_STEPS=[70,85,100,115,130];
-function setCadenceWeekZoom(value){ cadenceWeekZoom=CADENCE_ZOOM_STEPS.reduce((a,b)=>Math.abs(b-value)<Math.abs(a-value)?b:a,CADENCE_ZOOM_STEPS[0]); localStorage.setItem('cadence-week-zoom-v1',String(cadenceWeekZoom)); renderApp(); }
+const ZOOM_MIN=20, ZOOM_MAX=250;
+let cadenceZoomMode=(function(){ try{ return localStorage.getItem('cadence-zoom-mode-v1')==='manual' ? 'manual' : 'fit'; }catch(e){ return 'fit'; } })();
+let cadenceFitZoom=100, fitRetry=false;
+function currentZoom(){ return cadenceZoomMode==='fit' ? cadenceFitZoom : cadenceWeekZoom; }
+function zoomLabelText(){ return cadenceZoomMode==='fit' ? 'Ajusté' : Math.round(cadenceWeekZoom)+' %'; }
+function setCadenceWeekZoom(value){
+  cadenceZoomMode='manual';
+  cadenceWeekZoom=Math.round(clamp(value,ZOOM_MIN,ZOOM_MAX));
+  try{ localStorage.setItem('cadence-week-zoom-v1',String(cadenceWeekZoom)); localStorage.setItem('cadence-zoom-mode-v1','manual'); }catch(e){}
+  renderApp();
+}
+function setCadenceZoomFit(){
+  cadenceZoomMode='fit';
+  try{ localStorage.setItem('cadence-zoom-mode-v1','fit'); }catch(e){}
+  renderApp();
+}
+// Décalage entre le haut d'une colonne et le début de la grille (en-tête du jour + marge) : sert à l'axe des heures et au calcul du zoom ajusté.
+function gridHeaderOffset(){
+  if(window.matchMedia('(max-width:720px)').matches && (currentView==='week'||currentView==='threeday')) return editMode ? 76 : 48;
+  return window.matchMedia('(max-width:800px)').matches ? 84 : 76;
+}
+// Zoom (en %) pour que toute la journée (06:00–23:00) tienne dans la hauteur visible, sans défilement.
+function fitZoomFor(){
+  const main=document.getElementById('main'); if(!main) return null;
+  const el=(currentView==='day') ? dayViewEl : weekViewEl;
+  if(!el || el.hidden) return null;
+  main.scrollTop=0;
+  const mr=main.getBoundingClientRect(), er=el.getBoundingClientRect();
+  const nav=document.querySelector('.app-nav-mobile');
+  const navH=(nav && nav.offsetParent!==null) ? nav.offsetHeight : 0;
+  const usableBottom=Math.min(mr.bottom, window.innerHeight-navH);
+  const padBottom=parseFloat(getComputedStyle(main).paddingBottom)||0;
+  const avail=usableBottom-er.top-padBottom-gridHeaderOffset()-6;
+  const hours=(DAY_END-DAY_START)/60;
+  const zoom=(avail/hours)/(PX_PER_MIN*60)*100;
+  return Math.floor(clamp(zoom,ZOOM_MIN,ZOOM_MAX)*10)/10;
+}
 
 mobileViewSelect.addEventListener('change',()=>{currentView=mobileViewSelect.value;document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.view===currentView));renderApp();});
-document.getElementById('cadenceZoomOut').addEventListener('click',()=>setCadenceWeekZoom(cadenceWeekZoom-15));
-document.getElementById('cadenceZoomIn').addEventListener('click',()=>setCadenceWeekZoom(cadenceWeekZoom+15));
+document.getElementById('cadenceZoomOut').addEventListener('click',()=>setCadenceWeekZoom(currentZoom()-15));
+document.getElementById('cadenceZoomIn').addEventListener('click',()=>setCadenceWeekZoom(currentZoom()+15));
+document.getElementById('cadenceZoomFit').addEventListener('click',setCadenceZoomFit);
+let fitResizeTimer=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(fitResizeTimer);
+  fitResizeTimer=setTimeout(()=>{
+    if(cadenceZoomMode!=='fit' || appSection!=='cadence' || !zoomedView()) return;
+    const a=document.activeElement;
+    if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;   // clavier virtuel ouvert : on ne bouge rien
+    const f=fitZoomFor();
+    if(f!=null && Math.abs(f-cadenceFitZoom)>1) renderApp();
+  },200);
+});
 document.getElementById('editModeBtn').addEventListener('click', ()=>setEditMode(!editMode));
 
 /* ---- Téléphone : onglets de vue, menu ⋮, liens du menu ☰, ouverture à l'heure actuelle ---- */
 function scrollGridToNow(){
+  if(cadenceZoomMode==='fit') return;   // tout tient à l'écran : rien à faire défiler
   if(!window.matchMedia('(max-width:720px)').matches) return;
   if(!['day','threeday','week'].includes(currentView)) return;
   const main=document.getElementById('main'); if(!main) return;
@@ -1591,17 +1646,17 @@ function closeActionsMenu(){ actionsMenu.hidden=true; moreActionsBtn.setAttribut
 function openActionsMenu(){
   const r=moreActionsBtn.getBoundingClientRect();
   actionsMenu.style.top=(r.bottom+6)+'px';
-  document.getElementById('menuZoom').hidden=!(currentView==='week'||currentView==='threeday');
-  document.getElementById('menuZoomLabel').textContent=cadenceWeekZoom+' %';
+  document.getElementById('menuZoom').hidden=!zoomedView();
+  document.getElementById('menuZoomLabel').textContent=zoomLabelText();
   actionsMenu.hidden=false; moreActionsBtn.setAttribute('aria-expanded','true');
 }
 moreActionsBtn.addEventListener('click',e=>{ e.stopPropagation(); if(actionsMenu.hidden) openActionsMenu(); else closeActionsMenu(); });
 actionsMenu.addEventListener('click',e=>{
   const b=e.target.closest('button[data-act]'); if(!b) return;
   const act=b.dataset.act;
-  if(act==='zoomin'||act==='zoomout'){
-    document.getElementById(act==='zoomin'?'cadenceZoomIn':'cadenceZoomOut').click();
-    document.getElementById('menuZoomLabel').textContent=cadenceWeekZoom+' %';
+  if(act==='zoomin'||act==='zoomout'||act==='zoomfit'){
+    if(act==='zoomfit') setCadenceZoomFit(); else setCadenceWeekZoom(currentZoom()+(act==='zoomin'?15:-15));
+    document.getElementById('menuZoomLabel').textContent=zoomLabelText();
     return;
   }
   closeActionsMenu();
@@ -1647,22 +1702,27 @@ function closeSidebar(){
 
 // Sur téléphone, un pincement à deux doigts ajuste le zoom de la grille Cadence.
 let cadencePinchStart=null;
-weekViewEl.addEventListener('touchstart',e=>{
+const pinchStart=e=>{
   if(e.touches.length===2){
     weekTouchStartX=weekTouchStartY=null;
     const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY;
     cadencePinchStart=Math.hypot(dx,dy);
   }
-},{passive:true});
-weekViewEl.addEventListener('touchmove',e=>{
+};
+const pinchMove=e=>{
   if(e.touches.length!==2 || cadencePinchStart===null) return;
   if(e.cancelable) e.preventDefault();   // deux doigts = zoom, jamais défilement
   const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY;
   const dist=Math.hypot(dx,dy), ratio=dist/cadencePinchStart;
-  if(ratio>1.1){setCadenceWeekZoom(cadenceWeekZoom+15);cadencePinchStart=dist;}
-  else if(ratio<.9){setCadenceWeekZoom(cadenceWeekZoom-15);cadencePinchStart=dist;}
-},{passive:false});
-weekViewEl.addEventListener('touchend',e=>{if(e.touches.length<2) cadencePinchStart=null;},{passive:true});
+  if(ratio>1.1){setCadenceWeekZoom(currentZoom()+15);cadencePinchStart=dist;}
+  else if(ratio<.9){setCadenceWeekZoom(currentZoom()-15);cadencePinchStart=dist;}
+};
+const pinchEnd=e=>{if(e.touches.length<2) cadencePinchStart=null;};
+[weekViewEl,dayViewEl].forEach(el=>{
+  el.addEventListener('touchstart',pinchStart,{passive:true});
+  el.addEventListener('touchmove',pinchMove,{passive:false});
+  el.addEventListener('touchend',pinchEnd,{passive:true});
+});
 
 // Sur téléphone, un balayage horizontal sur la grille permet de passer rapidement à la semaine suivante/précédente.
 let weekTouchStartX=null, weekTouchStartY=null;
@@ -1804,7 +1864,7 @@ function buildTimeAxis(opts){
   axis.style.height = minToPx(DAY_END-DAY_START)+'px';
   // The time axis must start where the grid starts, i.e. below the day header.
   // Desktop: 70px header + 6px margin; mobile: 78px header + 6px margin.
-  const headerOffset = opts.headerOffset != null ? opts.headerOffset : (window.matchMedia('(max-width:800px)').matches ? 84 : 76);
+  const headerOffset = opts.headerOffset != null ? opts.headerOffset : gridHeaderOffset();
   for(let m=DAY_START; m<=DAY_END; m+=60){
     const t = document.createElement('div');
     t.className = 'tick';
@@ -1822,6 +1882,7 @@ function buildColumn(ctx, opts){
   const wrap = document.createElement('div');
   wrap.className = 'grid-column';
   wrap.style.height = minToPx(DAY_END-DAY_START)+'px';
+  wrap.style.setProperty('--hour-h', minToPx(60)+'px');
 
   function renderCurrentTime(){
     wrap.querySelectorAll('.current-time-overlay').forEach(n=>n.remove());
@@ -1862,7 +1923,9 @@ function buildColumn(ctx, opts){
       const el = document.createElement('div');
       el.className = 'block';
       el.style.top = (minToPx(b.start-DAY_START)+BLOCK_GAP/2)+'px';
-      el.style.height = Math.max(minToPx(b.end-b.start)-BLOCK_GAP,13)+'px';
+      const blockH = Math.max(minToPx(b.end-b.start)-BLOCK_GAP,13);
+      el.style.height = blockH+'px';
+      if(blockH<30) el.classList.add('tiny');
       el.style.background = b.color;
       // Keep every block strictly inside its visual sub-column: the 3px
       // inset is expressed in pixels, while the column position stays percentage-based.
@@ -1913,14 +1976,14 @@ function buildColumn(ctx, opts){
         openBlockModal({mode:'create', ctx, start, end, onDone:render});
       };
       if(armedSavedBlockId){ holdGesture(e, wrap, {onTap:placeSaved, onEnd:placeSaved}); return; }
-      let ghost = null, y1 = y0 + 60*PX_PER_MIN, dragged = false;
+      let ghost = null, y1 = y0 + minToPx(60), dragged = false;
       holdGesture(e, wrap, {
-        onTap: ()=>createFrom(y0 + 60*PX_PER_MIN),
+        onTap: ()=>createFrom(y0 + minToPx(60)),
         onHoldStart: ()=>{
           ghost = document.createElement('div');
           ghost.className = 'ghost';
           ghost.style.top = y0+'px';
-          ghost.style.height = (60*PX_PER_MIN)+'px';
+          ghost.style.height = minToPx(60)+'px';
           wrap.appendChild(ghost);
         },
         onMove: (ev)=>{
@@ -1929,7 +1992,7 @@ function buildColumn(ctx, opts){
           ghost.style.top = Math.min(y0,y1)+'px';
           ghost.style.height = Math.abs(y1-y0)+'px';
         },
-        onEnd: ()=>{ if(ghost) ghost.remove(); createFrom(dragged ? y1 : y0 + 60*PX_PER_MIN); },
+        onEnd: ()=>{ if(ghost) ghost.remove(); createFrom(dragged ? y1 : y0 + minToPx(60)); },
         onCancel: ()=>{ if(ghost) ghost.remove(); }
       });
       return;
@@ -1970,7 +2033,7 @@ function buildColumn(ctx, opts){
     function onUp(ev){
       wrap.removeEventListener('pointermove', onMove);
       wrap.removeEventListener('pointerup', onUp);
-      const y1 = moved ? ev.clientY - rect.top : y0+60*PX_PER_MIN;
+      const y1 = moved ? ev.clientY - rect.top : y0+minToPx(60);
       let start = snap(DAY_START + pxToMin(Math.min(y0,y1)));
       let end = snap(DAY_START + pxToMin(Math.max(y0,y1)));
       if(end-start < 15) end = start+60;
@@ -2179,7 +2242,7 @@ function renderWeekView(){
   container.style.display='flex'; container.style.width='100%';
   const phone = window.matchMedia('(max-width:720px)').matches;
   const count = currentView==='threeday' ? 3 : 7;
-  const axis = buildTimeAxis(phone ? {headerOffset: editMode ? 76 : 48} : undefined);
+  const axis = buildTimeAxis();
   const cols = document.createElement('div');
   cols.className = 'columns';
   cols.style.setProperty('--ncols', String(count));
@@ -2807,7 +2870,7 @@ function startGuidedTour(){
     {title:'Vos Journées types',text:'Une Journée type est l’organisation d’une journée complète. Cliquez sur « Nouveau » pour en créer une, puis appliquez-la au jour de votre choix.',target:'#templatePanel',before:cad('templates',openSide)},
     {title:'Vos Demi-journées types',text:'Une Demi-journée type couvre une plage horaire précise (une matinée, une soirée…). Elle s’applique à un jour sans toucher au reste de la journée.',target:'#halfDayPanel',before:cad('halfday-templates',openSide)},
     {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
-    {title:mobile()?'Le menu ⋮ et le zoom':'Le zoom de la semaine',text:(mobile()?'Le menu ⋮ regroupe Imprimer / PDF, Exporter, Importer et le zoom (− et +). Vous pouvez aussi pincer la grille à deux doigts pour changer la hauteur des heures.':'En vue Semaine, − et + règlent la hauteur de la grille.'),target:()=>mobile()?'#moreActionsBtn':'#cadenceZoom',before:cad('week')},
+    {title:mobile()?'Le menu ⋮ et le zoom':'Le zoom de la grille',text:(mobile()?'Le menu ⋮ regroupe Imprimer / PDF, Exporter, Importer et le zoom (− et +). Par défaut, la journée entière tient à l’écran (« Ajusté ») ; − et + zooment si besoin, et « Ajuster » revient à l’affichage complet. Vous pouvez aussi pincer la grille à deux doigts.':'Par défaut, la journée entière tient à l’écran (« Ajusté »), sans défilement. − et + zooment si besoin ; ⤢ revient à l’affichage ajusté.'),target:()=>mobile()?'#moreActionsBtn':'#cadenceZoom',before:cad('week')},
     {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist. Cochez le rond à gauche d’une tâche pour la terminer (quelques secondes pour annuler) ; Cadence ne crée ni ne modifie vos tâches autrement. Les titres sont mis en forme, la description se déplie avec « Détails », et les tâches dont le titre commence par « * » dans Todoist ne se cochent pas. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
     {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
     {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe, et « Aperçu » affiche la note mise en forme. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
@@ -3416,8 +3479,8 @@ function renderApp(){
   if(mobileViewSelect) mobileViewSelect.value=currentView;
   document.body.dataset.cview=currentView;
   document.querySelectorAll('#mobileViewTabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===currentView));
-  const cadenceZoom=document.getElementById('cadenceZoom'); if(cadenceZoom) cadenceZoom.style.display=(isCadence && (currentView==='week'||currentView==='threeday')) ? 'inline-flex' : 'none';
-  const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=cadenceWeekZoom+' %';
+  const cadenceZoom=document.getElementById('cadenceZoom'); if(cadenceZoom) cadenceZoom.style.display=(isCadence && zoomedView()) ? 'inline-flex' : 'none';
+  const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=zoomLabelText();
   document.body.classList.toggle('external-section', !isCadence);
   cadenceControlsEls.forEach(el=>{ el.style.display = isCadence ? (el.id==='cadenceActions' ? 'flex' : 'flex') : 'none'; });
   sectionTitleEl.textContent = isCadence ? '' : ({tasks:'Tâches',calendar:'Agenda',notes:'Notes',more:'Paramétrages'}[appSection] || 'Cadence');
@@ -3431,11 +3494,22 @@ function renderApp(){
   moreViewEl.hidden = appSection!=='more';
   if(isCadence){
     updateDateLabel();
+    if(cadenceZoomMode==='fit' && zoomedView() && !fitRetry){ const f=fitZoomFor(); if(f!=null) cadenceFitZoom=f; }
     if(currentView==='week'||currentView==='threeday') renderWeekView();
     else if(currentView==='day') renderDayView();
     else if(currentView==='templates') renderTemplatesView();
     else renderHalfDayTemplatesView();
     renderSidebar();
+    if(cadenceZoomMode==='fit' && zoomedView() && !fitRetry){
+      // Filet de sécurité : si malgré le calcul la page défile encore, on réduit juste ce qu'il faut (une seule fois).
+      const m=document.getElementById('main'); const over=m.scrollHeight-m.clientHeight;
+      if(over>0){
+        const gridPx=minToPx(DAY_END-DAY_START);
+        cadenceFitZoom=Math.max(ZOOM_MIN,Math.floor(cadenceFitZoom*Math.max(.3,(gridPx-over-2)/gridPx)*10)/10);
+        fitRetry=true; try{ renderApp(); } finally{ fitRetry=false; }
+        return;
+      }
+    }
     if(pendingScrollNow){ pendingScrollNow=false; scrollGridToNow(); }
   }else{
     closeSidebar();

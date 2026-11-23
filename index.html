@@ -1156,6 +1156,7 @@
     body:not(.external-section) #main{padding-top:0;}
     #weekView .time-axis::before{content:'';display:block;position:sticky;top:0;height:40px;background:var(--paper);z-index:5;}
     body.edit-mode #weekView .time-axis::before{height:68px;}
+    body.edit-mode[data-cview="week"] #weekView .time-axis::before{height:104px;}
     #dayView .columns{overflow:visible !important;}
     #dayView .col-head{position:sticky;top:0;z-index:4;background:var(--paper);}
     #dayView .time-axis{padding-top:0;}
@@ -1169,10 +1170,15 @@
     #weekView .col-head .wd{font-size:11px;}
     #weekView .col-head .dt{font-size:11px;}
     body.edit-mode #weekView .col-head{height:72px;}
-    body.edit-mode #weekView .col-head .day-actions{display:flex;justify-content:center;width:100%;margin-top:3px;}
-    body.edit-mode #weekView .col-head select.template-select{display:none;}
-    body.edit-mode #weekView .halfday-add{min-width:34px;min-height:30px;font-size:16px;padding:0 8px;}
-    body[data-cview="week"] #weekView .block .b-title,body[data-cview="week"] #weekView .block .b-time,body[data-cview="week"] #weekView .block .b-tag{display:none;}
+    body.edit-mode[data-cview="week"] #weekView .col-head{height:108px;}
+    body.edit-mode #weekView .col-head .day-actions{display:flex;gap:3px;width:100%;margin-top:3px;align-items:center;}
+    body.edit-mode #weekView .col-head select.template-select{display:block;flex:1 1 0;min-width:0;width:100%;height:30px;font-size:11px;padding:0 2px;margin:0;}
+    body.edit-mode #weekView .halfday-add{flex:none;min-width:32px;min-height:30px;font-size:16px;padding:0 6px;}
+    body.edit-mode[data-cview="week"] #weekView .col-head .day-actions{flex-direction:column;align-items:stretch;}
+    body.edit-mode[data-cview="week"] #weekView .halfday-add{width:100%;min-width:0;padding:0;}
+    body[data-cview="week"] #weekView .block .b-time,body[data-cview="week"] #weekView .block .b-tag{display:none;}
+    body[data-cview="week"] #weekView .block{padding:2px;}
+    body[data-cview="week"] #weekView .block .b-title{display:block;font-size:9.5px;line-height:1.15;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     body[data-cview="threeday"] #weekView .block{font-size:11px;}
   }
 </style>
@@ -1585,7 +1591,7 @@ function setCadenceZoomFit(){
 }
 // Décalage entre le haut d'une colonne et le début de la grille (en-tête du jour + marge) : sert à l'axe des heures et au calcul du zoom ajusté.
 function gridHeaderOffset(){
-  if(window.matchMedia('(max-width:720px)').matches && (currentView==='week'||currentView==='threeday')) return editMode ? 76 : 48;
+  if(window.matchMedia('(max-width:720px)').matches && (currentView==='week'||currentView==='threeday')) return editMode ? (currentView==='week' ? 112 : 76) : 48;
   return window.matchMedia('(max-width:800px)').matches ? 84 : 76;
 }
 // Zoom (en %) pour que toute la journée (06:00–23:00) tienne dans la hauteur visible, sans défilement.

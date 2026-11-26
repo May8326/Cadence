@@ -1181,6 +1181,49 @@
     body[data-cview="week"] #weekView .block .b-title{display:block;font-size:9.5px;line-height:1.15;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     body[data-cview="threeday"] #weekView .block{font-size:11px;}
   }
+  /* ---------- Agenda (Google Calendar) : même logique que le planning ---------- */
+  body[data-asection="calendar"] #main{padding-top:0;padding-bottom:16px;}
+  #calendarView{padding-top:16px;}
+  #calendarView .external-card > p{display:none;}
+  #calendarView .calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin-top:14px;}
+  #calendarView .calendar-range{display:flex;align-items:center;gap:5px;flex:1 1 auto;min-width:0;}
+  #calendarView .calendar-range-label{flex:1 1 auto;min-width:0;text-align:center;}
+  #calendarView .calendar-switcher{display:block;margin-top:10px;padding:6px 10px;border:1px solid var(--line-light);border-radius:8px;background:var(--paper);max-height:none;overflow:visible;}
+  #calendarView .calendar-switcher summary{cursor:pointer;font-size:12px;color:var(--ink-soft);}
+  #calendarView .calendar-switcher-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+  #calendarView .calendar-planner{margin-top:12px;overflow:visible;--axis-w:58px;touch-action:pan-x pan-y;}
+  #calendarView .calendar-planner-top{position:sticky;top:0;z-index:6;background:var(--paper);border-radius:9px 9px 0 0;}
+  #calendarView .calendar-planner-head,#calendarView .calendar-planner-body,#calendarView .calendar-allday{display:grid;grid-template-columns:var(--axis-w) repeat(var(--ncols,7),minmax(0,1fr));min-width:0;position:static;}
+  #calendarView .calendar-time-axis,#calendarView .calendar-day-column{height:calc(var(--hour-px,64px)*17);}
+  #calendarView .calendar-day-column{min-width:0;width:auto;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour-px,64px) - 1px),var(--line-light) var(--hour-px,64px));}
+  #calendarView .calendar-event-planned{min-height:0;}
+  #calendarView .calendar-planner[data-compact="1"] .calendar-event-planned{padding:1px 4px;line-height:1.15;}
+  #calendarView .calendar-planner[data-compact="1"] .event-time,#calendarView .calendar-planner[data-compact="1"] .event-location{display:none;}
+  @media (max-width:720px){
+    body[data-asection="calendar"] #main{padding-left:8px;padding-right:8px;}
+    #calendarView{padding-top:0;}
+    #calendarView .external-card{padding:10px 8px;}
+    #calendarView .external-card > h1{display:none;}
+    #calendarView .calendar-planner{--axis-w:38px;margin-top:6px;}
+    #calendarView .calendar-time-label{right:4px;}
+    #calendarView .calendar-toolbar{margin-top:6px;}
+    #calendarView .calendar-view-toggle{flex:1 1 auto;width:auto;display:flex;}
+    #calendarView .calendar-view-toggle button{flex:1;min-height:34px;font-size:13px;}
+    #calendarView .calendar-zoom{margin-left:0;flex:none;}
+    #calendarView .calendar-switcher{margin-top:6px;padding:3px 8px;}
+    #calendarView #calendarTodayBtn{margin:0;width:auto;flex:none;padding:6px 8px;font-size:12px;white-space:nowrap;}
+    #calendarView .calendar-range{width:100%;}
+    #calendarView .calendar-range > button:not(#calendarTodayBtn){flex:none;min-width:30px;width:30px;}
+    #calendarView .calendar-view-toggle button{white-space:nowrap;padding:6px 7px;font-size:12px;}
+    #calendarView .calendar-zoom button{min-width:28px;width:28px;padding:0;}
+    #calendarView .calendar-zoom-label{min-width:0;font-size:10px;}
+    #calendarView .calendar-planner.mode-week .event-time,#calendarView .calendar-planner.mode-week .event-location{display:none;}
+    #calendarView .calendar-planner.mode-week .calendar-event-planned{font-size:9.5px;padding:2px 3px;}
+    #calendarView .calendar-planner.mode-week .calendar-event-planned .event-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    #calendarView .calendar-planner.mode-week .calendar-planner-head>div{font-size:10px;padding:5px 1px;}
+    #calendarView .calendar-allday>div{padding:3px 2px;}
+  }
+
 </style>
   <!-- Configuration PWA -->
   <link rel="manifest" href="manifest.json">
@@ -1449,13 +1492,17 @@ let todoistFilter = 'today';
 let calendarEvents = [];
 let calendarCalendars = [];
 let calendarSelectedIds = new Set();
-let calendarViewMode = localStorage.getItem('cadence-calendar-view-v1') || 'day';
+let calendarViewMode = localStorage.getItem('cadence-calendar-view-v1') || (window.matchMedia('(max-width:720px)').matches ? 'threeday' : 'day');
+if(!['day','threeday','week'].includes(calendarViewMode)) calendarViewMode='day';
+let calendarZoomMode = (function(){ try{ return localStorage.getItem('cadence-calendar-zoom-mode-v1')==='manual' ? 'manual' : 'fit'; }catch(e){ return 'fit'; } })();
+let calendarFitHourPx = 40;
+let calendarSwitcherOpen = false;
 let calendarLoadedKey = '';
 let calendarLoading = false;
 let calendarWeekZoom = Number(localStorage.getItem('cadence-calendar-week-zoom-v1') || '100');
 let currentNoteId = null;
 let notesSaveTimer = null;
-if(![50,65,80,100,115,130].includes(calendarWeekZoom)) calendarWeekZoom=100;
+if(!(calendarWeekZoom>=20 && calendarWeekZoom<=250)) calendarWeekZoom=100;
 const cadenceControlsEls = document.querySelectorAll('.cadence-controls');
 const sectionTitleEl = document.getElementById('sectionTitle');
 const dateLabelEl = document.getElementById('dateLabel');
@@ -2651,12 +2698,16 @@ function openBlockModal({mode, ctx, block, start, end, onDone}){
   modal.querySelector('#f-cancel').addEventListener('click', closeModal);
   if(isEdit){
     modal.querySelector('#f-delete').addEventListener('click', ()=>{
-      if(!confirm('Supprimer ce bloc ?')) return;
+      const removed = ctx.getBlocks().find(b=>b.id===block.id);
       const blocks = ctx.getBlocks().filter(b=>b.id!==block.id);
       ctx.setBlocks(blocks);
       closeModal();
       onDone && onDone();
       renderSidebar();
+      if(removed) showUndoToast('Bloc « '+(removed.title||'Sans titre')+' » supprimé.', ()=>{
+        const again = ctx.getBlocks(); again.push(removed); ctx.setBlocks(again);
+        onDone && onDone(); renderSidebar();
+      });
     });
   }
   modal.querySelector('#f-save').addEventListener('click', ()=>{
@@ -2878,7 +2929,7 @@ function startGuidedTour(){
     {title:'Vos Blocs enregistrés',text:'Enregistrez ici vos activités récurrentes pour les replacer en un geste dans le planning. Vous pouvez les réorganiser par glisser-déposer.',target:'#savedBlockPanel',before:cad('week',openSide)},
     {title:mobile()?'Le menu ⋮ et le zoom':'Le zoom de la grille',text:(mobile()?'Le menu ⋮ regroupe Imprimer / PDF, Exporter, Importer et le zoom (− et +). Par défaut, la journée entière tient à l’écran (« Ajusté ») ; − et + zooment si besoin, et « Ajuster » revient à l’affichage complet. Vous pouvez aussi pincer la grille à deux doigts.':'Par défaut, la journée entière tient à l’écran (« Ajusté »), sans défilement. − et + zooment si besoin ; ⤢ revient à l’affichage ajusté.'),target:()=>mobile()?'#moreActionsBtn':'#cadenceZoom',before:cad('week')},
     {title:'Vos tâches Todoist',text:'L’espace Tâches affiche vos tâches Todoist. Cochez le rond à gauche d’une tâche pour la terminer (quelques secondes pour annuler) ; Cadence ne crée ni ne modifie vos tâches autrement. Les titres sont mis en forme, la description se déplie avec « Détails », et les tâches dont le titre commence par « * » dans Todoist ne se cochent pas. La connexion se fait dans Paramétrages.',target:'#tasksView .external-card',before:()=>{goSection('tasks');}},
-    {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, jour par jour ou par semaine, pour plusieurs agendas à la fois. La connexion et le choix des agendas se font dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
+    {title:'Votre Google Calendar',text:'L’espace Agenda affiche vos événements Google Calendar, par jour, sur 3 jours ou par semaine, pour plusieurs agendas à la fois. Comme le planning, il s’ajuste à l’écran par défaut (zoom, ⤢, balayage). Il reste séparé de vos blocs Cadence. La connexion se fait en un clic depuis l’Agenda, ou dans Paramétrages.',target:'#calendarView .external-card',before:()=>{goSection('calendar');}},
     {title:'Vos notes',text:'Écrivez en Markdown : le texte s’enregistre tout seul au fil de la frappe, et « Aperçu » affiche la note mise en forme. « Archiver » range une note qui ne sert plus (retrouvez-la par date d’archivage), « Supprimer » l’efface, avec quelques secondes pour annuler.',target:'#notesView .notes-layout, #notesView',before:()=>{goSection('notes');}},
     {title:'Paramétrages',text:'Ici se gèrent les connexions Todoist et Google Calendar, la synchronisation, la sauvegarde de vos données et l’aide.',target:'#moreContent',before:()=>{goSection('more');}},
     {title:'Synchroniser vos appareils',text:'« Synchroniser » envoie vos données sur votre Google Drive (dans un espace privé réservé à Cadence) ou récupère celles d’un autre appareil. La version la plus récente est conservée : synchronisez avant et après une session de travail.',target:'#moreSyncCard',before:()=>{goSection('more');}},
@@ -3049,6 +3100,11 @@ function todoistCheckHtml(task){
   if(todoistIsNonCheckable(task)||!window.CadenceTodoist.canWrite()) return '';
   return '<button type="button" class="todoist-check" data-task-id="'+escapeHtml(task.id)+'" aria-label="Terminer la tâche : '+escapeHtml(todoistPlainTitle(task))+'" title="Terminer la tâche"><span></span></button>';
 }
+function friendlyNetworkMessage(error){
+  const m=String((error&&error.message)||error||'');
+  if(error instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(m)) return 'Pas de connexion à Internet, ou service injoignable. Vérifiez votre réseau puis réessayez.';
+  return m;
+}
 function todoistWriteErrorMessage(error){
   if(error&&(error.status===401||error.status===403)) return 'Autorisation insuffisante : déconnectez puis reconnectez Todoist dans Paramétrages pour activer la modification des tâches.';
   return (error&&error.message)||String(error);
@@ -3114,7 +3170,16 @@ async function loadTodoistTasks(){
   if(!window.CadenceTodoist.isConnected()){renderTodoist();return;}
   todoistContentEl.innerHTML='<div class="todoist-loading">Chargement des tâches…</div>';
   try{const [tasks,sections]=await Promise.all([window.CadenceTodoist.getTasks(),window.CadenceTodoist.getSections()]);const sectionMap=new Map(sections.map(s=>[String(s.id),s]));todoistSections=sections;todoistTasks=tasks.map(task=>({...task,section_name:sectionMap.get(String(task.section_id))?.name||''}));todoistLoaded=true;renderTodoist();}
-  catch(error){todoistContentEl.innerHTML=`<div class="todoist-error">Impossible de charger Todoist : ${escapeHtml(error.message||String(error))}</div><div class="todoist-toolbar"><button class="btn" id="todoistRetryBtn">Réessayer</button></div>`;todoistContentEl.querySelector('#todoistRetryBtn').addEventListener('click',loadTodoistTasks);}
+  catch(error){
+    const expired=error&&(error.status===401||/expiré|pas connecté/i.test(error.message||''));
+    if(expired){
+      todoistContentEl.innerHTML='<div class="todoist-error">Votre connexion à Todoist a expiré ou a été révoquée. <button class="inline-link-btn" id="todoistReconnectNow">Se reconnecter</button></div>';
+      todoistContentEl.querySelector('#todoistReconnectNow').addEventListener('click',()=>{window.CadenceTodoist.disconnect();window.CadenceTodoist.startOAuth();});
+    }else{
+      todoistContentEl.innerHTML=`<div class="todoist-error">Impossible de charger Todoist : ${escapeHtml(friendlyNetworkMessage(error))}</div><div class="todoist-toolbar"><button class="btn" id="todoistRetryBtn">Réessayer</button></div>`;
+      todoistContentEl.querySelector('#todoistRetryBtn').addEventListener('click',loadTodoistTasks);
+    }
+  }
 }
 function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 
@@ -3127,17 +3192,18 @@ function calendarWeekStart(date){
 function calendarWeekEnd(date){
   const d=calendarWeekStart(date); d.setDate(d.getDate()+7); return d;
 }
+function calendarDaysCount(){ return calendarViewMode==='day' ? 1 : calendarViewMode==='threeday' ? 3 : 7; }
 function formatCalendarRange(start,end){
-  const opts={day:'numeric',month:'long'};
+  const opts={day:'numeric',month:window.matchMedia('(max-width:600px)').matches ? 'short' : 'long'};
   const a=start.toLocaleDateString('fr-FR',opts), b=new Date(end.getTime()-1).toLocaleDateString('fr-FR',opts);
   return a+' – '+b;
 }
 function calendarViewStart(){
-  if(calendarViewMode==='day'){ const d=new Date(refDate); d.setHours(0,0,0,0); return d; }
-  return calendarWeekStart(refDate);
+  if(calendarViewMode==='week') return calendarWeekStart(refDate);
+  const d=new Date(refDate); d.setHours(0,0,0,0); return d;
 }
 function calendarViewEnd(){
-  const d=calendarViewStart(); d.setDate(d.getDate()+(calendarViewMode==='day'?1:7)); return d;
+  const d=calendarViewStart(); d.setDate(d.getDate()+calendarDaysCount()); return d;
 }
 function formatCalendarViewRange(start,end){
   if(calendarViewMode==='day') return start.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -3145,12 +3211,12 @@ function formatCalendarViewRange(start,end){
 }
 function calendarNavigate(delta){
   const d=new Date(refDate);
-  d.setDate(d.getDate()+(calendarViewMode==='day'?delta:delta*7));
+  d.setDate(d.getDate()+delta*calendarDaysCount());
   d.setHours(0,0,0,0);
   refDate=d; calendarLoadedKey=''; renderCalendar(); loadCalendarEvents();
 }
 function setCalendarViewMode(mode){
-  calendarViewMode=mode==='week'?'week':'day';
+  calendarViewMode=(mode==='week'||mode==='threeday')?mode:'day';
   localStorage.setItem('cadence-calendar-view-v1',calendarViewMode);
   calendarLoadedKey=''; renderCalendar(); loadCalendarEvents();
 }
@@ -3190,7 +3256,7 @@ function plannerEventStyle(event,layout={}){
   let a=Math.max(dayStart,plannerMinutes(start)), b=Math.min(dayEnd,plannerMinutes(end||new Date(start.getTime()+30*60000)));
   if(b<=a) b=Math.min(dayEnd,a+20);
   const left=layout.left ?? 0, width=layout.width ?? 100;
-  return {top:((a-dayStart)/60*64),height:Math.max(22,(b-a)/60*64),left,right:100-left-width,width};
+  return {topH:(a-dayStart)/60,heightH:(b-a)/60,left,right:100-left-width,width};
 }
 function plannerEventLayouts(events){
   const sorted=events.map((event,index)=>({event,index,start:calendarEventDate(event),end:calendarEventEnd(event)||new Date((calendarEventDate(event)||new Date()).getTime()+30*60000)}))
@@ -3222,7 +3288,7 @@ function plannerNowOffset(day){
   if(calendarDayKey(now)!==calendarDayKey(day))return null;
   const mins=plannerMinutes(now), start=6*60, end=23*60;
   if(mins<start||mins>end)return null;
-  return (mins-start)/60*64;
+  return (mins-start)/60;
 }
 function plannerEventHtml(event){
   const title=escapeHtml(event.summary||'Sans titre'), link=calendarEventUrl(event);
@@ -3231,23 +3297,53 @@ function plannerEventHtml(event){
   const location=event.location?'<div class="event-location">'+escapeHtml(event.location)+'</div>':'';
   return '<div class="event-time">'+time+'</div><div class="event-title">'+titleHtml+'</div>'+location;
 }
-function calendarZoomDayMin(){
-  const base=window.matchMedia('(max-width:600px)').matches ? 88 : 105;
-  return Math.round(base*calendarWeekZoom/100);
-}
+const CAL_HOURS=17;   // 06:00 → 23:00
+function currentCalendarZoom(){ return calendarZoomMode==='fit' ? Math.round(calendarFitHourPx/64*100) : calendarWeekZoom; }
+function calendarZoomLabel(){ return calendarZoomMode==='fit' ? 'Ajusté' : Math.round(calendarWeekZoom)+' %'; }
 function setCalendarWeekZoom(value){
-  const steps=[50,65,80,100,115,130];
-  const raw=clamp(Number(value),50,130);
-  calendarWeekZoom=steps.reduce((best,v)=>Math.abs(v-raw)<Math.abs(best-raw)?v:best,100);
-  localStorage.setItem('cadence-calendar-week-zoom-v1',String(calendarWeekZoom));
+  calendarZoomMode='manual';
+  calendarWeekZoom=Math.round(clamp(Number(value),20,250));
+  try{ localStorage.setItem('cadence-calendar-week-zoom-v1',String(calendarWeekZoom)); localStorage.setItem('cadence-calendar-zoom-mode-v1','manual'); }catch(e){}
   renderCalendar();
+}
+function setCalendarZoomFit(){
+  calendarZoomMode='fit';
+  try{ localStorage.setItem('cadence-calendar-zoom-mode-v1','fit'); }catch(e){}
+  renderCalendar();
+}
+// Hauteur d'une heure : « ajustée » pour que toute la journée tienne à l'écran, ou zoom manuel.
+function applyCalendarFit(){
+  const planner=calendarContentEl && calendarContentEl.querySelector('.calendar-planner');
+  if(!planner) return;
+  let hourPx;
+  if(calendarZoomMode==='fit'){
+    const main=document.getElementById('main'); main.scrollTop=0;
+    planner.style.setProperty('--hour-px','20px');
+    const mr=main.getBoundingClientRect(), br=planner.querySelector('.calendar-planner-body').getBoundingClientRect();
+    const nav=document.querySelector('.app-nav-mobile'), navH=(nav && nav.offsetParent!==null) ? nav.offsetHeight : 0;
+    const usableBottom=Math.min(mr.bottom, window.innerHeight-navH);
+    const padB=parseFloat(getComputedStyle(main).paddingBottom)||0;
+    hourPx=Math.floor(clamp((usableBottom-br.top-padB-6)/CAL_HOURS,10,160)*10)/10;
+    planner.style.setProperty('--hour-px',hourPx+'px');
+    const over=main.scrollHeight-main.clientHeight;   // filet : si la page défile encore, on réduit juste ce qu'il faut
+    if(over>0){ hourPx=Math.max(10,Math.floor((hourPx-(over+2)/CAL_HOURS)*10)/10); planner.style.setProperty('--hour-px',hourPx+'px'); }
+    calendarFitHourPx=hourPx;
+  }else{
+    hourPx=64*calendarWeekZoom/100;
+    planner.style.setProperty('--hour-px',hourPx+'px');
+  }
+  planner.dataset.compact = hourPx<30 ? '1' : '0';
 }
 
 function renderCalendar(){
   if(!calendarContentEl)return;
   const start=calendarViewStart(), end=calendarViewEnd();
   if(!window.CadenceGoogleCalendar.isConnected()){
-    calendarContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Google Calendar déconnecté</strong><br><span>Pour utiliser vos agendas, paramétrez la connexion dans <button class="inline-link-btn" id="calendarSettingsBtn">Paramétrages</button>.</span></div></div>';
+    calendarContentEl.innerHTML='<div class="integration-status"><span class="dot"></span><div><strong>Google Calendar n’est pas connecté</strong><br><span>La connexion dure environ une heure et se renouvelle en un clic. <button class="btn primary" id="calendarConnectNow" style="margin-top:8px">Se connecter à Google Calendar</button><br><button class="inline-link-btn" id="calendarSettingsBtn">Ouvrir les Paramétrages</button></span></div></div>';
+    calendarContentEl.querySelector('#calendarConnectNow').addEventListener('click',async()=>{
+      try{ await window.CadenceGoogleCalendar.connect(); calendarLoadedKey=''; await loadCalendarCalendars(); renderCalendar(); loadCalendarEvents(); }
+      catch(error){ alert(friendlyNetworkMessage(error)); }
+    });
     calendarContentEl.querySelector('#calendarSettingsBtn').addEventListener('click',()=>{appSection='more';document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section==='more'));renderApp();});
     return;
   }
@@ -3259,29 +3355,38 @@ function renderCalendar(){
   const selectedIds=new Set(selected.map(c=>String(c.id)));
   const colorById=new Map(selected.map(c=>[String(c.id),calendarColor(c)]));
   const events=calendarEvents.filter(e=>selectedIds.has(String(e.cadenceCalendarId)));
-  const days=calendarViewMode==='day'?[start]:Array.from({length:7},(_,i)=>addDays(start,i));
+  const days=Array.from({length:calendarDaysCount()},(_,i)=>addDays(start,i));
   const weekdayHtml='<div></div>'+days.map(d=>'<div class="'+(calendarDayKey(d)===calendarDayKey(new Date())?'today':'')+'">'+escapeHtml(d.toLocaleDateString('fr-FR',{weekday:calendarViewMode==='day'?'long':'short',day:'numeric',month:calendarViewMode==='day'?'long':undefined}))+'</div>').join('');
+  const hasAllDay=days.some(day=>calendarEventsForDay(events,day).some(e=>e.start&&e.start.date));
   const allDayHtml='<div>Journée</div>'+days.map(day=>{
     const dayEvents=calendarEventsForDay(events,day).filter(e=>e.start?.date);
     return '<div>'+dayEvents.map(e=>'<span class="allday-event" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+'">'+escapeHtml(e.summary||'Sans titre')+'</span>').join('')+'</div>';
   }).join('');
-  const axis=Array.from({length:18},(_,i)=>'<span class="calendar-time-label" style="top:'+(i*64)+'px">'+String(i+6).padStart(2,'0')+':00</span>').join('');
+  const axis=Array.from({length:18},(_,i)=>'<span class="calendar-time-label" style="top:calc(var(--hour-px,64px)*'+i+')">'+String(i+6).padStart(2,'0')+':00</span>').join('');
   const body=days.map(day=>{
     const dayEvents=calendarEventsForDay(events,day).filter(e=>!e.start?.date);
     const layouts=plannerEventLayouts(dayEvents);
     const nowOffset=plannerNowOffset(day);
-    const nowLine=nowOffset===null?'':'<div class="calendar-now-line" style="top:'+nowOffset+'px" aria-hidden="true"></div>';
-    return '<div class="calendar-day-column">'+nowLine+dayEvents.map((e,i)=>{const st=plannerEventStyle(e,layouts.get(i));if(!st)return '';return '<article class="calendar-event-planned" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+';top:'+st.top+'px;height:'+st.height+'px;left:calc('+st.left+'% + 3px);width:calc('+st.width+'% - 6px)">'+plannerEventHtml(e)+'</article>';}).join('')+'</div>';
+    const nowLine=nowOffset===null?'':'<div class="calendar-now-line" style="top:calc(var(--hour-px,64px)*'+nowOffset+')" aria-hidden="true"></div>';
+    return '<div class="calendar-day-column">'+nowLine+dayEvents.map((e,i)=>{const st=plannerEventStyle(e,layouts.get(i));if(!st)return '';return '<article class="calendar-event-planned" style="--calendar-color:'+colorById.get(String(e.cadenceCalendarId))+';top:calc(var(--hour-px,64px)*'+st.topH+');height:max(18px,calc(var(--hour-px,64px)*'+st.heightH+'));left:calc('+st.left+'% + 3px);width:calc('+st.width+'% - 6px)">'+plannerEventHtml(e)+'</article>';}).join('')+'</div>';
   }).join('');
-  const switcher=calendarCalendars.map(c=>'<label><input type="checkbox" data-calendar-id="'+escapeHtml(String(c.id))+'" '+(calendarSelectedIds.has(String(c.id))?'checked':'')+'><span style="width:8px;height:8px;border-radius:50%;background:'+calendarColor(c)+';display:inline-block"></span>'+escapeHtml(c.summary||c.summaryOverride||c.id)+'</label>').join('');
-  const viewToggle='<div class="calendar-view-toggle" role="group" aria-label="Vue de l’agenda"><button id="calendarDayViewBtn" class="'+(calendarViewMode==='day'?'active':'')+'">Jour</button><button id="calendarWeekViewBtn" class="'+(calendarViewMode==='week'?'active':'')+'">Semaine</button></div>'+ (calendarViewMode==='week' ? '<div class="calendar-zoom" role="group" aria-label="Zoom de la semaine"><button id="calendarZoomOut" aria-label="Dézoomer">−</button><span class="calendar-zoom-label">'+calendarWeekZoom+' %</span><button id="calendarZoomIn" aria-label="Zoomer">+</button></div>' : '');
-  const prevLabel=calendarViewMode==='day'?'Jour précédent':'Semaine précédente', nextLabel=calendarViewMode==='day'?'Jour suivant':'Semaine suivante';
-  calendarContentEl.innerHTML='<div class="calendar-toolbar"><div class="calendar-range">'+viewToggle+'<button id="calendarPrevBtn" aria-label="'+prevLabel+'">‹</button><div class="calendar-range-label">'+escapeHtml(formatCalendarViewRange(start,end))+'</div><button id="calendarNextBtn" aria-label="'+nextLabel+'">›</button></div><button class="btn" id="calendarTodayBtn">Aujourd’hui</button></div><div class="calendar-switcher">'+switcher+'</div><div class="calendar-planner '+(calendarViewMode==='day'?'day-mode':'week-mode')+'" style="--calendar-day-min:'+calendarZoomDayMin()+'px"><div class="calendar-planner-head">'+weekdayHtml+'</div><div class="calendar-allday">'+allDayHtml+'</div><div class="calendar-planner-body"><div class="calendar-time-axis">'+axis+'</div>'+body+'</div></div>';
+  const switcherItems=calendarCalendars.map(c=>'<label><input type="checkbox" data-calendar-id="'+escapeHtml(String(c.id))+'" '+(calendarSelectedIds.has(String(c.id))?'checked':'')+'><span style="width:8px;height:8px;border-radius:50%;background:'+calendarColor(c)+';display:inline-block"></span>'+escapeHtml(c.summary||c.summaryOverride||c.id)+'</label>').join('');
+  const nbSel=calendarCalendars.filter(c=>calendarSelectedIds.has(String(c.id))).length;
+  const switcher='<details class="calendar-switcher" id="calendarSwitcher"'+(calendarSwitcherOpen?' open':'')+'><summary>Agendas affichés : '+nbSel+' sur '+calendarCalendars.length+'</summary><div class="calendar-switcher-list">'+switcherItems+'</div></details>';
+  const viewToggle='<div class="calendar-view-toggle" role="group" aria-label="Vue de l’agenda"><button id="calendarDayViewBtn" class="'+(calendarViewMode==='day'?'active':'')+'">Jour</button><button id="calendarThreeViewBtn" class="'+(calendarViewMode==='threeday'?'active':'')+'">3 jours</button><button id="calendarWeekViewBtn" class="'+(calendarViewMode==='week'?'active':'')+'">Semaine</button></div>';
+  const zoomHtml='<div class="calendar-zoom" role="group" aria-label="Zoom de l’agenda"><button id="calendarZoomOut" aria-label="Dézoomer">−</button><span class="calendar-zoom-label">'+calendarZoomLabel()+'</span><button id="calendarZoomIn" aria-label="Zoomer">+</button><button id="calendarZoomFit" aria-label="Ajuster à l’écran" title="Ajuster à l’écran">⤢</button></div>';
+  const stepWord=calendarViewMode==='day'?'Jour':calendarViewMode==='threeday'?'3 jours':'Semaine';
+  const prevLabel=stepWord+' précédent'+(calendarViewMode==='day'?'':'s'), nextLabel=stepWord+' suivant'+(calendarViewMode==='day'?'':'s');
+  calendarContentEl.innerHTML='<div class="calendar-toolbar"><div class="calendar-range"><button id="calendarPrevBtn" aria-label="'+prevLabel+'">‹</button><div class="calendar-range-label">'+escapeHtml(formatCalendarViewRange(start,end))+'</div><button id="calendarNextBtn" aria-label="'+nextLabel+'">›</button><button class="btn" id="calendarTodayBtn">Aujourd’hui</button></div>'+viewToggle+zoomHtml+'</div>'+switcher+'<div class="calendar-planner mode-'+calendarViewMode+'" style="--ncols:'+days.length+'"><div class="calendar-planner-top"><div class="calendar-planner-head">'+weekdayHtml+'</div>'+(hasAllDay?'<div class="calendar-allday">'+allDayHtml+'</div>':'')+'</div><div class="calendar-planner-body"><div class="calendar-time-axis">'+axis+'</div>'+body+'</div></div>';
+  applyCalendarFit();
   calendarContentEl.querySelectorAll('[data-calendar-id]').forEach(input=>input.addEventListener('change',()=>{const id=input.dataset.calendarId;if(input.checked)calendarSelectedIds.add(id);else calendarSelectedIds.delete(id);renderCalendar();}));
   calendarContentEl.querySelector('#calendarDayViewBtn').addEventListener('click',()=>setCalendarViewMode('day'));
+  calendarContentEl.querySelector('#calendarThreeViewBtn').addEventListener('click',()=>setCalendarViewMode('threeday'));
   calendarContentEl.querySelector('#calendarWeekViewBtn').addEventListener('click',()=>setCalendarViewMode('week'));
-  const zoomOut=calendarContentEl.querySelector('#calendarZoomOut'); if(zoomOut)zoomOut.addEventListener('click',()=>setCalendarWeekZoom(calendarWeekZoom-15));
-  const zoomIn=calendarContentEl.querySelector('#calendarZoomIn'); if(zoomIn)zoomIn.addEventListener('click',()=>setCalendarWeekZoom(calendarWeekZoom+15));
+  const zoomFit=calendarContentEl.querySelector('#calendarZoomFit'); if(zoomFit)zoomFit.addEventListener('click',setCalendarZoomFit);
+  const switcherEl=calendarContentEl.querySelector('#calendarSwitcher'); if(switcherEl)switcherEl.addEventListener('toggle',()=>{calendarSwitcherOpen=switcherEl.open;});
+  const zoomOut=calendarContentEl.querySelector('#calendarZoomOut'); if(zoomOut)zoomOut.addEventListener('click',()=>setCalendarWeekZoom(currentCalendarZoom()-15));
+  const zoomIn=calendarContentEl.querySelector('#calendarZoomIn'); if(zoomIn)zoomIn.addEventListener('click',()=>setCalendarWeekZoom(currentCalendarZoom()+15));
   calendarContentEl.querySelector('#calendarPrevBtn').addEventListener('click',()=>calendarNavigate(-1));
   calendarContentEl.querySelector('#calendarNextBtn').addEventListener('click',()=>calendarNavigate(1));
   calendarContentEl.querySelector('#calendarTodayBtn').addEventListener('click',()=>{refDate=new Date();refDate.setHours(0,0,0,0);calendarLoadedKey='';renderCalendar();loadCalendarEvents();});
@@ -3293,7 +3398,7 @@ async function loadCalendarCalendars(){
   if(!calendarSelectedIds.size) calendarCalendars.forEach(c=>calendarSelectedIds.add(String(c.id)));
 }
 function showCalendarError(error){
-  calendarContentEl.innerHTML='<div class="calendar-error">Impossible de charger Google Calendar : '+escapeHtml(error.message||String(error))+'</div><div class="calendar-toolbar"><button class="btn" id="calendarRetryBtn">Réessayer</button></div>';
+  calendarContentEl.innerHTML='<div class="calendar-error">Impossible de charger Google Calendar : '+escapeHtml(friendlyNetworkMessage(error))+'</div><div class="calendar-toolbar"><button class="btn" id="calendarRetryBtn">Réessayer</button></div>';
   calendarContentEl.querySelector('#calendarRetryBtn').addEventListener('click',loadCalendarEvents);
 }
 async function loadCalendarEvents(){
@@ -3470,7 +3575,7 @@ function renderMore(){
   const q=(id)=>moreContentEl.querySelector(id);
   if(q('#moreTodoConnect'))q('#moreTodoConnect').addEventListener('click',()=>window.CadenceTodoist.startOAuth());
   if(q('#moreTodoDisconnect'))q('#moreTodoDisconnect').addEventListener('click',()=>{window.CadenceTodoist.disconnect();todoistTasks=[];todoistSections=[];todoistLoaded=false;renderMore();});
-  if(q('#moreGoogleConnect'))q('#moreGoogleConnect').addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';await loadCalendarCalendars();renderMore();}catch(error){alert(error.message||String(error));}});
+  if(q('#moreGoogleConnect'))q('#moreGoogleConnect').addEventListener('click',async()=>{try{await window.CadenceGoogleCalendar.connect();calendarLoadedKey='';await loadCalendarCalendars();renderMore();}catch(error){alert(friendlyNetworkMessage(error));}});
   if(q('#moreGoogleDisconnect'))q('#moreGoogleDisconnect').addEventListener('click',()=>{window.CadenceGoogleCalendar.disconnect();calendarEvents=[];calendarCalendars=[];calendarSelectedIds=new Set();calendarLoadedKey='';renderMore();});
   if(q('#moreSync'))q('#moreSync').addEventListener('click',runDriveSync);
   if(q('#moreExport'))q('#moreExport').addEventListener('click',exportData);
@@ -3484,6 +3589,7 @@ function renderApp(){
   const isCadence = appSection==='cadence';
   if(mobileViewSelect) mobileViewSelect.value=currentView;
   document.body.dataset.cview=currentView;
+  document.body.dataset.asection=appSection;
   document.querySelectorAll('#mobileViewTabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===currentView));
   const cadenceZoom=document.getElementById('cadenceZoom'); if(cadenceZoom) cadenceZoom.style.display=(isCadence && zoomedView()) ? 'inline-flex' : 'none';
   const cadenceZoomLabel=document.getElementById('cadenceZoomLabel'); if(cadenceZoomLabel) cadenceZoomLabel.textContent=zoomLabelText();
@@ -3564,6 +3670,38 @@ function refreshCurrentTimeIndicators(){
 if(currentTimeRefresh) clearInterval(currentTimeRefresh);
 currentTimeRefresh=setInterval(refreshCurrentTimeIndicators, 30000);
 
+
+// ---- Agenda : redimensionnement, balayage, pincement ----
+let calResizeTimer=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(calResizeTimer);
+  calResizeTimer=setTimeout(()=>{
+    if(appSection!=='calendar' || calendarZoomMode!=='fit') return;
+    const a=document.activeElement;
+    if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+    applyCalendarFit();
+  },200);
+});
+let calSwipeX=null, calSwipeY=null, calPinch=null;
+calendarContentEl.addEventListener('touchstart',e=>{
+  if(e.touches.length===2){ calSwipeX=null; calPinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); }
+  else if(e.touches.length===1){ calSwipeX=e.touches[0].clientX; calSwipeY=e.touches[0].clientY; }
+},{passive:true});
+calendarContentEl.addEventListener('touchmove',e=>{
+  if(e.touches.length!==2 || calPinch===null) return;
+  if(e.cancelable) e.preventDefault();
+  const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY), ratio=dist/calPinch;
+  if(ratio>1.1){ setCalendarWeekZoom(currentCalendarZoom()+15); calPinch=dist; }
+  else if(ratio<.9){ setCalendarWeekZoom(currentCalendarZoom()-15); calPinch=dist; }
+},{passive:false});
+calendarContentEl.addEventListener('touchend',e=>{
+  if(e.touches.length<2) calPinch=null;
+  if(calSwipeX===null || e.changedTouches.length!==1) return;
+  const inPlanner=!!(e.target.closest && e.target.closest('.calendar-planner'));
+  const dx=e.changedTouches[0].clientX-calSwipeX, dy=e.changedTouches[0].clientY-calSwipeY;
+  calSwipeX=calSwipeY=null;
+  if(inPlanner && Math.abs(dx)>=80 && Math.abs(dx)>Math.abs(dy)*1.35) calendarNavigate(dx<0?1:-1);
+},{passive:true});
 
 // ============ PWA / Service Worker ============
 if ('serviceWorker' in navigator) {

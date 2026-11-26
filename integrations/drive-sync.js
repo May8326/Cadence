@@ -15,6 +15,12 @@
   const ready = new Promise(resolve => { readyResolve = resolve; });
   let pending = null; // { resolve, reject } de la demande d'autorisation en cours
 
+  function explainAuth(code, description){
+    if(code==='access_denied') return 'Accès refusé par Google. Tant que l’application est en mode Test, votre compte doit figurer parmi les utilisateurs test et l’autorisation se renouvelle tous les 7 jours : relancez la synchronisation et acceptez la demande.';
+    if(code==='popup_closed') return 'La fenêtre Google a été fermée avant la fin. Relancez la synchronisation.';
+    if(code==='popup_failed_to_open') return 'Le navigateur a bloqué la fenêtre Google : autorisez les fenêtres pop-up pour ce site, puis réessayez.';
+    return description || code || 'Autorisation Google impossible.';
+  }
   function loadGIS(){
     return new Promise((resolve, reject) => {
       if(window.google?.accounts?.oauth2) return resolve();
@@ -43,7 +49,7 @@
         callback: response => {
           if(!pending) return;
           const p = pending; pending = null;
-          if(response.error){ p.reject(new Error(response.error_description || response.error)); return; }
+          if(response.error){ p.reject(new Error(explainAuth(response.error, response.error_description))); return; }
           accessToken = response.access_token;
           tokenExpiresAt = Date.now() + (Number(response.expires_in) || 3600) * 1000;
           p.resolve(accessToken);
@@ -51,7 +57,7 @@
         error_callback: err => {
           if(!pending) return;
           const p = pending; pending = null;
-          p.reject(new Error('Autorisation Google annulée ou bloquée (' + (err?.type || 'erreur') + ').'));
+          p.reject(new Error(explainAuth(err && err.type)));
         }
       });
       readyResolve(true);
@@ -76,15 +82,22 @@
 
   async function driveFetch(url, options = {}){
     const token = await getToken();
-    const response = await fetch(url, {
-      ...options,
-      headers: { ...(options.headers || {}), Authorization: 'Bearer ' + token }
-    });
+    let response;
+    try{
+      response = await fetch(url, { ...options, headers: { ...(options.headers || {}), Authorization: 'Bearer ' + token } });
+    }catch(error){
+      throw new Error('Pas de connexion à Internet, ou Google est injoignable. Vérifiez votre réseau puis réessayez.');
+    }
     if(!response.ok){
-      let message = 'Erreur Google Drive (' + response.status + ').';
-      try{ const data = await response.json(); message = data.error?.message || message; }catch(e){}
-      if(response.status === 401){ accessToken = null; tokenExpiresAt = 0; }
-      throw new Error(message);
+      let raw = '';
+      try{ const data = await response.json(); raw = (data.error && data.error.message) || ''; }catch(e){}
+      if(response.status === 401){ accessToken = null; tokenExpiresAt = 0; throw new Error('Votre session Google a expiré : relancez la synchronisation.'); }
+      if(response.status === 403){
+        if(/not been used|disabled|accessNotConfigured/i.test(raw)) throw new Error('L’API Google Drive n’est pas activée pour ce projet (console Google Cloud, API et services, Bibliothèque).');
+        throw new Error('Google refuse l’accès à l’espace privé de Cadence sur Drive : relancez la synchronisation en acceptant la demande d’accès à Drive.');
+      }
+      if(response.status >= 500) throw new Error('Google Drive est momentanément indisponible. Réessayez dans quelques minutes.');
+      throw new Error(raw || 'Erreur Google Drive (' + response.status + ').');
     }
     return response;
   }

@@ -12,6 +12,13 @@
   let readyResolve;
   const ready = new Promise(resolve => { readyResolve = resolve; });
   let gisLoading = null;
+  let pendingReject = null;
+  function explainAuth(code, description){
+    if(code==='access_denied') return 'Accès refusé par Google. Tant que l’application est en mode Test, votre compte doit figurer parmi les utilisateurs test et l’autorisation se renouvelle tous les 7 jours : réessayez et acceptez la demande.';
+    if(code==='popup_closed') return 'La fenêtre Google a été fermée avant la fin. Réessayez.';
+    if(code==='popup_failed_to_open') return 'Le navigateur a bloqué la fenêtre Google : autorisez les fenêtres pop-up pour ce site, puis réessayez.';
+    return description || code || 'Connexion à Google impossible.';
+  }
 
   function loadGIS(){
     if(window.google?.accounts?.oauth2) return Promise.resolve();
@@ -41,7 +48,10 @@
       tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        callback: ()=>{}
+        callback: ()=>{},
+        error_callback: err=>{
+          if(pendingReject){ const r=pendingReject; pendingReject=null; r(new Error(explainAuth(err && err.type))); }
+        }
       });
       readyResolve(true);
     }catch(error){
@@ -66,15 +76,17 @@
     await ready;
     if(!tokenClient) throw new Error('Google Identity Services n’est pas disponible.');
     return new Promise((resolve,reject)=>{
+      pendingReject = reject;
       tokenClient.callback = response=>{
-        if(response.error){ reject(new Error(response.error_description || response.error)); return; }
+        pendingReject = null;
+        if(response.error){ reject(new Error(explainAuth(response.error, response.error_description))); return; }
         accessToken=response.access_token;
         tokenExpiresAt=Date.now() + (Number(response.expires_in)||3600)*1000;
         resolve(response);
       };
       try{
         tokenClient.requestAccessToken({prompt: accessToken ? '' : 'consent'});
-      }catch(error){ reject(error); }
+      }catch(error){ pendingReject = null; reject(error); }
     });
   }
 
